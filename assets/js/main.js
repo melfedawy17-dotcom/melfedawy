@@ -107,6 +107,7 @@
         'Email: ' + (d.get('email') || '') + '\n' +
         'Phone / WhatsApp: ' + (d.get('phone') || '') + '\n' +
         'Business / Project: ' + (d.get('business') || '') + '\n' +
+        'Project type: ' + (d.get('ptype') || '') + '\n' +
         'Needs help with: ' + (d.get('need') || '') + '\n\n' +
         (d.get('message') || '');
       var mailto = 'mailto:' + (form.getAttribute('data-fallback-email') || '') +
