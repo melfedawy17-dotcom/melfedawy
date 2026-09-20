@@ -67,6 +67,32 @@
     });
   }).catch(function () { /* keep static defaults */ });
 
+  /* ---- text overrides (content/overrides.json) ---- */
+  loadJSON('content/overrides.json').then(function (ov) {
+    var lang = document.documentElement.lang;
+    var dict = (ov && ov[lang]) || {};
+    var glob = (ov && ov.global) || {};
+    document.querySelectorAll('[data-cms]').forEach(function (el) {
+      var v = dict[el.getAttribute('data-cms')];
+      if (v != null && String(v).trim() !== '') el.textContent = v;
+    });
+    document.querySelectorAll('[data-cms-global]').forEach(function (el) {
+      var k = el.getAttribute('data-cms-global');
+      var v = glob[k];
+      if (v == null || String(v).trim() === '') return;
+      el.textContent = v;
+      var digits = String(v).replace(/\D/g, '');
+      if (k === 'wa_display' && digits) {
+        document.querySelectorAll('a[href^="https://wa.me/"]').forEach(function (a) {
+          var q = a.href.indexOf('?text=');
+          a.href = 'https://wa.me/' + digits + (q > -1 ? a.href.slice(q) : '');
+        });
+      }
+      if (k === 'phone_display' && digits) document.querySelectorAll('a[href^="tel:"]').forEach(function (a) { a.href = 'tel:+' + digits; });
+      if (k === 'email') document.querySelectorAll('a[href^="mailto:"]').forEach(function (a) { a.href = 'mailto:' + String(v).trim(); });
+    });
+  }).catch(function () { /* keep built-in defaults */ });
+
   /* ---- articles hub ---- */
   var grid = document.getElementById('postsGrid');
   if (grid) {

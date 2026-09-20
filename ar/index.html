@@ -25,7 +25,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Inter:wght@400;500;600&family=IBM+Plex+Sans+Arabic:wght@400;500;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../assets/css/main.css?v=20260920b">
+<link rel="stylesheet" href="../assets/css/main.css?v=20260920c">
 <script>
 (function(){try{
   document.documentElement.classList.add('js');
@@ -72,9 +72,9 @@
 <section class="hero">
   <div class="container hero-in">
     <div class="hero-copy">
-      <p class="eyebrow" data-reveal>استشارات أعمال · استراتيجية · تنفيذ</p>
-      <h1 data-reveal>نحوّل الأفكار إلى<br><span class="gold">أعمالٍ قابلة للنجاح.</span></h1>
-      <p class="lead" data-reveal>أساعد روّاد الأعمال والشركات الناشئة والمنشآت الصغيرة والمتوسطة على صياغة الفرص، والتحقق من الأفكار، وبناء خطط عملية، والانتقال من الاستراتيجية إلى التنفيذ.</p>
+      <p class="eyebrow" data-reveal data-cms="hero.eyebrow">استشارات أعمال · استراتيجية · تنفيذ</p>
+      <h1 data-reveal><span data-cms="hero.h1a">نحوّل الأفكار إلى</span><br><span class="gold" data-cms="hero.h1b">أعمالٍ قابلة للنجاح.</span></h1>
+      <p class="lead" data-reveal data-cms="hero.sub">أساعد روّاد الأعمال والشركات الناشئة والمنشآت الصغيرة والمتوسطة على صياغة الفرص، والتحقق من الأفكار، وبناء خطط عملية، والانتقال من الاستراتيجية إلى التنفيذ.</p>
       <div class="cta-row" data-reveal>
         <a class="btn btn-gold" href="./#contact">ابدأ محادثة</a>
         <a class="btn btn-ghost" href="./#work">شاهد أعمالًا مختارة</a>
@@ -97,16 +97,16 @@
     <div class="about-copy">
       <p class="label" data-reveal>عن محمد</p>
       <h2 data-reveal>تفكير أعمالٍ <span class="gold">بعقلية تنفيذ.</span></h2>
-      <p data-reveal>متخصص في تطوير الأعمال والاستشارات، بخبرة تمتد عبر دراسات الجدوى، وأبحاث السوق، وتخطيط الأعمال، والعمليات، وتنفيذ المشاريع، واستراتيجيات النمو.</p>
-      <p data-reveal>يجمع عملي بين التفكير الاستراتيجي والتنفيذ العملي: فهم الفرصة، واختبار جدواها التجارية، وهيكلة الخطة، ثم تحويلها إلى إجراءات قابلة للقياس.</p>
-      <p data-reveal>تمتد خبرتي عبر تصنيع الأغذية والمنتجات الطبيعية، والشركات الناشئة والمنشآت الصغيرة والمتوسطة، والخدمات التعليمية عبر الإنترنت، واستشارات الأعمال.</p>
+      <p data-reveal data-cms="about.p1">متخصص في تطوير الأعمال والاستشارات، بخبرة تمتد عبر دراسات الجدوى، وأبحاث السوق، وتخطيط الأعمال، والعمليات، وتنفيذ المشاريع، واستراتيجيات النمو.</p>
+      <p data-reveal data-cms="about.p2">يجمع عملي بين التفكير الاستراتيجي والتنفيذ العملي: فهم الفرصة، واختبار جدواها التجارية، وهيكلة الخطة، ثم تحويلها إلى إجراءات قابلة للقياس.</p>
+      <p data-reveal data-cms="about.p3">تمتد خبرتي عبر تصنيع الأغذية والمنتجات الطبيعية، والشركات الناشئة والمنشآت الصغيرة والمتوسطة، والخدمات التعليمية عبر الإنترنت، واستشارات الأعمال.</p>
       <div class="method" data-reveal><span>افهم الفرصة.</span><span>قيّم الجدوى التجارية.</span><span>هيكل الاستراتيجية.</span><span>ابنِ الخطة.</span><span>نفّذ.</span><span>قِس.</span><span>حسّن.</span></div>
     </div>
     <div class="about-vis" data-reveal>
       <div class="about-frame"><img data-dyn="about" src="../assets/img/mohamed-elfedawy.jpg" alt="محمد الفداوي في مكتب العمل" loading="lazy"></div>
       <blockquote class="philosophy">
         <span class="ph-tag">فلسفة العمل</span>
-        <p>“الاستراتيجية الجيدة لا قيمة لها ما لم يمكن تنفيذها.”</p>
+        <p>“<span data-cms="about.philosophy">الاستراتيجية الجيدة لا قيمة لها ما لم يمكن تنفيذها.</span>”</p>
       </blockquote>
     </div>
   </div>
@@ -124,7 +124,7 @@
   <div class="container">
     <p class="label" data-reveal>ماذا أقدم</p>
     <h2 data-reveal>من الفرصة إلى التنفيذ.</h2>
-    <div class="svc-grid"><article class="svc"><span class="num">01</span><h3>هيكلة الأعمال والتخطيط</h3><p>هيكلة فكرة العمل، وتحديد الأولويات، ومتطلبات التشغيل، وخارطة طريق تنفيذية عملية.</p><div class="scope"><span>هيكلة الفكرة</span><span>متطلبات التشغيل</span><span>خارطة طريق التنفيذ</span></div></article><article class="svc"><span class="num">02</span><h3>دراسات الجدوى</h3><p>تقييم فرص الأعمال عبر تحليل السوق والتشغيل والجوانب التجارية لدعم قرارات مبنية على معلومات.</p><div class="scope"><span>تحليل السوق</span><span>تقييم التشغيل</span><span>مراجعة تجارية</span></div></article><article class="svc"><span class="num">03</span><h3>أبحاث السوق</h3><p>استكشاف الأسواق والعملاء والمنافسين والفرص وديناميكيات السوق لدعم استراتيجية عملية.</p><div class="scope"><span>العملاء والمنافسون</span><span>ديناميكيات السوق</span><span>رسم الفرص</span></div></article><article class="svc"><span class="num">04</span><h3>خطط الأعمال</h3><p>تحويل مفاهيم الأعمال إلى خطط منظمة تغطي الاستراتيجية والتشغيل والنمو والموارد والتنفيذ.</p><div class="scope"><span>الاستراتيجية والتشغيل</span><span>النمو والموارد</span><span>خطة التنفيذ</span></div></article><article class="svc"><span class="num">05</span><h3>تطوير الأعمال</h3><p>تحديد فرص النمو والشراكات ومسارات التوسع السوقي وفرص الإيرادات.</p><div class="scope"><span>فرص النمو</span><span>الشراكات</span><span>التوسع السوقي</span></div></article><article class="svc"><span class="num">06</span><h3>إدارة العمليات والمشاريع</h3><p>تحسين سير العمل، وتنسيق الفرق، وإدارة المشاريع، ومتابعة الأداء، وربط الاستراتيجية بالتنفيذ.</p><div class="scope"><span>تحسين سير العمل</span><span>تنسيق الفرق</span><span>متابعة الأداء</span></div></article></div>
+    <div class="svc-grid"><article class="svc"><span class="num">01</span><h3 data-cms="svc.0.title">هيكلة الأعمال والتخطيط</h3><p data-cms="svc.0.desc">هيكلة فكرة العمل، وتحديد الأولويات، ومتطلبات التشغيل، وخارطة طريق تنفيذية عملية.</p><div class="scope"><span>هيكلة الفكرة</span><span>متطلبات التشغيل</span><span>خارطة طريق التنفيذ</span></div></article><article class="svc"><span class="num">02</span><h3 data-cms="svc.1.title">دراسات الجدوى</h3><p data-cms="svc.1.desc">تقييم فرص الأعمال عبر تحليل السوق والتشغيل والجوانب التجارية لدعم قرارات مبنية على معلومات.</p><div class="scope"><span>تحليل السوق</span><span>تقييم التشغيل</span><span>مراجعة تجارية</span></div></article><article class="svc"><span class="num">03</span><h3 data-cms="svc.2.title">أبحاث السوق</h3><p data-cms="svc.2.desc">استكشاف الأسواق والعملاء والمنافسين والفرص وديناميكيات السوق لدعم استراتيجية عملية.</p><div class="scope"><span>العملاء والمنافسون</span><span>ديناميكيات السوق</span><span>رسم الفرص</span></div></article><article class="svc"><span class="num">04</span><h3 data-cms="svc.3.title">خطط الأعمال</h3><p data-cms="svc.3.desc">تحويل مفاهيم الأعمال إلى خطط منظمة تغطي الاستراتيجية والتشغيل والنمو والموارد والتنفيذ.</p><div class="scope"><span>الاستراتيجية والتشغيل</span><span>النمو والموارد</span><span>خطة التنفيذ</span></div></article><article class="svc"><span class="num">05</span><h3 data-cms="svc.4.title">تطوير الأعمال</h3><p data-cms="svc.4.desc">تحديد فرص النمو والشراكات ومسارات التوسع السوقي وفرص الإيرادات.</p><div class="scope"><span>فرص النمو</span><span>الشراكات</span><span>التوسع السوقي</span></div></article><article class="svc"><span class="num">06</span><h3 data-cms="svc.5.title">إدارة العمليات والمشاريع</h3><p data-cms="svc.5.desc">تحسين سير العمل، وتنسيق الفرق، وإدارة المشاريع، ومتابعة الأداء، وربط الاستراتيجية بالتنفيذ.</p><div class="scope"><span>تحسين سير العمل</span><span>تنسيق الفرق</span><span>متابعة الأداء</span></div></article></div>
   </div>
 </section>
 
@@ -201,9 +201,9 @@
       <h2 data-reveal>لديك فكرة عمل؟</h2>
       <p class="lead" data-reveal>لنتحدث عن الفرصة، والتحدي، والخطوة العملية التالية.</p>
       <div class="con-cards" data-reveal>
-        <a class="con-card gold" href="https://wa.me/201146905560?text=%D9%85%D8%B1%D8%AD%D8%A8%D9%8B%D8%A7%20%D9%85%D8%AD%D9%85%D8%AF%D8%8C%20%D8%A3%D9%88%D8%AF%20%D9%85%D9%86%D8%A7%D9%82%D8%B4%D8%A9%20%D9%81%D8%B1%D8%B5%D8%A9%20%D8%B9%D9%85%D9%84%20%D9%85%D8%B9%D9%83." target="_blank" rel="noopener"><span class="con-k">واتساب</span><span class="con-v">+20 114 690 5560</span></a>
-        <a class="con-card" href="tel:+201066488149"><span class="con-k">اتصال</span><span class="con-v">+20 106 648 8149</span></a>
-        <a class="con-card" href="mailto:m.elfedawy17@gmail.com"><span class="con-k">بريد إلكتروني</span><span class="con-v">m.elfedawy17@gmail.com</span></a>
+        <a class="con-card gold" href="https://wa.me/201146905560?text=%D9%85%D8%B1%D8%AD%D8%A8%D9%8B%D8%A7%20%D9%85%D8%AD%D9%85%D8%AF%D8%8C%20%D8%A3%D9%88%D8%AF%20%D9%85%D9%86%D8%A7%D9%82%D8%B4%D8%A9%20%D9%81%D8%B1%D8%B5%D8%A9%20%D8%B9%D9%85%D9%84%20%D9%85%D8%B9%D9%83." target="_blank" rel="noopener"><span class="con-k">واتساب</span><span class="con-v" data-cms-global="wa_display">+20 114 690 5560</span></a>
+        <a class="con-card" href="tel:+201066488149"><span class="con-k">اتصال</span><span class="con-v" data-cms-global="phone_display">+20 106 648 8149</span></a>
+        <a class="con-card" href="mailto:m.elfedawy17@gmail.com"><span class="con-k">بريد إلكتروني</span><span class="con-v" data-cms-global="email">m.elfedawy17@gmail.com</span></a>
       </div>
     </div>
     <form class="con-form" name="contact" method="POST" data-netlify="true" netlify-honeypot="bot-field" data-fallback-email="m.elfedawy17@gmail.com" data-sent-note="شكرًا لك — أصبحت مسودة رسالتك جاهزة في تطبيق البريد. أو تواصل مباشرة عبر واتساب." data-reveal>
@@ -231,7 +231,7 @@
     <div class="f-brand">
       <a class="logo" href="./">MOHAMED<span>.</span></a>
       <p class="f-tag">استشارات أعمال · تطوير أعمال · استراتيجية · عمليات</p>
-      <p class="f-blurb">استشارات أعمال، وتطوير أعمال، واستراتيجية، وتشغيل — من الفكرة إلى التنفيذ.</p>
+      <p class="f-blurb" data-cms="footer.blurb">استشارات أعمال، وتطوير أعمال، واستراتيجية، وتشغيل — من الفكرة إلى التنفيذ.</p>
     </div>
     <div class="f-col">
       <h4>استكشف</h4>
@@ -276,7 +276,7 @@
     <button class="btn btn-ghost btn-sm" data-close>إغلاق</button>
   </div>
 </div>
-<script src="../assets/js/main.js?v=20260920b" defer></script>
-<script src="../assets/js/cms.js?v=20260920b" defer></script>
+<script src="../assets/js/main.js?v=20260920c" defer></script>
+<script src="../assets/js/cms.js?v=20260920c" defer></script>
 </body>
 </html>

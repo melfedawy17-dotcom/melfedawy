@@ -75,6 +75,7 @@ h2{font-size:20px;margin-top:26px}
       <button class="tab on" data-tab="posts">المقالات</button>
       <button class="tab" data-tab="works">الأعمال الجديدة</button>
       <button class="tab" data-tab="images">صور الموقع</button>
+      <button class="tab" data-tab="texts">نصوص الموقع والتواصل</button>
     </div>
 
     <!-- posts -->
@@ -127,6 +128,20 @@ h2{font-size:20px;margin-top:26px}
       <div class="card imgslot"><img id="prevHero" alt=""><div style="flex:1;min-width:200px"><b>صورة Hero / About (البورتريه)</b><p class="hint">يُفضّل مربع 1200×1200 بخلفية داكنة.</p></div><input type="file" accept="image/*" id="upHero" style="max-width:220px"></div>
       <div class="card imgslot"><img id="prevInd" alt=""><div style="flex:1;min-width:200px"><b>صورة قسم القطاعات (التصنيع)</b><p class="hint">عرض 1400 بكسل تقريبًا.</p></div><input type="file" accept="image/*" id="upInd" style="max-width:220px"></div>
     </div>
+
+    <!-- texts -->
+    <div id="tab-texts" class="hide">
+      <h2>تعديل نصوص الموقع (لكل لغة على حدة)</h2>
+      <p class="hint">اختر اللغة، اكتب النص الجديد في أي خانة، وسيظهر في الموقع فورًا. الخانة الفارغة = يبقى النص الأصلي.</p>
+      <div class="row">
+        <label>لغة التحرير<select id="tLang"><option value="ar">عربي</option><option value="en">English</option></select></label>
+        <label>تحديث القيم من الموقع<button class="btn ghost" id="tLoad" type="button">تحميل القيم الحالية</button></label>
+      </div>
+      <div id="tFields"></div>
+      <h2>بيانات التواصل المعروضة (تُسري على اللغتين وتحدّث الروابط نفسها)</h2>
+      <div id="gFields"></div>
+      <p style="margin-top:14px"><button class="btn" id="tSave">حفظ النصوص</button></p>
+    </div>
   </section>
 </div>
 <div class="toast" id="toast"><div id="toastMsg"></div></div>
@@ -168,7 +183,8 @@ function enter(){$('login').classList.add('hide');$('dash').classList.remove('hi
 /* tabs */
 document.querySelectorAll('.tab').forEach(function(b){b.onclick=function(){
   document.querySelectorAll('.tab').forEach(function(x){x.classList.remove('on')});b.classList.add('on');
-  ['posts','works','images'].forEach(function(t){$('tab-'+t).classList.toggle('hide',t!==b.getAttribute('data-tab'))});};});
+  ['posts','works','images','texts'].forEach(function(t){$('tab-'+t).classList.toggle('hide',t!==b.getAttribute('data-tab'))});
+  if(b.getAttribute('data-tab')==='texts')renderT($('tLang').value);};});
 
 /* ---------- posts ---------- */
 function refreshPosts(){getJSON('content/posts.json',[]).then(function(posts){
@@ -243,6 +259,28 @@ function bindUpload(inputId,key,fixedName){$(inputId).onchange=function(){var f=
       toast('تم استبدال الصورة ✅');refreshImgs();}).catch(function(e){toast('فشل الاستبدال: '+e.message,1)});};}
 bindUpload('upHero','hero','dyn-hero');
 bindUpload('upInd','industries','dyn-industries');
+
+/* ---------- texts ---------- */
+var TSCHEMA=[['hero.eyebrow','السطر الصغير فوق العنوان'],['hero.h1a','العنوان الرئيسي — السطر ١'],['hero.h1b','العنوان الرئيسي — السطر ٢ (الذهبي)'],['hero.sub','الفقرة تحت العنوان'],
+['about.p1','عن محمد — فقرة ١'],['about.p2','عن محمد — فقرة ٢'],['about.p3','عن محمد — فقرة ٣'],['about.philosophy','جملة الفلسفة المميزة'],
+['svc.0.title','خدمة ١ — العنوان'],['svc.0.desc','خدمة ١ — الوصف'],['svc.1.title','خدمة ٢ — العنوان'],['svc.1.desc','خدمة ٢ — الوصف'],
+['svc.2.title','خدمة ٣ — العنوان'],['svc.2.desc','خدمة ٣ — الوصف'],['svc.3.title','خدمة ٤ — العنوان'],['svc.3.desc','خدمة ٤ — الوصف'],
+['svc.4.title','خدمة ٥ — العنوان'],['svc.4.desc','خدمة ٥ — الوصف'],['svc.5.title','خدمة ٦ — العنوان'],['svc.5.desc','خدمة ٦ — الوصف'],
+['footer.blurb','وصف الفوتر']];
+var GSCHEMA=[['wa_display','رقم الواتساب المعروض'],['phone_display','رقم الهاتف المعروض'],['email','البريد الإلكتروني المعروض']];
+function q(s){return String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');}
+function renderT(lang){getJSON('content/overrides.json',{}).then(function(ov){var d=(ov&&ov[lang])||{};var g=(ov&&ov.global)||{};
+  $('tFields').innerHTML=TSCHEMA.map(function(f){return '<label>'+f[1]+'<input data-k="'+f[0]+'" value="'+q(d[f[0]]||'')+'"></label>'}).join('');
+  $('gFields').innerHTML=GSCHEMA.map(function(f){return '<label>'+f[1]+'<input data-g="'+f[0]+'" value="'+q(g[f[0]]||'')+'"></label>'}).join('');
+}).catch(function(e){toast('تعذر قراءة النصوص: '+e.message,1)});}
+$('tLoad').onclick=function(){renderT($('tLang').value)};
+$('tLang').onchange=function(){renderT($('tLang').value)};
+$('tSave').onclick=function(){var lang=$('tLang').value;
+  getJSON('content/overrides.json',{}).then(function(ov){ov=ov||{};ov[lang]=ov[lang]||{};ov.global=ov.global||{};
+    document.querySelectorAll('#tFields input').forEach(function(i){var v=i.value.trim();if(v)ov[lang][i.getAttribute('data-k')]=v;else delete ov[lang][i.getAttribute('data-k')];});
+    document.querySelectorAll('#gFields input').forEach(function(i){var v=i.value.trim();if(v)ov.global[i.getAttribute('data-g')]=v;else delete ov.global[i.getAttribute('data-g')];});
+    return putText('content/overrides.json',JSON.stringify(ov,null,1),'update text overrides');}).then(function(){
+    toast('تم حفظ النصوص ✅ ظهرت في الموقع فورًا');}).catch(function(e){toast('فشل الحفظ: '+e.message,1)});};
 
 /* boot */
 $('pDate').value=today();

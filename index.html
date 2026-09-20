@@ -25,7 +25,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Inter:wght@400;500;600&family=IBM+Plex+Sans+Arabic:wght@400;500;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="./assets/css/main.css?v=20260920b">
+<link rel="stylesheet" href="./assets/css/main.css?v=20260920c">
 <script>
 (function(){try{
   document.documentElement.classList.add('js');
@@ -72,9 +72,9 @@
 <section class="hero">
   <div class="container hero-in">
     <div class="hero-copy">
-      <p class="eyebrow" data-reveal>Business Consulting · Strategy · Execution</p>
-      <h1 data-reveal>Turn ideas into<br><span class="gold">viable businesses.</span></h1>
-      <p class="lead" data-reveal>I help entrepreneurs, startups, and businesses structure opportunities, validate ideas, build practical plans, and move from strategy to execution.</p>
+      <p class="eyebrow" data-reveal data-cms="hero.eyebrow">Business Consulting · Strategy · Execution</p>
+      <h1 data-reveal><span data-cms="hero.h1a">Turn ideas into</span><br><span class="gold" data-cms="hero.h1b">viable businesses.</span></h1>
+      <p class="lead" data-reveal data-cms="hero.sub">I help entrepreneurs, startups, and businesses structure opportunities, validate ideas, build practical plans, and move from strategy to execution.</p>
       <div class="cta-row" data-reveal>
         <a class="btn btn-gold" href="./#contact">Start a Conversation</a>
         <a class="btn btn-ghost" href="./#work">View Selected Work</a>
@@ -97,16 +97,16 @@
     <div class="about-copy">
       <p class="label" data-reveal>About Mohamed</p>
       <h2 data-reveal>Business thinking with an <span class="gold">execution mindset.</span></h2>
-      <p data-reveal>I’m a business development and consulting professional with experience across feasibility studies, market research, business planning, operations, project execution, and growth strategy.</p>
-      <p data-reveal>My work combines strategic thinking with practical execution — understanding the opportunity, testing the business case, structuring the plan, and helping turn it into measurable action.</p>
-      <p data-reveal>My experience spans food and natural-product manufacturing, startups and SMEs, online services, and business consulting.</p>
+      <p data-reveal data-cms="about.p1">I’m a business development and consulting professional with experience across feasibility studies, market research, business planning, operations, project execution, and growth strategy.</p>
+      <p data-reveal data-cms="about.p2">My work combines strategic thinking with practical execution — understanding the opportunity, testing the business case, structuring the plan, and helping turn it into measurable action.</p>
+      <p data-reveal data-cms="about.p3">My experience spans food and natural-product manufacturing, startups and SMEs, online services, and business consulting.</p>
       <div class="method" data-reveal><span>Understand the opportunity.</span><span>Assess the business case.</span><span>Structure the strategy.</span><span>Build the plan.</span><span>Execute.</span><span>Measure.</span><span>Improve.</span></div>
     </div>
     <div class="about-vis" data-reveal>
       <div class="about-frame"><img data-dyn="about" src="./assets/img/mohamed-elfedawy.jpg" alt="Mohamed Elfedawy in his working office" loading="lazy"></div>
       <blockquote class="philosophy">
         <span class="ph-tag">Working philosophy</span>
-        <p>“A good strategy is only valuable when it can be executed.”</p>
+        <p>“<span data-cms="about.philosophy">A good strategy is only valuable when it can be executed.</span>”</p>
       </blockquote>
     </div>
   </div>
@@ -124,7 +124,7 @@
   <div class="container">
     <p class="label" data-reveal>What I Do</p>
     <h2 data-reveal>From opportunity to execution.</h2>
-    <div class="svc-grid"><article class="svc"><span class="num">01</span><h3>Business Setup & Planning</h3><p>Structure the business idea, define priorities, identify operational requirements, and create a practical execution roadmap.</p><div class="scope"><span>Idea structuring</span><span>Operational requirements</span><span>Execution roadmap</span></div></article><article class="svc"><span class="num">02</span><h3>Feasibility Studies</h3><p>Assess business opportunities through market, operational, and commercial analysis to support informed decisions.</p><div class="scope"><span>Market analysis</span><span>Operational assessment</span><span>Commercial review</span></div></article><article class="svc"><span class="num">03</span><h3>Market Research</h3><p>Explore markets, customers, competitors, opportunities, and market dynamics to support practical business strategy.</p><div class="scope"><span>Customers & competitors</span><span>Market dynamics</span><span>Opportunity mapping</span></div></article><article class="svc"><span class="num">04</span><h3>Business Plans</h3><p>Translate business concepts into structured plans covering strategy, operations, growth, resources, and execution.</p><div class="scope"><span>Strategy & operations</span><span>Growth & resources</span><span>Execution plan</span></div></article><article class="svc"><span class="num">05</span><h3>Business Development</h3><p>Identify growth opportunities, partnerships, market expansion paths, and revenue opportunities.</p><div class="scope"><span>Growth opportunities</span><span>Partnerships</span><span>Market expansion</span></div></article><article class="svc"><span class="num">06</span><h3>Operations & Project Management</h3><p>Improve workflows, coordinate teams, manage projects, monitor performance, and connect strategy with execution.</p><div class="scope"><span>Workflow improvement</span><span>Team coordination</span><span>Performance monitoring</span></div></article></div>
+    <div class="svc-grid"><article class="svc"><span class="num">01</span><h3 data-cms="svc.0.title">Business Setup & Planning</h3><p data-cms="svc.0.desc">Structure the business idea, define priorities, identify operational requirements, and create a practical execution roadmap.</p><div class="scope"><span>Idea structuring</span><span>Operational requirements</span><span>Execution roadmap</span></div></article><article class="svc"><span class="num">02</span><h3 data-cms="svc.1.title">Feasibility Studies</h3><p data-cms="svc.1.desc">Assess business opportunities through market, operational, and commercial analysis to support informed decisions.</p><div class="scope"><span>Market analysis</span><span>Operational assessment</span><span>Commercial review</span></div></article><article class="svc"><span class="num">03</span><h3 data-cms="svc.2.title">Market Research</h3><p data-cms="svc.2.desc">Explore markets, customers, competitors, opportunities, and market dynamics to support practical business strategy.</p><div class="scope"><span>Customers & competitors</span><span>Market dynamics</span><span>Opportunity mapping</span></div></article><article class="svc"><span class="num">04</span><h3 data-cms="svc.3.title">Business Plans</h3><p data-cms="svc.3.desc">Translate business concepts into structured plans covering strategy, operations, growth, resources, and execution.</p><div class="scope"><span>Strategy & operations</span><span>Growth & resources</span><span>Execution plan</span></div></article><article class="svc"><span class="num">05</span><h3 data-cms="svc.4.title">Business Development</h3><p data-cms="svc.4.desc">Identify growth opportunities, partnerships, market expansion paths, and revenue opportunities.</p><div class="scope"><span>Growth opportunities</span><span>Partnerships</span><span>Market expansion</span></div></article><article class="svc"><span class="num">06</span><h3 data-cms="svc.5.title">Operations & Project Management</h3><p data-cms="svc.5.desc">Improve workflows, coordinate teams, manage projects, monitor performance, and connect strategy with execution.</p><div class="scope"><span>Workflow improvement</span><span>Team coordination</span><span>Performance monitoring</span></div></article></div>
   </div>
 </section>
 
@@ -201,9 +201,9 @@
       <h2 data-reveal>Have a business idea?</h2>
       <p class="lead" data-reveal>Let’s discuss the opportunity, the challenge, and the next practical step.</p>
       <div class="con-cards" data-reveal>
-        <a class="con-card gold" href="https://wa.me/201146905560?text=Hello%20Mohamed%2C%20I%20would%20like%20to%20discuss%20a%20business%20opportunity." target="_blank" rel="noopener"><span class="con-k">WhatsApp</span><span class="con-v">+20 114 690 5560</span></a>
-        <a class="con-card" href="tel:+201066488149"><span class="con-k">Call</span><span class="con-v">+20 106 648 8149</span></a>
-        <a class="con-card" href="mailto:m.elfedawy17@gmail.com"><span class="con-k">Email</span><span class="con-v">m.elfedawy17@gmail.com</span></a>
+        <a class="con-card gold" href="https://wa.me/201146905560?text=Hello%20Mohamed%2C%20I%20would%20like%20to%20discuss%20a%20business%20opportunity." target="_blank" rel="noopener"><span class="con-k">WhatsApp</span><span class="con-v" data-cms-global="wa_display">+20 114 690 5560</span></a>
+        <a class="con-card" href="tel:+201066488149"><span class="con-k">Call</span><span class="con-v" data-cms-global="phone_display">+20 106 648 8149</span></a>
+        <a class="con-card" href="mailto:m.elfedawy17@gmail.com"><span class="con-k">Email</span><span class="con-v" data-cms-global="email">m.elfedawy17@gmail.com</span></a>
       </div>
     </div>
     <form class="con-form" name="contact" method="POST" data-netlify="true" netlify-honeypot="bot-field" data-fallback-email="m.elfedawy17@gmail.com" data-sent-note="Thank you — your message draft is ready in your email app. Or reach me directly on WhatsApp." data-reveal>
@@ -231,7 +231,7 @@
     <div class="f-brand">
       <a class="logo" href="./">MOHAMED<span>.</span></a>
       <p class="f-tag">Business Consulting · Business Development · Strategy · Operations</p>
-      <p class="f-blurb">Business consulting, business development, strategy, and operations — from idea to execution.</p>
+      <p class="f-blurb" data-cms="footer.blurb">Business consulting, business development, strategy, and operations — from idea to execution.</p>
     </div>
     <div class="f-col">
       <h4>Explore</h4>
@@ -276,7 +276,7 @@
     <button class="btn btn-ghost btn-sm" data-close>Close</button>
   </div>
 </div>
-<script src="./assets/js/main.js?v=20260920b" defer></script>
-<script src="./assets/js/cms.js?v=20260920b" defer></script>
+<script src="./assets/js/main.js?v=20260920c" defer></script>
+<script src="./assets/js/cms.js?v=20260920c" defer></script>
 </body>
 </html>
