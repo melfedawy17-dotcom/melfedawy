@@ -483,20 +483,3 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,te
 .wm-extra{margin:14px 0}
 .wm-block h4{color:var(--gold);font-size:13px;letter-spacing:.08em;margin-bottom:4px}
 .wm-block p{color:var(--muted);font-size:14px;margin-bottom:12px}
-
-.page-hero{padding:110px 0 34px}
-.page-hero h1{font-size:clamp(30px,5vw,46px)}
-.final-cta{text-align:center}
-.cta-final-in{max-width:680px;margin:0 auto;display:flex;flex-direction:column;gap:14px;align-items:center}
-.cta-final-in p{color:var(--muted)}
-.sum-cta{margin-top:22px}
-.ind-line{color:var(--muted);font-size:17px;font-weight:600;margin-top:10px}
-.svc-sum{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:26px}
-.svc-sum .g{border:1px solid var(--line);background:var(--panel);border-radius:14px;padding:22px}
-.svc-sum .num{color:var(--gold);font-weight:800;font-size:13px;letter-spacing:.16em}
-.svc-sum h3{font-size:20px;margin:6px 0 10px}
-.svc-sum ul{list-style:none;display:flex;flex-direction:column;gap:6px}
-.svc-sum li{color:var(--muted);font-size:14px}
-.wa-mini{display:inline-flex;gap:6px;align-items:center;color:var(--muted);font-size:13.5px}
-.wa-mini:hover{color:var(--gold)}
-@media(max-width:760px){.svc-sum{grid-template-columns:1fr}}

@@ -10,7 +10,7 @@
   };
   var RAW = 'https://raw.githubusercontent.com/' + CMS.owner + '/' + CMS.repo + '/' + CMS.branch + '/';
   var root = document.body.getAttribute('data-root') || './';
-  var VER = '20260920m';
+  var VER = '20260920k';
   function vs(p){ return p + (p.indexOf('?') > -1 ? '' : '?v=' + VER); }
 
   function cb() { return '?t=' + Date.now(); }
@@ -204,50 +204,5 @@
         });
       }
     }).catch(function () { /* no extra works yet */ });
-  }
-
-  /* ---- runtime testimonials (content/testimonials.json) ---- */
-  var STARJ = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.6 7-6.2-3.7-6.2 3.7 1.6-7L2 9.2l7.1-.6z"/></svg>';
-  var STARH = '<svg viewBox="0 0 24 24" aria-hidden="true"><defs><linearGradient id="hg"><stop offset="50%" stop-color="currentColor"/><stop offset="50%" stop-color="rgba(0,0,0,0)"/></linearGradient></defs><path style="fill:url(#hg)" d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.6 7-6.2-3.7-6.2 3.7 1.6-7L2 9.2l7.1-.6z"/><path style="fill:none;stroke:currentColor;stroke-width:1.4" d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.6 7-6.2-3.7-6.2 3.7 1.6-7L2 9.2l7.1-.6z"/></svg>';
-  var STARS45 = '<span class="stars" role="img" aria-label="4.5/5">' + STARJ + STARJ + STARJ + STARJ + STARH + '</span>';
-  function tcard(rv, lang, vlabel) {
-    var q = lang === 'ar' ? rv.quote_ar : (rv.quote_en || rv.quote_ar);
-    var role = lang === 'ar' ? rv.role_ar : (rv.role_en || rv.role_ar);
-    var tag = lang === 'ar' ? rv.tag_ar : (rv.tag_en || rv.tag_ar);
-    var badge = rv.verified ? '<span class="v-badge">&#10003; ' + esc(vlabel || '') + '</span>' : '';
-    return '<article class="tcard' + (rv.verified ? ' verified' : '') + '">' + STARS45 + badge +
-      '<blockquote>' + esc(q) + '</blockquote><span class="t-tag">' + esc(tag || '') + '</span>' +
-      '<div class="t-who"><span class="t-ava">' + esc((rv.name || '?')[0]) + '</span><span><span class="n">' + esc(rv.name || '') + '</span><br><span class="r">' + esc(role || '') + '</span></span></div></article>';
-  }
-  function aggHtml(T, lang) {
-    var of = lang === 'ar' ? '/ ٥' : '/ 5';
-    var title = lang === 'ar' ? T.agg_title_ar : T.agg_title_en;
-    return '<div class="agg"><span class="big">' + esc(T.agg) + '</span><span class="of">' + of + '</span><div class="t">' + esc(title) + '</div>' + STARS45 + '</div>';
-  }
-  var aggHome = document.getElementById('testiAgg');
-  var gridHome = document.getElementById('testiGrid');
-  var aggFull = document.getElementById('testiAggFull');
-  var critEl = document.getElementById('testiCrit');
-  var gridFull = document.getElementById('testiGridFull');
-  if (aggHome || aggFull) {
-    loadJSON('content/testimonials.json').then(function (T) {
-      if (!T) return;
-      var lang = document.documentElement.lang === 'ar' ? 'ar' : 'en';
-      var vlabel = (aggHome || aggFull).getAttribute('data-vlabel') || '';
-      var revs = T.reviews || [];
-      if (aggHome) {
-        aggHome.innerHTML = aggHtml(T, lang);
-        gridHome.innerHTML = revs.slice(0, 3).map(function (rv) { return tcard(rv, lang, vlabel); }).join('');
-      }
-      if (aggFull) {
-        aggFull.innerHTML = aggHtml(T, lang) + '<p class="section-note">' + esc(lang === 'ar' ? (T.agg_note_ar || '') : (T.agg_note_en || '')) + '</p>';
-        var crit = lang === 'ar' ? T.criteria_ar : T.criteria_en;
-        var vals = T.criteria_vals || [];
-        critEl.innerHTML = crit.map(function (c, i) {
-          return '<div><span>' + esc(c) + '</span><b>' + STARS45 + ' ' + (vals[i] != null ? Number(vals[i]).toFixed(1) : T.agg) + '</b></div>';
-        }).join('');
-        gridFull.innerHTML = revs.map(function (rv) { return tcard(rv, lang, vlabel); }).join('');
-      }
-    }).catch(function () { /* section stays empty */ });
   }
 })();
