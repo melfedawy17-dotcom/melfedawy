@@ -124,6 +124,7 @@ textarea{min-height:260px}
     <div class="grp">المحتوى</div>
     <button data-view="articles">المقالات</button>
     <button data-view="cases">دراسات الحالة الإضافية</button>
+    <button data-view="reviews">تقييمات العملاء</button>
     <div class="grp">الموقع</div>
     <button data-view="media">مكتبة الصور</button>
     <button data-view="contact">بيانات التواصل</button>
@@ -217,6 +218,33 @@ textarea{min-height:260px}
       </div>
     </section>
 
+    <!-- REVIEWS -->
+    <section id="v-reviews" class="hide">
+      <div class="topbar" style="margin-bottom:12px"><button class="btn" id="newRev">+ تقييم جديد</button></div>
+      <table class="table"><thead><tr><th>الاسم</th><th>التصنيف</th><th>موثق</th><th></th></tr></thead>
+      <tbody id="revList"></tbody></table>
+      <div class="card" id="revForm" style="margin-top:16px;display:none">
+        <h3 id="revFormTitle">تقييم جديد</h3>
+        <input type="hidden" id="rEditIdx" value="-1">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+          <label>الاسم<input id="rName"></label>
+          <label>موثق<select id="rVer"><option value="1">نعم ✓</option><option value="0">لا</option></select></label>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+          <label>الدور (عربي)<input id="rRoleAr" placeholder="صاحب مشروع"></label>
+          <label>الدور (EN)<input id="rRoleEn" placeholder="Project Owner"></label>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+          <label>التصنيف (عربي)<input id="rTagAr" placeholder="دراسة جدوى"></label>
+          <label>التصنيف (EN)<input id="rTagEn" placeholder="Feasibility Study"></label>
+        </div>
+        <label>نص التقييم (عربي)<textarea id="rQuoteAr" style="min-height:90px"></textarea></label>
+        <label>نص التقييم (EN)<textarea id="rQuoteEn" style="min-height:90px"></textarea></label>
+        <p style="margin-top:12px"><button class="btn" id="rSave">حفظ</button>
+        <button class="btn ghost" id="rCancel">إلغاء</button></p>
+      </div>
+    </section>
+
     <!-- MEDIA -->
     <section id="v-media" class="hide">
       <div class="slot"><img id="prevHero" alt=""><div class="info"><b>صورة Hero / About (البورتريه)</b><p>تُستبدل بنفس المسار — تظهر فورًا في الموقع.</p></div><input type="file" accept="image/*" id="upHero" style="max-width:200px"></div>
@@ -275,7 +303,7 @@ textarea{min-height:260px}
 <script>
 (function(){
 'use strict';
-var ADMIN_VER='20260920k';
+var ADMIN_VER='20260920m';
 var CFG={owner:'melfedawy17-dotcom',repo:'melfedawy',branch:'main',token:''};
 var $=function(id){return document.getElementById(id)};
 function toast(msg,err){var t=$('toast');$('toastMsg').textContent=msg;t.className='toast show'+(err?' err':'');setTimeout(function(){t.className='toast'},3400);}
@@ -324,15 +352,16 @@ $('ghChange').onclick=function(){localStorage.removeItem('mf-cms2');location.rel
 function enter(){$('login').classList.add('hide');$('dash').classList.remove('hide');show('home');refreshAll();}
 
 /* ---------- router ---------- */
-var TITLES={home:'الرئيسية',articles:'المقالات',cases:'دراسات الحالة الإضافية',media:'مكتبة الصور',contact:'بيانات التواصل',texts:'نصوص الموقع',system:'GitHub والنشر',editor:'محرر المقال'};
+var TITLES={home:'الرئيسية',articles:'المقالات',cases:'دراسات الحالة الإضافية',reviews:'تقييمات العملاء',media:'مكتبة الصور',contact:'بيانات التواصل',texts:'نصوص الموقع',system:'GitHub والنشر',editor:'محرر المقال'};
 function show(v){document.querySelectorAll('.side button[data-view]').forEach(function(b){b.classList.toggle('on',b.getAttribute('data-view')===v)});
-  ['home','articles','editor','cases','media','contact','texts','system'].forEach(function(k){$('v-'+k).classList.toggle('hide',k!==v)});
+  ['home','articles','editor','cases','reviews','media','contact','texts','system'].forEach(function(k){$('v-'+k).classList.toggle('hide',k!==v)});
   $('viewTitle').textContent=TITLES[v]||'';
   if(v==='texts')renderT($('tLang').value);
   if(v==='media'){refreshImgs();refreshMedia();}
   if(v==='contact')renderContact();
   if(v==='system')refreshSystem();
-  if(v==='home')refreshHome();}
+  if(v==='home')refreshHome();
+  if(v==='reviews')refreshReviews();}
 document.querySelectorAll('.side button[data-view]').forEach(function(b){b.onclick=function(){show(b.getAttribute('data-view'))};});
 
 /* ---------- home / system ---------- */
@@ -450,8 +479,29 @@ $('tSave').onclick=function(){var lang=$('tLang').value;
     document.querySelectorAll('#tGroups input').forEach(function(i){var v=i.value.trim();if(v)ov[lang][i.getAttribute('data-k')]=v;else delete ov[lang][i.getAttribute('data-k')];});
     return putText('content/overrides.json',JSON.stringify(ov,null,1),'update text overrides');}).then(function(){toast('تم حفظ النصوص ✅ ظهرت فورًا');}).catch(function(e){toast('فشل الحفظ: '+e.message,1)});};
 
+/* ---------- reviews ---------- */
+var TJSON={reviews:[]};
+function refreshReviews(){getJSON('content/testimonials.json',{reviews:[]}).then(function(T){TJSON=T||{reviews:[]};
+  $('revList').innerHTML=(TJSON.reviews||[]).map(function(rv,i){return '<tr><td>'+esc(rv.name)+'</td><td>'+esc(rv.tag_ar||'')+'</td><td>'+(rv.verified?'<span class="badge pub">✓ موثق</span>':'<span class="badge">لا</span>')+'</td><td style="white-space:nowrap"><button class="btn ghost sm" data-re="'+i+'">تعديل</button> <button class="btn danger sm" data-rd="'+i+'">حذف</button></td></tr>';}).join('')||'<tr><td colspan="4" style="color:var(--muted)">لا تقييمات</td></tr>';
+  $('revList').querySelectorAll('[data-re]').forEach(function(b){b.onclick=function(){editRev(+b.getAttribute('data-re'))};});
+  $('revList').querySelectorAll('[data-rd]').forEach(function(b){b.onclick=function(){var i=+b.getAttribute('data-rd');if(confirm('حذف التقييم؟')){TJSON.reviews.splice(i,1);saveTJSON('remove review');}};});
+}).catch(function(e){toast('تعذر قراءة التقييمات: '+e.message,1)});}
+function editRev(i){var rv=TJSON.reviews[i];$('rEditIdx').value=i;$('rName').value=rv.name;$('rVer').value=rv.verified?'1':'0';
+  $('rRoleAr').value=rv.role_ar||'';$('rRoleEn').value=rv.role_en||'';$('rTagAr').value=rv.tag_ar||'';$('rTagEn').value=rv.tag_en||'';
+  $('rQuoteAr').value=rv.quote_ar||'';$('rQuoteEn').value=rv.quote_en||'';$('revFormTitle').textContent='تعديل: '+rv.name;$('revForm').style.display='block';}
+function clearRev(){$('rEditIdx').value=-1;['rName','rRoleAr','rRoleEn','rTagAr','rTagEn','rQuoteAr','rQuoteEn'].forEach(function(i){$(i).value=''});$('rVer').value='1';$('revFormTitle').textContent='تقييم جديد';}
+$('newRev').onclick=function(){clearRev();$('revForm').style.display='block';};
+$('rCancel').onclick=function(){$('revForm').style.display='none';clearRev();};
+function saveTJSON(msg){return putText('content/testimonials.json',JSON.stringify(TJSON,null,1),msg).then(function(){toast('تم الحفظ ✅ ظهر في الموقع فورًا');refreshReviews();});}
+$('rSave').onclick=function(){var name=$('rName').value.trim();if(!name){toast('اكتب الاسم',1);return;}
+  var rv={name:name,verified:$('rVer').value==='1',role_ar:$('rRoleAr').value.trim(),role_en:$('rRoleEn').value.trim(),
+    tag_ar:$('rTagAr').value.trim(),tag_en:$('rTagEn').value.trim(),quote_ar:$('rQuoteAr').value.trim(),quote_en:$('rQuoteEn').value.trim()};
+  var i=+$('rEditIdx').value;TJSON.reviews=TJSON.reviews||[];
+  if(i>=0)TJSON.reviews[i]=rv;else TJSON.reviews.push(rv);
+  $('rSave').disabled=true;saveTJSON(i>=0?'update review':'add review').catch(function(e){toast('فشل الحفظ: '+e.message,1)}).then(function(){$('rSave').disabled=false;$('revForm').style.display='none';clearRev();});};
+
 /* ---------- boot ---------- */
-function refreshAll(){refreshPosts();refreshWorks();refreshHome();}
+function refreshAll(){refreshPosts();refreshWorks();refreshReviews();refreshHome();}
 if(loadCfg()){enter();}
 })();
 </script>
