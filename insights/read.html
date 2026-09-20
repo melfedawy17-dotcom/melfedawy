@@ -565,7 +565,326 @@ html.js [data-reveal].in{opacity:1;transform:none}
     <button class="btn btn-ghost btn-sm" data-close>Close</button>
   </div>
 </div>
-<script src="../assets/js/main.js?v=20260920d" defer></script>
-<script src="../assets/js/cms.js?v=20260920d" defer></script>
+<script>/* Mohamed Elfedawy — site behaviour */
+(function () {
+  'use strict';
+
+  /* sticky nav state */
+  var nav = document.querySelector('.nav');
+  var onScroll = function () {
+    if (nav) nav.classList.toggle('scrolled', window.scrollY > 12);
+  };
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+
+  /* mobile menu */
+  var burger = document.querySelector('.burger');
+  var links = document.getElementById('navLinks');
+  if (burger && links) {
+    burger.addEventListener('click', function () {
+      var open = links.classList.toggle('open');
+      burger.setAttribute('aria-expanded', open ? 'true' : 'false');
+    });
+    links.addEventListener('click', function (e) {
+      if (e.target.tagName === 'A') {
+        links.classList.remove('open');
+        burger.setAttribute('aria-expanded', 'false');
+      }
+    });
+  }
+
+  /* language switch: remember the explicit choice */
+  document.querySelectorAll('[data-lang-set]').forEach(function (a) {
+    a.addEventListener('click', function () {
+      try { localStorage.setItem('mf-lang', a.getAttribute('data-lang-set')); } catch (e) {}
+    });
+  });
+
+  /* reveal on scroll */
+  var revealables = document.querySelectorAll('[data-reveal]');
+  if ('IntersectionObserver' in window && revealables.length) {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) {
+        if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); }
+      });
+    }, { threshold: 0.12, rootMargin: '0px 0px -6% 0px' });
+    revealables.forEach(function (el) { io.observe(el); });
+  } else {
+    revealables.forEach(function (el) { el.classList.add('in'); });
+  }
+  window.__mfRevealOK = true;
+
+  /* animated counters (verified numbers only) */
+  var counters = document.querySelectorAll('[data-count]');
+  var runCount = function (el) {
+    var target = parseFloat(el.getAttribute('data-count'));
+    var dur = 1200, t0 = null;
+    var step = function (t) {
+      if (!t0) t0 = t;
+      var p = Math.min((t - t0) / dur, 1);
+      var eased = 1 - Math.pow(1 - p, 3);
+      el.textContent = Math.round(target * eased);
+      if (p < 1) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  };
+  if ('IntersectionObserver' in window && counters.length) {
+    var io2 = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) {
+        if (en.isIntersecting) { runCount(en.target); io2.unobserve(en.target); }
+      });
+    }, { threshold: 0.6 });
+    counters.forEach(function (el) { io2.observe(el); });
+  }
+
+  /* video modal */
+  var modal = document.getElementById('videoModal');
+  if (modal) {
+    var vmTitle = modal.querySelector('#vmTitle');
+    var vmTopic = modal.querySelector('.vm-topic');
+    document.querySelectorAll('[data-video]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        vmTitle.textContent = btn.getAttribute('data-video');
+        vmTopic.textContent = btn.getAttribute('data-topic') || '';
+        modal.hidden = false;
+        document.body.style.overflow = 'hidden';
+      });
+    });
+    modal.addEventListener('click', function (e) {
+      if (e.target.closest('[data-close]') || e.target === modal) {
+        modal.hidden = true;
+        document.body.style.overflow = '';
+      }
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && !modal.hidden) { modal.hidden = true; document.body.style.overflow = ''; }
+    });
+  }
+
+  /* contact form: Netlify Forms when hosted there, mailto fallback elsewhere */
+  var form = document.querySelector('.con-form');
+  if (form) {
+    form.addEventListener('submit', function (e) {
+      var onNetlify = /(^|\.)netlify\.app$|netlify\.com$/.test(location.hostname);
+      if (onNetlify) return; /* native POST → Netlify Forms */
+      e.preventDefault();
+      var d = new FormData(form);
+      var body =
+        'Name: ' + (d.get('name') || '') + '\n' +
+        'Email: ' + (d.get('email') || '') + '\n' +
+        'Phone / WhatsApp: ' + (d.get('phone') || '') + '\n' +
+        'Business / Project: ' + (d.get('business') || '') + '\n' +
+        'Needs help with: ' + (d.get('need') || '') + '\n\n' +
+        (d.get('message') || '');
+      var mailto = 'mailto:' + (form.getAttribute('data-fallback-email') || '') +
+        '?subject=' + encodeURIComponent('Website inquiry — ' + (d.get('name') || '')) +
+        '&body=' + encodeURIComponent(body);
+      location.href = mailto;
+      var note = form.querySelector('.form-note');
+      if (note) note.textContent = form.getAttribute('data-sent-note') || note.textContent;
+    });
+  }
+})();
+</script>
+<script>/* Living-site layer: articles, extra works, swappable images.
+   Content lives in the GitHub repo under /content and is fetched at runtime.
+   Edit CMS config if your repo owner/name changes. */
+(function () {
+  'use strict';
+  var CMS = {
+    owner: 'melfedawy17-dotcom',
+    repo: 'melfedawy',
+    branch: 'main'
+  };
+  var RAW = 'https://raw.githubusercontent.com/' + CMS.owner + '/' + CMS.repo + '/' + CMS.branch + '/';
+  var root = document.body.getAttribute('data-root') || './';
+
+  function cb() { return '?t=' + Date.now(); }
+  function apiRaw(path) {
+    return fetch('https://api.github.com/repos/' + CMS.owner + '/' + CMS.repo + '/contents/' + path,
+      { headers: { 'Accept': 'application/vnd.github.raw+json' } });
+  }
+  function loadJSON(path) {
+    return fetch(RAW + path + cb(), { cache: 'no-store' }).then(function (r) {
+      if (!r.ok) throw new Error(path + ' -> ' + r.status);
+      return r.json();
+    }).catch(function (e) {
+      if (path.indexOf('content/') === 0) {
+        return apiRaw(path).then(function (r2) {
+          if (!r2.ok) throw e;
+          return r2.json();
+        });
+      }
+      throw e;
+    });
+  }
+  function loadText(path) {
+    return fetch(RAW + path + cb(), { cache: 'no-store' }).then(function (r) {
+      if (!r.ok) throw new Error(path + ' -> ' + r.status);
+      return r.text();
+    }).catch(function (e) {
+      if (path.indexOf('content/') === 0) {
+        return apiRaw(path).then(function (r2) {
+          if (!r2.ok) throw e;
+          return r2.text();
+        });
+      }
+      throw e;
+    });
+  }
+  function esc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+
+  /* tiny markdown -> html */
+  function md2html(src) {
+    var lines = esc(src).split(/\r?\n/), out = [], list = false, para = [];
+    function flushP() { if (para.length) { out.push('<p>' + para.join(' ') + '</p>'); para = []; } }
+    function flushL() { if (list) { out.push('</ul>'); list = false; } }
+    function inline(t) {
+      return t
+        .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+        .replace(/\*([^*]+)\*/g, '<em>$1</em>')
+        .replace(/\[([^\]]+)\]\((https?:[^)\s]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>');
+    }
+    lines.forEach(function (ln) {
+      var t = ln.trim();
+      if (!t) { flushP(); flushL(); return; }
+      if (/^###\s/.test(t)) { flushP(); flushL(); out.push('<h4>' + inline(t.slice(4)) + '</h4>'); }
+      else if (/^##\s/.test(t)) { flushP(); flushL(); out.push('<h3>' + inline(t.slice(3)) + '</h3>'); }
+      else if (/^#\s/.test(t)) { flushP(); flushL(); out.push('<h2>' + inline(t.slice(2)) + '</h2>'); }
+      else if (/^>\s?/.test(t)) { flushP(); flushL(); out.push('<blockquote>' + inline(t.replace(/^>\s?/, '')) + '</blockquote>'); }
+      else if (/^[-*]\s/.test(t)) { flushP(); if (!list) { out.push('<ul>'); list = true; } out.push('<li>' + inline(t.slice(2)) + '</li>'); }
+      else { para.push(inline(t)); }
+    });
+    flushP(); flushL();
+    return out.join('\n');
+  }
+
+  function fmtDate(d, lang) {
+    try {
+      return new Date(d).toLocaleDateString(lang === 'ar' ? 'ar-EG' : 'en-GB', { year: 'numeric', month: 'long', day: 'numeric' });
+    } catch (e) { return d; }
+  }
+
+  /* ---- swappable images (site.json) ---- */
+  loadJSON('content/site.json').then(function (cfg) {
+    var imgs = (cfg && cfg.images) || {};
+    Object.keys(imgs).forEach(function (key) {
+      document.querySelectorAll('[data-dyn="' + key + '"]').forEach(function (el) {
+        el.setAttribute('src', root + imgs[key]);
+      });
+    });
+  }).catch(function () { /* keep static defaults */ });
+
+  /* ---- text overrides (content/overrides.json) ---- */
+  loadJSON('content/overrides.json').then(function (ov) {
+    var lang = document.documentElement.lang;
+    var dict = (ov && ov[lang]) || {};
+    var glob = (ov && ov.global) || {};
+    document.querySelectorAll('[data-cms]').forEach(function (el) {
+      var v = dict[el.getAttribute('data-cms')];
+      if (v != null && String(v).trim() !== '') el.textContent = v;
+    });
+    document.querySelectorAll('[data-cms-global]').forEach(function (el) {
+      var k = el.getAttribute('data-cms-global');
+      var v = glob[k];
+      if (v == null || String(v).trim() === '') return;
+      el.textContent = v;
+      var digits = String(v).replace(/\D/g, '');
+      if (k === 'wa_display' && digits) {
+        document.querySelectorAll('a[href^="https://wa.me/"]').forEach(function (a) {
+          var q = a.href.indexOf('?text=');
+          a.href = 'https://wa.me/' + digits + (q > -1 ? a.href.slice(q) : '');
+        });
+      }
+      if (k === 'phone_display' && digits) document.querySelectorAll('a[href^="tel:"]').forEach(function (a) { a.href = 'tel:+' + digits; });
+      if (k === 'email') document.querySelectorAll('a[href^="mailto:"]').forEach(function (a) { a.href = 'mailto:' + String(v).trim(); });
+    });
+  }).catch(function () { /* keep built-in defaults */ });
+
+  /* ---- articles hub ---- */
+  var grid = document.getElementById('postsGrid');
+  if (grid) {
+    loadJSON('content/posts.json').then(function (posts) {
+      var empty = document.getElementById('postsEmpty');
+      if (!posts || !posts.length) { if (empty) empty.hidden = false; return; }
+      posts = posts.slice().sort(function (a, b) { return (b.date || '').localeCompare(a.date || ''); });
+      grid.innerHTML = posts.map(function (p) {
+        return '<a class="post-card" href="read.html?slug=' + encodeURIComponent(p.slug) + '">' +
+          '<span class="post-thumb"><img loading="lazy" src="' + root + (p.cover || 'assets/img/case-feasibility.jpg') + '" alt=""></span>' +
+          '<span class="post-body-in"><span class="post-meta">' + fmtDate(p.date, p.lang) +
+          ' <i class="lang-badge">' + (p.lang === 'ar' ? 'عربي' : 'EN') + '</i></span>' +
+          '<h3>' + esc(p.title) + '</h3><p>' + esc(p.excerpt || '') + '</p></span></a>';
+      }).join('');
+    }).catch(function () {
+      var empty = document.getElementById('postsEmpty');
+      if (empty) { empty.hidden = false; empty.setAttribute('data-err', '1'); }
+    });
+  }
+
+  /* ---- article reader ---- */
+  var view = document.getElementById('postView');
+  if (view) {
+    var slug = decodeURIComponent((location.search.match(/slug=([^&]+)/) || [])[1] || '');
+    loadJSON('content/posts.json').then(function (posts) {
+      var p = (posts || []).filter(function (x) { return x.slug === slug; })[0];
+      if (!p) { view.innerHTML = '<p class="err-note">Article not found.</p>'; return; }
+      document.documentElement.lang = p.lang === 'ar' ? 'ar' : 'en';
+      document.documentElement.dir = p.lang === 'ar' ? 'rtl' : 'ltr';
+      document.title = p.title;
+      var back = document.getElementById('backToInsights');
+      if (back) back.setAttribute('href', p.lang === 'ar' ? root + 'ar/insights/' : root + 'insights/');
+      loadText('content/posts/' + slug + '.md').then(function (md) {
+        var url = location.href;
+        var share =
+          '<div class="share-row">' +
+          '<a target="_blank" rel="noopener" href="https://wa.me/?text=' + encodeURIComponent(p.title + ' ' + url) + '">WhatsApp</a>' +
+          '<a target="_blank" rel="noopener" href="https://www.linkedin.com/sharing/share-offsite/?url=' + encodeURIComponent(url) + '">LinkedIn</a>' +
+          '<a target="_blank" rel="noopener" href="https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(url) + '">Facebook</a>' +
+          '</div>';
+        view.innerHTML =
+          '<p class="post-meta">' + fmtDate(p.date, p.lang) + ' <i class="lang-badge">' + (p.lang === 'ar' ? 'عربي' : 'EN') + '</i></p>' +
+          '<h1>' + esc(p.title) + '</h1>' +
+          (p.cover ? '<img class="article-cover" src="' + root + p.cover + '" alt="">' : '') +
+          md2html(md) + share;
+      }).catch(function () { view.innerHTML = '<p class="err-note">Could not load the article body.</p>'; });
+    }).catch(function () { view.innerHTML = '<p class="err-note">Could not load articles index.</p>'; });
+  }
+
+  /* ---- extra works (works.json) appended to the case grid ---- */
+  var caseGrid = document.getElementById('caseGrid');
+  if (caseGrid) {
+    loadJSON('content/works.json').then(function (w) {
+      var items = (w && w.items) || [];
+      if (!items.length) return;
+      var html = items.map(function (it, n) {
+        return '<button class="case-card" data-work="' + n + '" type="button">' +
+          '<span class="case-thumb"><img loading="lazy" src="' + root + (it.img || 'assets/img/case-growth.jpg') + '" alt=""></span>' +
+          '<span class="case-body-in"><h3>' + esc(it.title) + '</h3><span class="case-res">' + esc(it.result || '') + '</span>' +
+          '<p>' + esc(it.desc || '') + '</p></span></button>';
+      }).join('');
+      caseGrid.insertAdjacentHTML('beforeend', html);
+      var modal = document.getElementById('workModal');
+      caseGrid.addEventListener('click', function (e) {
+        var btn = e.target.closest('[data-work]');
+        if (!btn || !modal) return;
+        var it = items[+btn.getAttribute('data-work')];
+        modal.querySelector('#wmTitle').textContent = it.title || '';
+        modal.querySelector('.wm-cat').textContent = it.cat || '';
+        modal.querySelector('.wm-result').textContent = it.result || '';
+        modal.querySelector('.wm-desc').textContent = it.desc || '';
+        var img = modal.querySelector('.wm-img');
+        img.src = root + (it.img || 'assets/img/case-growth.jpg');
+        modal.hidden = false;
+        document.body.style.overflow = 'hidden';
+      });
+      if (modal) {
+        modal.addEventListener('click', function (e) {
+          if (e.target.closest('[data-close]') || e.target === modal) { modal.hidden = true; document.body.style.overflow = ''; }
+        });
+      }
+    }).catch(function () { /* no extra works yet */ });
+  }
+})();
+</script>
 </body>
 </html>

@@ -12,16 +12,36 @@
   var root = document.body.getAttribute('data-root') || './';
 
   function cb() { return '?t=' + Date.now(); }
+  function apiRaw(path) {
+    return fetch('https://api.github.com/repos/' + CMS.owner + '/' + CMS.repo + '/contents/' + path,
+      { headers: { 'Accept': 'application/vnd.github.raw+json' } });
+  }
   function loadJSON(path) {
     return fetch(RAW + path + cb(), { cache: 'no-store' }).then(function (r) {
       if (!r.ok) throw new Error(path + ' -> ' + r.status);
       return r.json();
+    }).catch(function (e) {
+      if (path.indexOf('content/') === 0) {
+        return apiRaw(path).then(function (r2) {
+          if (!r2.ok) throw e;
+          return r2.json();
+        });
+      }
+      throw e;
     });
   }
   function loadText(path) {
     return fetch(RAW + path + cb(), { cache: 'no-store' }).then(function (r) {
       if (!r.ok) throw new Error(path + ' -> ' + r.status);
       return r.text();
+    }).catch(function (e) {
+      if (path.indexOf('content/') === 0) {
+        return apiRaw(path).then(function (r2) {
+          if (!r2.ok) throw e;
+          return r2.text();
+        });
+      }
+      throw e;
     });
   }
   function esc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
