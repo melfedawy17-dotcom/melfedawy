@@ -10,7 +10,7 @@
   };
   var RAW = 'https://raw.githubusercontent.com/' + CMS.owner + '/' + CMS.repo + '/' + CMS.branch + '/';
   var root = document.body.getAttribute('data-root') || './';
-  var VER = '20260920g';
+  var VER = '20260920k';
   function vs(p){ return p + (p.indexOf('?') > -1 ? '' : '?v=' + VER); }
 
   function cb() { return '?t=' + Date.now(); }
@@ -121,7 +121,7 @@
     loadJSON('content/posts.json').then(function (posts) {
       var empty = document.getElementById('postsEmpty');
       if (!posts || !posts.length) { if (empty) empty.hidden = false; return; }
-      posts = posts.slice().sort(function (a, b) { return (b.date || '').localeCompare(a.date || ''); });
+      posts = posts.filter(function (p) { return p.status !== 'draft'; }).slice().sort(function (a, b) { return (b.date || '').localeCompare(a.date || ''); });
       grid.innerHTML = posts.map(function (p) {
         return '<a class="post-card" href="read.html?slug=' + encodeURIComponent(p.slug) + '">' +
           '<span class="post-thumb"><img loading="lazy" src="' + root + vs(p.cover || 'assets/img/case-feasibility.jpg') + '" alt=""></span>' +
@@ -142,6 +142,7 @@
     loadJSON('content/posts.json').then(function (posts) {
       var p = (posts || []).filter(function (x) { return x.slug === slug; })[0];
       if (!p) { view.innerHTML = '<p class="err-note">Article not found.</p>'; return; }
+      if (p.status === 'draft') { view.innerHTML = '<p class="err-note">' + (p.lang === 'ar' ? 'هذه مسودة غير منشورة بعد.' : 'This is an unpublished draft.') + '</p>'; return; }
       document.documentElement.lang = p.lang === 'ar' ? 'ar' : 'en';
       document.documentElement.dir = p.lang === 'ar' ? 'rtl' : 'ltr';
       document.title = p.title;
@@ -186,6 +187,12 @@
         modal.querySelector('.wm-cat').textContent = it.cat || '';
         modal.querySelector('.wm-result').textContent = it.result || '';
         modal.querySelector('.wm-desc').textContent = it.desc || '';
+        var arDoc = document.documentElement.lang === 'ar';
+        var ex = '';
+        if (it.challenge) ex += '<div class="wm-block"><h4>' + (arDoc ? 'التحدي' : 'Challenge') + '</h4><p>' + esc(it.challenge) + '</p></div>';
+        if (it.approach) ex += '<div class="wm-block"><h4>' + (arDoc ? 'ما تم تنفيذه' : 'What was done') + '</h4><p>' + esc(it.approach) + '</p></div>';
+        if (it.outcome) ex += '<div class="wm-block"><h4>' + (arDoc ? 'النتائج' : 'Results') + '</h4><p>' + esc(it.outcome) + '</p></div>';
+        modal.querySelector('.wm-extra').innerHTML = ex;
         var img = modal.querySelector('.wm-img');
         img.src = root + vs(it.img || 'assets/img/case-growth.jpg');
         modal.hidden = false;

@@ -473,3 +473,13 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,te
 .ind-row a{color:var(--gold);font-weight:700;white-space:nowrap;font-size:14px}
 .ind-row a:hover{text-decoration:underline}
 @media(max-width:760px){.ind-row{flex-direction:column;align-items:flex-start;gap:10px}}
+
+.svc-group{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:24px 24px 26px;margin-top:16px;border-top:1px solid var(--line)}
+.svc-group:first-of-type{margin-top:24px}
+.svc-head{margin-bottom:16px}
+.svc-group .svc-grid{gap:16px;margin-top:0}
+.svc-group .svc{background:rgba(255,255,255,.02);border-color:rgba(255,255,255,.09)}
+
+.wm-extra{margin:14px 0}
+.wm-block h4{color:var(--gold);font-size:13px;letter-spacing:.08em;margin-bottom:4px}
+.wm-block p{color:var(--muted);font-size:14px;margin-bottom:12px}
