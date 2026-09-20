@@ -518,7 +518,7 @@ html.js [data-reveal].in{opacity:1;transform:none}
       <div class="flow"><span>التحدي</span> <i>&#8594;</i> <span>الاستراتيجية</span> <i>&#8594;</i> <span>التنفيذ</span> <i>&#8594;</i> <span>النتيجة</span></div>
     </div>
     <figure class="case-img">
-      <img src="../../assets/img/case-growth.jpg" alt="صورة تحريرية توضيحية: مخططات نمو على مكتب تنفيذي" loading="lazy">
+      <img src="../../assets/img/case-growth.jpg?v=@@VER@@" alt="صورة تحريرية توضيحية: مخططات نمو على مكتب تنفيذي" loading="lazy">
       <figcaption>صورة توضيحية</figcaption>
     </figure>
   </div>
@@ -730,6 +730,8 @@ html.js [data-reveal].in{opacity:1;transform:none}
   };
   var RAW = 'https://raw.githubusercontent.com/' + CMS.owner + '/' + CMS.repo + '/' + CMS.branch + '/';
   var root = document.body.getAttribute('data-root') || './';
+  var VER = '20260920e';
+  function vs(p){ return p + (p.indexOf('?') > -1 ? '' : '?v=' + VER); }
 
   function cb() { return '?t=' + Date.now(); }
   function apiRaw(path) {
@@ -802,7 +804,7 @@ html.js [data-reveal].in{opacity:1;transform:none}
     var imgs = (cfg && cfg.images) || {};
     Object.keys(imgs).forEach(function (key) {
       document.querySelectorAll('[data-dyn="' + key + '"]').forEach(function (el) {
-        el.setAttribute('src', root + imgs[key]);
+        el.setAttribute('src', root + vs(imgs[key]));
       });
     });
   }).catch(function () { /* keep static defaults */ });
@@ -842,7 +844,7 @@ html.js [data-reveal].in{opacity:1;transform:none}
       posts = posts.slice().sort(function (a, b) { return (b.date || '').localeCompare(a.date || ''); });
       grid.innerHTML = posts.map(function (p) {
         return '<a class="post-card" href="read.html?slug=' + encodeURIComponent(p.slug) + '">' +
-          '<span class="post-thumb"><img loading="lazy" src="' + root + (p.cover || 'assets/img/case-feasibility.jpg') + '" alt=""></span>' +
+          '<span class="post-thumb"><img loading="lazy" src="' + root + vs(p.cover || 'assets/img/case-feasibility.jpg') + '" alt=""></span>' +
           '<span class="post-body-in"><span class="post-meta">' + fmtDate(p.date, p.lang) +
           ' <i class="lang-badge">' + (p.lang === 'ar' ? 'عربي' : 'EN') + '</i></span>' +
           '<h3>' + esc(p.title) + '</h3><p>' + esc(p.excerpt || '') + '</p></span></a>';
@@ -876,7 +878,7 @@ html.js [data-reveal].in{opacity:1;transform:none}
         view.innerHTML =
           '<p class="post-meta">' + fmtDate(p.date, p.lang) + ' <i class="lang-badge">' + (p.lang === 'ar' ? 'عربي' : 'EN') + '</i></p>' +
           '<h1>' + esc(p.title) + '</h1>' +
-          (p.cover ? '<img class="article-cover" src="' + root + p.cover + '" alt="">' : '') +
+          (p.cover ? '<img class="article-cover" src="' + root + vs(p.cover) + '" alt="">' : '') +
           md2html(md) + share;
       }).catch(function () { view.innerHTML = '<p class="err-note">Could not load the article body.</p>'; });
     }).catch(function () { view.innerHTML = '<p class="err-note">Could not load articles index.</p>'; });
@@ -890,7 +892,7 @@ html.js [data-reveal].in{opacity:1;transform:none}
       if (!items.length) return;
       var html = items.map(function (it, n) {
         return '<button class="case-card" data-work="' + n + '" type="button">' +
-          '<span class="case-thumb"><img loading="lazy" src="' + root + (it.img || 'assets/img/case-growth.jpg') + '" alt=""></span>' +
+          '<span class="case-thumb"><img loading="lazy" src="' + root + vs(it.img || 'assets/img/case-growth.jpg') + '" alt=""></span>' +
           '<span class="case-body-in"><h3>' + esc(it.title) + '</h3><span class="case-res">' + esc(it.result || '') + '</span>' +
           '<p>' + esc(it.desc || '') + '</p></span></button>';
       }).join('');
@@ -905,7 +907,7 @@ html.js [data-reveal].in{opacity:1;transform:none}
         modal.querySelector('.wm-result').textContent = it.result || '';
         modal.querySelector('.wm-desc').textContent = it.desc || '';
         var img = modal.querySelector('.wm-img');
-        img.src = root + (it.img || 'assets/img/case-growth.jpg');
+        img.src = root + vs(it.img || 'assets/img/case-growth.jpg');
         modal.hidden = false;
         document.body.style.overflow = 'hidden';
       });
