@@ -450,3 +450,8 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,te
 .ind-group p{color:var(--muted);font-size:14px}
 .f-line{color:var(--gold);font-weight:700;margin-top:12px;font-size:15px}
 @media(max-width:760px){.moments{grid-template-columns:1fr}}
+
+.svc-group .svc-grid{grid-template-columns:repeat(2,1fr);margin-top:18px}
+@media(max-width:760px){.svc-group .svc-grid{grid-template-columns:1fr}}
+
+.svc-groups{margin-top:30px}
