@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>لوحة التحكم — موقع محمد الفداوي</title>
+<style>
+:root{--bg:#090C11;--panel:#111720;--text:#F5F7FA;--muted:#A9B2BF;--gold:#F3BD36;--line:rgba(255,255,255,.1);--red:#ff6b6b;--green:#3fce6b}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'Segoe UI',Tahoma,system-ui,sans-serif;font-size:15.5px;line-height:1.7;padding-bottom:60px}
+a{color:var(--gold)}
+.wrap{max-width:860px;margin:0 auto;padding:0 18px}
+header{position:sticky;top:0;background:rgba(9,12,17,.95);backdrop-filter:blur(10px);border-bottom:1px solid var(--line);z-index:10}
+.hin{display:flex;align-items:center;gap:12px;padding:14px 18px;max-width:860px;margin:0 auto}
+.hin b{font-size:16px}.hin b span{color:var(--gold)}
+.hin .sp{flex:1}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;background:linear-gradient(135deg,var(--gold),#e0a92a);color:#131008;border:0;border-radius:10px;padding:11px 18px;font-weight:700;font-size:14px;cursor:pointer}
+.btn.ghost{background:none;color:var(--text);border:1px solid var(--line)}
+.btn.danger{background:none;color:var(--red);border:1px solid rgba(255,107,107,.4)}
+.btn.sm{padding:7px 12px;font-size:12.5px}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:20px;margin-top:16px}
+label{display:grid;gap:6px;font-size:13px;font-weight:700;color:var(--muted);margin-top:12px}
+input,select,textarea{background:var(--bg);border:1px solid var(--line);border-radius:10px;color:var(--text);padding:11px 13px;font-size:15px;font-family:inherit;width:100%}
+textarea{min-height:220px;line-height:1.8}
+input:focus,textarea:focus,select:focus{outline:none;border-color:var(--gold)}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-top:18px}
+.tab{border:1px solid var(--line);background:var(--panel);color:var(--muted);border-radius:999px;padding:9px 18px;font-weight:700;cursor:pointer;font-size:14px}
+.tab.on{color:#131008;background:var(--gold);border-color:var(--gold)}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:640px){.row{grid-template-columns:1fr}}
+.list{display:grid;gap:10px;margin-top:14px}
+.item{display:flex;align-items:center;gap:12px;background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:12px 14px;flex-wrap:wrap}
+.item .t{flex:1;min-width:160px;font-weight:700}
+.item .d{color:var(--muted);font-size:12.5px}
+.thumb{width:56px;height:40px;object-fit:cover;border-radius:8px;border:1px solid var(--line)}
+.toast{position:fixed;bottom:18px;inset-inline:0;display:flex;justify-content:center;z-index:50;pointer-events:none}
+.toast div{background:#132015;border:1px solid rgba(63,206,107,.5);color:#c9f5d6;padding:11px 20px;border-radius:999px;font-size:14px;font-weight:700;opacity:0;transform:translateY(10px);transition:.3s}
+.toast.err div{background:#201313;border-color:rgba(255,107,107,.5);color:#ffd2d2}
+.toast.show div{opacity:1;transform:none}
+.hint{color:var(--muted);font-size:13px;margin-top:8px}
+.err-note{color:var(--red)}
+.imgslot{display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+.imgslot img{width:96px;height:72px;object-fit:cover;border-radius:10px;border:1px solid var(--line)}
+.hide{display:none}
+h2{font-size:20px;margin-top:26px}
+.badge{font-size:11px;background:rgba(243,189,54,.12);color:var(--gold);border:1px solid rgba(243,189,54,.4);border-radius:999px;padding:3px 10px;font-weight:700}
+</style>
+</head>
+<body>
+<header><div class="hin"><b>لوحة التحكم<span>.</span></b><span class="badge">GitHub CMS</span><span class="sp"></span>
+<a class="btn ghost sm" href="../" target="_blank">عرض الموقع</a>
+<button class="btn ghost sm hide" id="logout">خروج</button></div></header>
+
+<div class="wrap">
+  <!-- login -->
+  <section id="login" class="card">
+    <h2 style="margin-top:0">تسجيل الدخول للوحة التحكم</h2>
+    <p class="hint">اللوحة تعمل عبر GitHub مباشرة (مجاني بالكامل). تحتاج Personal Access Token مرة واحدة فقط — خطوات إنشائه تحت.</p>
+    <div class="row">
+      <label>مالك الريبو (Owner)<input id="fOwner" value="melfedawy17-dotcom"></label>
+      <label>اسم الريبو (Repo)<input id="fRepo" value="melfedawy"></label>
+    </div>
+    <label>الفرع (Branch)<input id="fBranch" value="main"></label>
+    <label>Personal Access Token<input id="fToken" type="password" placeholder="github_pat_..."></label>
+    <p class="hint">إنشاء التوكن: github.com → Settings → Developer settings → Personal access tokens → <b>Fine-grained tokens</b> → Generate new token → في Repository access اختر <b>Only select repositories</b> وحدد ريبو الموقع → في Permissions افتح Contents واجعله <b>Read and write</b> → Generate → انسخ التوكن والصقه هنا. التوكن يُحفظ في متصفحك أنت فقط.</p>
+    <p style="margin-top:14px"><button class="btn" id="loginBtn">دخول اللوحة</button></p>
+    <p class="hint err-note" id="loginErr"></p>
+  </section>
+
+  <!-- dashboard -->
+  <section id="dash" class="hide">
+    <div class="tabs">
+      <button class="tab on" data-tab="posts">المقالات</button>
+      <button class="tab" data-tab="works">الأعمال الجديدة</button>
+      <button class="tab" data-tab="images">صور الموقع</button>
+    </div>
+
+    <!-- posts -->
+    <div id="tab-posts">
+      <h2>المقالات المنشورة</h2>
+      <div class="list" id="postsList"></div>
+      <div class="card">
+        <h2 style="margin-top:0" id="postFormTitle">مقال جديد</h2>
+        <input type="hidden" id="pEditSlug" value="">
+        <label>عنوان المقال<input id="pTitle"></label>
+        <label>نبذة قصيرة (تظهر في الكارت)<input id="pExcerpt"></label>
+        <div class="row">
+          <label>لغة المقال<select id="pLang"><option value="ar">عربي</option><option value="en">English</option></select></label>
+          <label>التاريخ<input id="pDate" type="date"></label>
+        </div>
+        <label>صورة الغلاف (اختياري)<input id="pCover" type="file" accept="image/*"></label>
+        <label>نص المقال (Markdown: # عنوان ، ## عنوان فرعي ، - نقطة ، **bold**)<textarea id="pBody"></textarea></label>
+        <p style="margin-top:14px;display:flex;gap:10px;flex-wrap:wrap">
+          <button class="btn" id="pSave">حفظ ونشر</button>
+          <button class="btn ghost hide" id="pCancel">إلغاء التعديل</button>
+        </p>
+      </div>
+    </div>
+
+    <!-- works -->
+    <div id="tab-works" class="hide">
+      <h2>أعمال مضافة (تظهر في قسم دراسات الحالة)</h2>
+      <div class="list" id="worksList"></div>
+      <div class="card">
+        <h2 style="margin-top:0" id="workFormTitle">عمل جديد</h2>
+        <input type="hidden" id="wEditId" value="">
+        <label>عنوان العمل<input id="wTitle"></label>
+        <div class="row">
+          <label>التصنيف<input id="wCat" placeholder="مثال: استراتيجية نمو"></label>
+          <label>النتيجة الرئيسية<input id="wResult" placeholder="مثال: +20% مبيعات"></label>
+        </div>
+        <label>الوصف<textarea id="wDesc" style="min-height:110px"></textarea></label>
+        <label>صورة العمل<input id="wImg" type="file" accept="image/*"></label>
+        <p style="margin-top:14px;display:flex;gap:10px;flex-wrap:wrap">
+          <button class="btn" id="wSave">حفظ وإظهار</button>
+          <button class="btn ghost hide" id="wCancel">إلغاء التعديل</button>
+        </p>
+      </div>
+    </div>
+
+    <!-- images -->
+    <div id="tab-images" class="hide">
+      <h2>استبدال صور الموقع الأساسية</h2>
+      <p class="hint">ارفع صورة جديدة لأي موضع — تتبدل في الموقع فورًا بدون كود (الملف القديم يُستبدل بنفس المسار).</p>
+      <div class="card imgslot"><img id="prevHero" alt=""><div style="flex:1;min-width:200px"><b>صورة Hero / About (البورتريه)</b><p class="hint">يُفضّل مربع 1200×1200 بخلفية داكنة.</p></div><input type="file" accept="image/*" id="upHero" style="max-width:220px"></div>
+      <div class="card imgslot"><img id="prevInd" alt=""><div style="flex:1;min-width:200px"><b>صورة قسم القطاعات (التصنيع)</b><p class="hint">عرض 1400 بكسل تقريبًا.</p></div><input type="file" accept="image/*" id="upInd" style="max-width:220px"></div>
+    </div>
+  </section>
+</div>
+<div class="toast" id="toast"><div id="toastMsg"></div></div>
+
+<script>
+(function(){
+'use strict';
+var CFG={owner:'',repo:'',branch:'',token:''};
+var $=function(id){return document.getElementById(id)};
+function toast(msg,err){var t=$('toast');$('toastMsg').textContent=msg;t.className='toast show'+(err?' err':'');setTimeout(function(){t.className='toast'},3200);}
+function api(path,opts){opts=opts||{};opts.headers=Object.assign({'Authorization':'Bearer '+CFG.token,'Accept':'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28'},opts.headers||{});
+  return fetch('https://api.github.com/repos/'+CFG.owner+'/'+CFG.repo+'/contents/'+path,opts).then(function(r){
+    if(!r.ok)return r.text().then(function(t){throw new Error(r.status+': '+t.slice(0,160))});
+    return r.status===204?null:r.json();});}
+function getJSON(path,fallback){return api(path).then(function(j){return JSON.parse(decodeB64(j.content))}).catch(function(e){if(String(e.message).indexOf('404')===0)return fallback;throw e});}
+function putText(path,text,msg){return api(path).catch(function(e){if(String(e.message).indexOf('404')===0)return null;throw e}).then(function(cur){
+  return api(path,{method:'PUT',body:JSON.stringify({message:msg,content:b64text(text),sha:cur?cur.sha:undefined,branch:CFG.branch})});});}
+function putB64(path,b64,msg){return api(path).catch(function(e){if(String(e.message).indexOf('404')===0)return null;throw e}).then(function(cur){
+  return api(path,{method:'PUT',body:JSON.stringify({message:msg,content:b64,sha:cur?cur.sha:undefined,branch:CFG.branch})});});}
+function delFile(path,msg){return api(path).then(function(cur){return api(path,{method:'DELETE',body:JSON.stringify({message:msg,sha:cur.sha,branch:CFG.branch})});});}
+function b64text(t){return btoa(unescape(encodeURIComponent(t)));}
+function decodeB64(b){var bin=atob(b.replace(/\n/g,''));var u=new Uint8Array(bin.length);for(var i=0;i<bin.length;i++)u[i]=bin.charCodeAt(i);return new TextDecoder('utf-8').decode(u);}
+function fileB64(f){return new Promise(function(res,rej){var r=new FileReader();r.onload=function(){res(String(r.result).split(',')[1])};r.onerror=rej;r.readAsDataURL(f)});}
+function slugify(s){return String(s).trim().toLowerCase().replace(/[\u0600-\u06FF]+/g,function(m){return translit(m)}).replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,60)||('post-'+Date.now());}
+function translit(ar){var m={'ا':'a','أ':'a','إ':'i','آ':'a','ب':'b','ت':'t','ث':'th','ج':'j','ح':'h','خ':'kh','د':'d','ذ':'th','ر':'r','ز':'z','س':'s','ش':'sh','ص':'s','ض':'d','ط':'t','ظ':'z','ع':'a','غ':'gh','ف':'f','ق':'q','ك':'k','ل':'l','م':'m','ن':'n','ه':'h','و':'w','ي':'y','ى':'a','ة':'h','ء':''};return ar.split('').map(function(c){return m[c]!==undefined?m[c]:c}).join('');}
+function today(){return new Date().toISOString().slice(0,10);}
+
+/* login */
+function saveCfg(){localStorage.setItem('mf-cms',JSON.stringify(CFG));}
+function loadCfg(){try{var c=JSON.parse(localStorage.getItem('mf-cms')||'null');if(c){CFG=c;return true}}catch(e){}return false;}
+$('loginBtn').onclick=function(){CFG={owner:$('fOwner').value.trim(),repo:$('fRepo').value.trim(),branch:$('fBranch').value.trim()||'main',token:$('fToken').value.trim()};
+  if(!CFG.owner||!CFG.repo||!CFG.token){$('loginErr').textContent='أكمل كل الحقول';return;}
+  $('loginBtn').disabled=true;
+  fetch('https://api.github.com/user',{headers:{'Authorization':'Bearer '+CFG.token}}).then(function(r){if(!r.ok)throw new Error('token مرفوض ('+r.status+')');return r.json()}).then(function(){
+    saveCfg();enter();}).catch(function(e){$('loginErr').textContent='فشل الدخول: '+e.message;$('loginBtn').disabled=false;});};
+$('logout').onclick=function(){localStorage.removeItem('mf-cms');location.reload();};
+function enter(){$('login').classList.add('hide');$('dash').classList.remove('hide');$('logout').classList.remove('hide');refreshPosts();refreshWorks();refreshImgs();}
+
+/* tabs */
+document.querySelectorAll('.tab').forEach(function(b){b.onclick=function(){
+  document.querySelectorAll('.tab').forEach(function(x){x.classList.remove('on')});b.classList.add('on');
+  ['posts','works','images'].forEach(function(t){$('tab-'+t).classList.toggle('hide',t!==b.getAttribute('data-tab'))});};});
+
+/* ---------- posts ---------- */
+function refreshPosts(){getJSON('content/posts.json',[]).then(function(posts){
+  var L=$('postsList');L.innerHTML='';
+  (posts||[]).slice().sort(function(a,b){return (b.date||'').localeCompare(a.date||'')}).forEach(function(p){
+    var d=document.createElement('div');d.className='item';
+    d.innerHTML='<span class="t">'+p.title+' <span class="badge">'+(p.lang==='ar'?'عربي':'EN')+'</span></span><span class="d">'+(p.date||'')+'</span>';
+    var e=document.createElement('button');e.className='btn ghost sm';e.textContent='تعديل';e.onclick=function(){editPost(p)};
+    var x=document.createElement('button');x.className='btn danger sm';x.textContent='حذف';x.onclick=function(){if(confirm('حذف المقال نهائيًا؟'))delPost(p)};
+    L.appendChild(d);d.appendChild(e);d.appendChild(x);});
+}).catch(function(e){toast('تعذر قراءة المقالات: '+e.message,1)});}
+function editPost(p){$('pEditSlug').value=p.slug;$('pTitle').value=p.title;$('pExcerpt').value=p.excerpt||'';$('pLang').value=p.lang;$('pDate').value=p.date||today();$('pBody').value='';
+  $('postFormTitle').textContent='تعديل مقال: '+p.title;$('pCancel').classList.remove('hide');
+  fetch('https://raw.githubusercontent.com/'+CFG.owner+'/'+CFG.repo+'/'+CFG.branch+'/content/posts/'+p.slug+'.md?t='+Date.now()).then(function(r){return r.ok?r.text():''}).then(function(t){$('pBody').value=t;});
+  window.scrollTo({top:0,behavior:'smooth'});}
+$('pCancel').onclick=function(){clearPostForm()};
+function clearPostForm(){$('pEditSlug').value='';$('pTitle').value='';$('pExcerpt').value='';$('pBody').value='';$('pCover').value='';$('pDate').value=today();$('postFormTitle').textContent='مقال جديد';$('pCancel').classList.add('hide');}
+$('pSave').onclick=function(){var title=$('pTitle').value.trim();if(!title){toast('اكتب عنوان المقال',1);return;}
+  var slug=$('pEditSlug').value||slugify(title);var body=$('pBody').value;var date=$('pDate').value||today();var lang=$('pLang').value;
+  $('pSave').disabled=true;
+  var chain=Promise.resolve(null);
+  var coverPath=null;
+  if($('pCover').files[0]){var f=$('pCover').files[0];var ext=(f.name.match(/\.(png|jpe?g|webp)$/i)||['','.jpg'])[0].replace('jpeg','jpg');
+    coverPath='assets/img/uploads/cover-'+slug+ext;
+    chain=fileB64(f).then(function(b){return putB64(coverPath,b,'upload cover: '+slug)});}
+  chain.then(function(){return putText('content/posts/'+slug+'.md',body,'article: '+slug)}).then(function(){
+    return getJSON('content/posts.json',[]).then(function(posts){posts=(posts||[]).filter(function(p){return p.slug!==slug});
+      var old=(posts.find&&null);/*keep cover if editing and no new cover*/
+      posts.push({slug:slug,title:title,excerpt:$('pExcerpt').value.trim(),date:date,lang:lang,cover:coverPath||($('pEditSlug').value? (window.__lastCover||null):null)||'assets/img/case-feasibility.jpg'});
+      return putText('content/posts.json',JSON.stringify(posts,null,1),'article index: '+slug);});}).then(function(){
+    toast('تم نشر المقال ✅ ظهر في الموقع فورًا');clearPostForm();refreshPosts();}).catch(function(e){toast('فشل الحفظ: '+e.message,1)}).then(function(){$('pSave').disabled=false;});};
+function delPost(p){delFile('content/posts/'+p.slug+'.md','delete article: '+p.slug).then(function(){
+  return getJSON('content/posts.json',[]).then(function(posts){posts=(posts||[]).filter(function(x){return x.slug!==p.slug});
+    return putText('content/posts.json',JSON.stringify(posts,null,1),'remove from index: '+p.slug)});}).then(function(){toast('تم الحذف');refreshPosts()}).catch(function(e){toast('فشل الحذف: '+e.message,1)});}
+
+/* ---------- works ---------- */
+function refreshWorks(){getJSON('content/works.json',{items:[]}).then(function(w){
+  var L=$('worksList');L.innerHTML='';
+  ((w&&w.items)||[]).forEach(function(it){
+    var d=document.createElement('div');d.className='item';
+    d.innerHTML='<img class="thumb" src="../'+(it.img||'assets/img/case-growth.jpg')+'?t='+Date.now()+'" alt=""><span class="t">'+it.title+'</span><span class="d">'+(it.result||'')+'</span>';
+    var e=document.createElement('button');e.className='btn ghost sm';e.textContent='تعديل';e.onclick=function(){editWork(it)};
+    var x=document.createElement('button');x.className='btn danger sm';x.textContent='حذف';x.onclick=function(){if(confirm('حذف العمل؟'))delWork(it)};
+    L.appendChild(d);d.appendChild(e);d.appendChild(x);});
+}).catch(function(e){toast('تعذر قراءة الأعمال: '+e.message,1)});}
+function editWork(it){$('wEditId').value=it.id;$('wTitle').value=it.title;$('wCat').value=it.cat||'';$('wResult').value=it.result||'';$('wDesc').value=it.desc||'';$('workFormTitle').textContent='تعديل: '+it.title;$('wCancel').classList.remove('hide');}
+$('wCancel').onclick=function(){$('wEditId').value='';$('wTitle').value='';$('wCat').value='';$('wResult').value='';$('wDesc').value='';$('wImg').value='';$('workFormTitle').textContent='عمل جديد';$('wCancel').classList.add('hide');};
+$('wSave').onclick=function(){var title=$('wTitle').value.trim();if(!title){toast('اكتب عنوان العمل',1);return;}
+  var id=$('wEditId').value||slugify(title);$('wSave').disabled=true;var chain=Promise.resolve(null);var imgPath=null;
+  if($('wImg').files[0]){var f=$('wImg').files[0];var ext=(f.name.match(/\.(png|jpe?g|webp)$/i)||['','.jpg'])[0].replace('jpeg','jpg');
+    imgPath='assets/img/uploads/work-'+id+ext;chain=fileB64(f).then(function(b){return putB64(imgPath,b,'upload work image: '+id)});}
+  chain.then(function(){return getJSON('content/works.json',{items:[]}).then(function(w){w=w||{items:[]};w.items=(w.items||[]).filter(function(x){return x.id!==id});
+    w.items.push({id:id,title:title,cat:$('wCat').value.trim(),result:$('wResult').value.trim(),desc:$('wDesc').value.trim(),img:imgPath||'assets/img/case-growth.jpg'});
+    return putText('content/works.json',JSON.stringify(w,null,1),'work: '+id);});}).then(function(){
+    toast('تمت إضافة العمل ✅ ظهر في دراسات الحالة');$('wCancel').onclick();refreshWorks();}).catch(function(e){toast('فشل الحفظ: '+e.message,1)}).then(function(){$('wSave').disabled=false;});};
+function delWork(it){getJSON('content/works.json',{items:[]}).then(function(w){w.items=(w.items||[]).filter(function(x){return x.id!==it.id});
+  return putText('content/works.json',JSON.stringify(w,null,1),'remove work: '+it.id)}).then(function(){toast('تم الحذف');refreshWorks()}).catch(function(e){toast('فشل: '+e.message,1)});}
+
+/* ---------- images ---------- */
+function refreshImgs(){getJSON('content/site.json',{images:{}}).then(function(cfg){
+  var img=(cfg&&cfg.images)||{};
+  $('prevHero').src='../'+(img.hero||'assets/img/mohamed-elfedawy.jpg')+'?t='+Date.now();
+  $('prevInd').src='../'+(img.industries||'assets/img/industry-ops.jpg')+'?t='+Date.now();
+}).catch(function(){});}
+function bindUpload(inputId,key,fixedName){$(inputId).onchange=function(){var f=$(inputId).files[0];if(!f)return;
+  var ext=(f.name.match(/\.(png|jpe?g|webp)$/i)||['','.jpg'])[0].replace('jpeg','jpg');
+  var path='assets/img/'+fixedName+ext;
+  fileB64(f).then(function(b){return putB64(path,b,'replace site image: '+key)}).then(function(){
+    return getJSON('content/site.json',{images:{}}).then(function(cfg){cfg=cfg||{images:{}};cfg.images=cfg.images||{};
+      cfg.images[key]=path+'?v='+Date.now();
+      return putText('content/site.json',JSON.stringify(cfg,null,1),'site image: '+key)});}).then(function(){
+      toast('تم استبدال الصورة ✅');refreshImgs();}).catch(function(e){toast('فشل الاستبدال: '+e.message,1)});};}
+bindUpload('upHero','hero','dyn-hero');
+bindUpload('upInd','industries','dyn-industries');
+
+/* boot */
+$('pDate').value=today();
+if(loadCfg()&&CFG.token){enter();}
+})();
+</script>
+</body>
+</html>
