@@ -1,1 +1,7 @@
-{"images":{"hero":"assets/img/mohamed-elfedawy.jpg","about":"assets/img/mohamed-elfedawy.jpg","industries":"assets/img/industry-ops.jpg"}}
+{
+ "images": {
+  "hero": "assets/img/dyn-hero.png?v=1789926746266",
+  "about": "assets/img/mohamed-elfedawy.jpg",
+  "industries": "assets/img/industry-ops.jpg"
+ }
+}
