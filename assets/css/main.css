@@ -433,3 +433,20 @@ html.js [data-reveal].in{opacity:1;transform:none}
 .wm-result{color:var(--gold);font-family:var(--font-h);font-weight:800}
 @media (max-width:1020px){.post-grid{grid-template-columns:1fr 1fr}}
 @media (max-width:760px){.post-grid{grid-template-columns:1fr}}
+
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--gold);outline-offset:3px;border-radius:4px}
+
+.moments{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-top:26px}
+.moment{border:1px solid var(--line);background:var(--panel);border-radius:14px;padding:22px}
+.moment h3{font-size:19px;margin-bottom:8px}
+.moment p{color:var(--muted);font-size:15px;line-height:1.7}
+.svc-group{margin-top:38px;padding-top:28px;border-top:1px solid var(--line)}
+.svc-group:first-of-type{margin-top:26px;border-top:0;padding-top:0}
+.svc-head{display:flex;gap:14px;align-items:baseline;margin-bottom:18px}
+.svc-head h3{font-size:22px}
+.svc-head p{color:var(--gold);font-weight:600}
+.ind-group{border:1px solid var(--line);background:var(--panel);border-radius:14px;padding:20px;margin-bottom:12px}
+.ind-group h3{font-size:18px;margin-bottom:6px}
+.ind-group p{color:var(--muted);font-size:14px}
+.f-line{color:var(--gold);font-weight:700;margin-top:12px;font-size:15px}
+@media(max-width:760px){.moments{grid-template-columns:1fr}}
