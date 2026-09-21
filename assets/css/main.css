@@ -545,3 +545,5 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,te
 .iq-rec-btns{display:flex;gap:10px;flex-wrap:wrap}
 
 .iq-ver{color:#5b6470;font-size:11px;margin:10px 0 0}
+
+.iq-hint{color:#A9B2BF;font-size:13px;margin:6px 0 8px;line-height:1.6}
