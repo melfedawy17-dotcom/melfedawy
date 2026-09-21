@@ -802,7 +802,6 @@ permissions:
 jobs:
   draft:
     runs-on: ubuntu-latest
-    if: ${{ (secrets.GEMINI_KEY != '') || (secrets.GEMINIKEY != '') }}
     steps:
       - name: pick topic
         id: t
@@ -827,7 +826,10 @@ jobs:
         run: |
           python3 - <<'PY'
           import json,os,urllib.request,base64,datetime,urllib.parse
-          key=os.environ['GEMINI_KEY']; topic=os.environ['TOPIC']; slug=os.environ['SLUG']
+          key=os.environ.get('GEMINI_KEY','') or ''
+          if not key:
+              print('لا يوجد مفتاح GEMINI_KEY — تخطٍ'); raise SystemExit(0)
+          topic=os.environ['TOPIC']; slug=os.environ['SLUG']
           def gem(model,parts):
               req=urllib.request.Request('https://generativelanguage.googleapis.com/v1beta/models/'+model+':generateContent?key='+key,
                 data=json.dumps({'contents':[{'parts':parts}]}).encode(),headers={'Content-Type':'application/json'})
