@@ -500,3 +500,14 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,te
 .wa-mini{display:inline-flex;gap:6px;align-items:center;color:var(--muted);font-size:13.5px}
 .wa-mini:hover{color:var(--gold)}
 @media(max-width:760px){.svc-sum{grid-template-columns:1fr}}
+
+
+/* ===== markets (v17) ===== */
+.mk-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:30px}
+.mk-card{display:block;background:#111720;border:1px solid rgba(245,247,250,.08);border-radius:16px;padding:26px 24px;transition:border-color .25s ease,transform .25s ease}
+.mk-card:hover{border-color:rgba(243,189,54,.55);transform:translateY(-3px)}
+.mk-card .flag{font-size:30px;line-height:1;display:block}
+.mk-card h3{margin:14px 0 8px;font-size:19px;color:#F5F7FA}
+.mk-card p{color:#A9B2BF;font-size:15px;line-height:1.7;margin:0 0 14px}
+.mk-link{color:#F3BD36;font-size:14px;font-weight:600}
+@media(max-width:860px){.mk-grid{grid-template-columns:1fr}}
