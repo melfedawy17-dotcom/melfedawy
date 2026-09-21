@@ -731,7 +731,7 @@ $('dCopyLi').onclick=function(){navigator.clipboard.writeText($('dLi').value).th
 $('dOpenLi').onclick=function(){navigator.clipboard.writeText($('dLi').value).then(function(){toast('النص منسوخ — ألصقه في نافذة النشر (Ctrl+V) ثم اضغط نشر');window.open('https://www.linkedin.com/sharing/share-offsite/?url='+encodeURIComponent(dUrl()),'_blank');});};
 $('dOpenFb').onclick=function(){window.open('https://www.facebook.com/sharer/sharer.php?u='+encodeURIComponent(dUrl())+'&quote='+encodeURIComponent($('dFb').value),'_blank');};
 $('dWa').onclick=function(){window.open('https://wa.me/?text='+encodeURIComponent($('dTitle').value+' '+dUrl()),'_blank');};
-getJSON('assets/data/topics.json',null).then(function(j){if(j&&j.topics&&j.topics.length){D_ITEMS=j.topics;dRefreshInfo();var d2=dLoad();if(d2&&d2.img){$('dThumb').hidden=false;$('dThumb').src='../'+d2.img;}}}).catch(function(){});
+fetch('assets/data/topics.json?t='+Date.now()).then(function(r){return r.ok?r.json():null;}).then(function(j){if(j&&j.topics&&j.topics.length){D_ITEMS=j.topics;dRefreshInfo();var d2=dLoad();if(d2&&d2.img){$('dThumb').hidden=false;$('dThumb').src='../'+d2.img;}}}).catch(function(){});getJSON('assets/data/topics.json',null).then(function(j){if(j&&j.topics&&j.topics.length&&!D_ITEMS){D_ITEMS=j.topics;dRefreshInfo();}}).catch(function(){});
 (function(){var d=dLoad();if(d&&d.body)dRender(d);setTimeout(dRefreshInfo,600);})();
 })();
 function refreshLeads(){renderLeads();}
