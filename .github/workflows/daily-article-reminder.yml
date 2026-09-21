@@ -12,12 +12,13 @@ jobs:
         id: topic
         run: |
           IDX=$(( $(date -u +%s) / 86400 % 30 ))
-          TOPIC=$(curl -s https://raw.githubusercontent.com/melfedawy17-dotcom/melfedawy/main/assets/data/topics.json | python3 -c "import json,sys;print(json.load(sys.stdin)['topics'][$IDX]['t'])")
+          TOPIC=$(curl -s https://raw.githubusercontent.com/${{ github.repository }}/main/assets/data/topics.json | python3 -c "import json,sys;print(json.load(sys.stdin)['topics'][$IDX]['t'])")
           echo "topic=$TOPIC" >> "$GITHUB_OUTPUT"
       - name: whatsapp reminder via CallMeBot
-        if: ${{ (secrets.CB_APIKEY != '') || (secrets.CALLMBOTAPIKEY != '') }}
-        run: |
-          TEXT=$(python3 -c "import urllib.parse,os;print(urllib.parse.quote('📝 موضوع مقال اليوم: '+os.environ['T']+' — لوحة التحكم → المقالات → توليد مسودة اليوم'))")
-          curl -s "https://api.callmebot.com/whatsapp.php?phone=%2B201146905560&apikey=${{ secrets.CB_APIKEY || secrets.CALLMBOTAPIKEY }}&text=$TEXT"
         env:
+          CBKEY: ${{ secrets.CB_APIKEY || secrets.CALLMBOTAPIKEY }}
           T: ${{ steps.topic.outputs.topic }}
+        run: |
+          if [ -z "$CBKEY" ]; then echo "no CallMeBot key — skip"; exit 0; fi
+          TEXT=$(python3 -c "import urllib.parse,os;print(urllib.parse.quote('📝 موضوع مقال اليوم: '+os.environ['T']+' — لوحة التحكم → المقالات → توليد مسودة اليوم'))")
+          curl -s "https://api.callmebot.com/whatsapp.php?phone=%2B201146905560&apikey=$CBKEY&text=$TEXT"
