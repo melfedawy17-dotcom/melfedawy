@@ -307,7 +307,7 @@ textarea{min-height:260px}
       <label>المزوّد <select id="aiProv"><option value="gemini">Gemini (مجاني)</option><option value="openai">OpenAI</option></select></label>
       <label>API Key <input id="aiKey" type="password" placeholder="الصق المفتاح هنا"></label>
       <label>الموديل <input id="aiModel" placeholder="gemini-2.5-flash"></label>
-      <label style="display:block;margin-top:8px">مفتاح واتساب CallMeBot <input id="cbKey" placeholder="API key"></label><button class="btn ghost sm" id="aiSave">حفظ الإعدادات</button>
+      <label style="display:block;margin-top:8px">مفتاح واتساب CallMeBot <input id="cbKey" placeholder="API key"></label><button class="btn ghost sm" id="aiTest">🔬 اختبار الإعدادات</button> <button class="btn ghost sm" id="aiSave">حفظ الإعدادات</button>
       <p style="color:var(--muted);font-size:12px">المفتاح لا يغادر متصفحك إلا في طلب مباشر للمزوّد عند ضغط «توليد بالـAI». بدون مفتاح استخدم «توليد هيكل».</p>
     </div>
   </section>
@@ -651,13 +651,21 @@ $('ldSkel').onclick=function(){if(LD_CUR<0)return;var k=LD_TAB==='answers'?'rese
 $('ldCopy').onclick=function(){var t=$('ldOut');if(t){navigator.clipboard.writeText(t.value);toast('تم النسخ');}};
 $('ldDl').onclick=function(){var t=$('ldOut');if(!t)return;var b=new Blob([t.value],{type:'text/markdown'});
   var a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='mf-'+LD_TAB+'-'+(LEADS[LD_CUR].answers.name||'lead')+'.md';a.click();};
+$('aiTest').onclick=function(){var cfg=JSON.parse(localStorage.getItem('mf-ai')||'{}');var out=[];
+  function done(){toast(out.join(' | '),out.some(function(x){return x.indexOf('✖')===0;})?1:0);}
+  var pend=3;
+  function fin(s){out.push(s);pend--;if(pend===0)done();}
+  if(!cfg.key){fin('✖ نص: لا مفتاح');}else{fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key='+encodeURIComponent(cfg.key),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contents:[{parts:[{text:'قل: تمام'}]}]})}).then(function(r){return r.ok?fin('✅ نص: يعمل'):r.json().then(function(j){fin('✖ نص: '+(j.error&&j.error.message||'HTTP '+r.status).slice(0,60));});}).catch(function(e){fin('✖ نص: '+e.message.slice(0,40));});}
+  if(!cfg.key){fin('✖ صورة: لا مفتاح');}else{fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-image:generateContent?key='+encodeURIComponent(cfg.key),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contents:[{parts:[{text:'gold line on dark background, abstract'}]}]})}).then(function(r){return r.ok?fin('✅ صورة: يعمل'):r.json().then(function(j){fin('✖ صورة: '+(j.error&&j.error.message||'HTTP '+r.status).slice(0,60));});}).catch(function(e){fin('✖ صورة: '+e.message.slice(0,40));});}
+  if(!cfg.cb){fin('✖ واتساب: لا مفتاح');}else{fetch('https://api.callmebot.com/whatsapp.php?phone=%2B201146905560&text='+encodeURIComponent('🔬 اختبار تنبيهات الموقع')+'&apikey='+encodeURIComponent(cfg.cb)).then(function(r){return r.text();}).then(function(t){fin(/queued|sent|ok/i.test(t)?'✅ واتساب: يعمل':'✖ واتساب: '+t.slice(0,50));}).catch(function(e){fin('✖ واتساب: '+e.message.slice(0,40));});}};
 $('aiSave').onclick=function(){localStorage.setItem('mf-ai',JSON.stringify({provider:$('aiProv').value,key:$('aiKey').value.trim(),model:$('aiModel').value.trim(),cb:$('cbKey').value.trim()}));toast('تم حفظ إعدادات AI في متصفحك');};
 (function(){var cfg=JSON.parse(localStorage.getItem('mf-ai')||'{}');if(cfg.provider)$('aiProv').value=cfg.provider;if(cfg.key)$('aiKey').value=cfg.key;if(cfg.model)$('aiModel').value=cfg.model;if(cfg.cb)$('cbKey').value=cfg.cb;/* ===== محرك المقال اليومي ===== */
 var D_TOPICS=['هل فكرة مشروعك تستحق التنفيذ؟ ٥ أسئلة تجيب قبل ما تصرف جنيه','أخطاء شائعة في دراسات الجدوى تقع فيها المشاريع الصغيرة','كيف تختار السوق المستهدف الأول لمشروعك؟','دراسة جدوى أم خطة عمل؟ الفرق الذي يحدد من أين تبدأ','تحليل المنافسين بدون ميزانية: أدوات مجانية ونتائج عملية','تسعير المنتج الجديد: ثلاثة نماذج وأيها يناسب مشروعك','لماذا تتوقف المبيعات بعد أول ٦ أشهر؟ تشخيص عملي','من فكرة إلى خطة: خارطة طريق الـ ٩٠ يومًا الأولى','إدارة التدفق النقدي في المشاريع الناشئة: قواعد البقاء','متى تتوسع جغرافيًا؟ علامات الجاهزية التي يغفلها أصحاب المشاريع','بحث السوق بالمقابلات: كيف تسأل العميل سؤالًا لا يضلك','الفرق بين الربح والكاش: قصة كل مشروع متعثر','بناء عرض قيمة واضح في جملة واحدة','اختيار اسم وعلامة تجارية: ما الذي يؤثر فعلًا على المبيعات؟','قراءة قائمة دخل لمشروع صغير في ١٠ دقائق','نقطة التعادل: كم وحدة تبيع قبل أن تربح؟','التفاوض مع الموردين: ٥ روافع تكلفة صفرية','توظيف أول موظف: متى ولمن وكيف تحسبها؟','أتمتة العمليات الصغيرة: أين تبدأ بدون ميزانية تقنية؟','مؤشرات أداء بسيطة لصاحب مشروع غير مالي','دخول سوق خليجي جديد: ما الذي يختلف عن السوق المصري؟','التصدير خطوة صفر: جاهزية المنتج قبل جاهزية السوق','تحويل عميل مرة واحدة إلى عميل متكرر','تقييم فرصة امتياز تجاري: قائمة فحص عملية','العروض والباقات: كيف تبني سلم أسعار لا يحرق هامشك؟','دراسة الجدوى البنكية: ما الذي يبحث عنه الممول فعلًا؟','إدارة المخزون في التجارة: تكلفة مخفية تستهلك هامشك','خطة التسويق الأولى بميزانية محدودة: قنوات تستحق البدء','من مشروع فردي إلى منشأة: متى تؤسس كياناتك الرسمية؟','قياس رضا العملاء بدون أنظمة: ٣ طرق سريعة','إعادة إطلاق منتج متوقف: تشخيص قبل القرار'];
 function dToday(){return Math.floor(Date.now()/86400000)%D_TOPICS.length;}
 var D_ITEMS=null;
 function dItem(){if(D_ITEMS&&D_ITEMS.length)return D_ITEMS[Math.floor(Date.now()/86400000)%D_ITEMS.length];return {t:D_TOPICS[dToday()],img:''};}
-function waPing(text){var cfg=JSON.parse(localStorage.getItem('mf-ai')||'{}');if(!cfg.cb){toast('احفظ مفتاح CallMeBot أولًا في إعدادات AI أسفل الصفحة',1);return;}new Image().src='https://api.callmebot.com/whatsapp.php?phone=%2B201146905560&text='+encodeURIComponent(text)+'&apikey='+encodeURIComponent(cfg.cb);toast('أُرسل التنبيه إلى واتساب 📱');}
+function waPing(text){var cfg=JSON.parse(localStorage.getItem('mf-ai')||'{}');if(!cfg.cb){toast('احفظ مفتاح CallMeBot أولًا في إعدادات AI أسفل الصفحة',1);return;}
+  fetch('https://api.callmebot.com/whatsapp.php?phone=%2B201146905560&text='+encodeURIComponent(text)+'&apikey='+encodeURIComponent(cfg.cb)).then(function(r){return r.text();}).then(function(t){if(/queued|sent|ok|success/i.test(t)){toast('واتساب: تم الإرسال ✅');}else{toast('رد CallMeBot: '+t.slice(0,120),1);}}).catch(function(e){toast('تعذر الوصول لـ CallMeBot: '+e.message,1);});}
 function dLoad(){try{return JSON.parse(localStorage.getItem('mf-draft')||'null');}catch(e){return null;}}
 function dSave(d){localStorage.setItem('mf-draft',JSON.stringify(d));}
 function dRefreshInfo(){var last='';try{last=(POSTS||[]).map(function(p){return p.date||'';}).sort().pop();}catch(e){}
@@ -717,14 +725,16 @@ function dAttachCover(){return dMakeCover().then(function(b){if(!b){toast('مت�
 $('dCover').onclick=function(){dAttachCover();};
 $('dCoverAi').onclick=function(){var cfg=JSON.parse(localStorage.getItem('mf-ai')||'{}');if(!cfg.key){toast('احفظ مفتاح Gemini أولًا في إعدادات AI',1);return;}
   toast('جارٍ توليد غلاف AI…');
-  fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-image:generateContent?key='+encodeURIComponent(cfg.key),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contents:[{parts:[{text:'Editorial business illustration for an article titled: '+($('dTitle').value||'')+ '. Dark navy background #090C11, subtle gold #F3BD36 accent light, minimal executive-editorial style, abstract objects only, NO text, NO logos, NO recognizable faces, 16:9.'}]}]})})
-  .then(function(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.json();})
-  .then(function(j){var d=null;(j.candidates[0].content.parts||[]).forEach(function(p){if(p.inlineData)d=p.inlineData;});if(!d)throw new Error('no image');
+  var IPROMPT='Editorial business illustration for an article titled: '+($('dTitle').value||'')+ '. Dark navy background #090C11, subtle gold #F3BD36 accent light, minimal executive-editorial style, abstract objects only, NO text, NO logos, NO recognizable faces, 16:9.';
+  function tryImg(models){var m=models[0];return fetch('https://generativelanguage.googleapis.com/v1beta/models/'+m+':generateContent?key='+encodeURIComponent(cfg.key),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contents:[{parts:[{text:IPROMPT}]}]})}).then(function(r){if(!r.ok)return r.json().then(function(j){throw new Error(m+': '+(j.error&&j.error.message?j.error.message:'HTTP '+r.status));});return r.json();}).catch(function(e){if(models.length>1)return tryImg(models.slice(1));throw e;});}
+  tryImg(['gemini-2.5-flash-image','gemini-2.5-flash-image-preview','gemini-2.0-flash-preview-image-generation'])
+  .then(function(j){if(!j.candidates)throw new Error('no candidates');return j;})
+  .then(function(j){var d=null;((j.candidates&&j.candidates[0].content.parts)||[]).forEach(function(p){if(p.inlineData)d=p.inlineData;});if(!d)throw new Error('no image in response');
     var bin=atob(d.data);var arr=new Uint8Array(bin.length);for(var i=0;i<bin.length;i++)arr[i]=bin.charCodeAt(i);
     var f=new File([new Blob([arr],{type:d.mimeType||'image/png'})],'cover-'+slugify($('dTitle').value||'post')+'.webp',{type:d.mimeType||'image/png'});
     var dt=new DataTransfer();dt.items.add(f);$('pCover').files=dt.files;$('pCoverExist').value='';
     toast('غلاف AI جاهز — سيُرفع مع الحفظ ✅');})
-  .catch(function(e){toast('فشل غلاف AI: '+e.message+' — استخدم غلاف الصورة أو الهوية',1);});};
+  .catch(function(e){toast('فشل غلاف AI: '+String(e.message).slice(0,140)+' — استخدم غلاف الصورة أو الهوية',1);});};
 $('dRemind').onclick=function(){waPing('📝 موضوع مقال اليوم: '+dItem().t+' — لوحة التحكم → المقالات → توليد مسودة اليوم');};
 $('dPosts').onclick=dMakePosts;
 $('dCopyLi').onclick=function(){navigator.clipboard.writeText($('dLi').value).then(function(){toast('تم نسخ نص لينكدإن');});};
