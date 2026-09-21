@@ -9,7 +9,8 @@
 <meta name="author" content="Mohamed Elfedawy">
 <link rel="canonical" href="https://melfedawy.vercel.app/ar/diag/">
 <meta name="theme-color" content="#090C11">
-<meta name="mf-ver" content="20260921a">
+<meta name="mf-ver" content="20260921f">
+<link rel="alternate" hreflang="ar" href="https://melfedawy.vercel.app/ar/diag/">
 <link rel="alternate" hreflang="en" href="https://melfedawy.vercel.app/diag/">
 <link rel="alternate" hreflang="x-default" href="https://melfedawy.vercel.app/diag/">
 <meta property="og:type" content="website">
@@ -24,13 +25,13 @@
 <link rel="icon" type="image/svg+xml" href="../../assets/favicon.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Inter:wght@400;500;600&family=IBM+Plex+Sans+Arabic:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Sans+Arabic:wght@400;500;700&display=swap" rel="stylesheet">
 <style>/* Mohamed Elfedawy — premium executive consulting theme */
 :root{
   --bg:#090C11; --panel:#111720; --panel2:#0D131B; --text:#F5F7FA; --muted:#A9B2BF;
   --gold:#F3BD36; --gold2:#FFE08A; --line:rgba(255,255,255,.08); --line2:rgba(255,255,255,.14);
   --r:16px; --nav-h:72px;
-  --font-h:'Manrope',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --font-h:'Inter',system-ui,-apple-system,'Segoe UI',sans-serif;
   --font-b:'Inter',system-ui,-apple-system,'Segoe UI',sans-serif;
 }
 html[lang="ar"]{--font-h:'IBM Plex Sans Arabic',system-ui,sans-serif;--font-b:'IBM Plex Sans Arabic',system-ui,sans-serif;}
@@ -610,7 +611,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,te
       <a href="../#work">دراسات الحالة</a>
       <a href="../insights/">المقالات</a>
       <a href="../#contact">تواصل</a>
-      <a class="lang-switch" href="../diag/" data-lang-set="en">EN</a>
+      <a class="lang-switch" href="../../diag/" data-lang-set="en">EN</a>
       <a class="btn btn-gold btn-sm" href="../start/">ناقش مشروعك</a>
     </nav>
     <button class="burger" aria-expanded="false" aria-controls="navLinks" aria-label="القائمة">
@@ -853,7 +854,7 @@ var FORM_SENDING='جارٍ الإرسال…';
   };
   var RAW = 'https://raw.githubusercontent.com/' + CMS.owner + '/' + CMS.repo + '/' + CMS.branch + '/';
   var root = document.body.getAttribute('data-root') || './';
-  var VER = '20260921c';
+  var VER = '20260921f';
   function vs(p){ return p + (p.indexOf('?') > -1 ? '' : '?v=' + VER); }
 
   function cb() { return '?t=' + Date.now(); }

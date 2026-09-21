@@ -3,7 +3,7 @@
   --bg:#090C11; --panel:#111720; --panel2:#0D131B; --text:#F5F7FA; --muted:#A9B2BF;
   --gold:#F3BD36; --gold2:#FFE08A; --line:rgba(255,255,255,.08); --line2:rgba(255,255,255,.14);
   --r:16px; --nav-h:72px;
-  --font-h:'Manrope',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --font-h:'Inter',system-ui,-apple-system,'Segoe UI',sans-serif;
   --font-b:'Inter',system-ui,-apple-system,'Segoe UI',sans-serif;
 }
 html[lang="ar"]{--font-h:'IBM Plex Sans Arabic',system-ui,sans-serif;--font-b:'IBM Plex Sans Arabic',system-ui,sans-serif;}
