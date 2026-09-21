@@ -9,7 +9,7 @@
 <meta name="author" content="Mohamed Elfedawy">
 <link rel="canonical" href="https://melfedawy.vercel.app/start/">
 <meta name="theme-color" content="#090C11">
-<meta name="mf-ver" content="20260920u">
+<meta name="mf-ver" content="20260920v">
 <link rel="alternate" hreflang="ar" href="https://melfedawy.vercel.app/ar/start/">
 <link rel="alternate" hreflang="x-default" href="https://melfedawy.vercel.app/start/">
 <meta property="og:type" content="website">
@@ -22,7 +22,7 @@
 <meta name="twitter:description" content="Before we talk, you can share a few details about your project. This helps me understand your situation and prepare suitable preliminary research before reaching out.">
 <meta name="twitter:image" content="../assets/img/mohamed-elfedawy.jpg">
 <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
-<link rel="preload" as="image" href="../assets/img/mohamed-elfedawy.jpg?v=20260920u">
+<link rel="preload" as="image" href="../assets/img/mohamed-elfedawy.jpg?v=20260920v">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Inter:wght@400;500;600&family=IBM+Plex+Sans+Arabic:wght@400;500;700&display=swap" rel="stylesheet">
@@ -618,7 +618,10 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,te
 <main id="main">
 <section class="page-hero"><div class="container"><p class="label">Start your project</p><h1>Discuss your project</h1><p class="lead">Before we talk, you can share a few details about your project. This helps me understand your situation and prepare suitable preliminary research before reaching out.</p><p class="iq-meta"><span>Only 2–3 minutes.</span><span>The questionnaire is optional — you can also contact me directly.</span></p></div></section>
 <section class="section"><div class="container intake-wrap">
-<form id="intakeForm" novalidate>
+<form id="intakeForm" novalidate action="https://formsubmit.co/m.elfedawy17@gmail.com" method="POST">
+<input type="hidden" name="_subject" value="New Project Inquiry (direct post)">
+<input type="hidden" name="_captcha" value="false">
+<input type="hidden" name="_template" value="table">
 <fieldset class="iq"><legend>01 — What is the nature of the project?</legend><label class="opt"><input type="radio" name="nature" value="New idea" required><span>New idea</span></label><label class="opt"><input type="radio" name="nature" value="Existing project" required><span>Existing project</span></label><label class="opt"><input type="radio" name="nature" value="Expansion or new market entry" required><span>Expansion or new market entry</span></label><label class="opt"><input type="radio" name="nature" value="New product or service" required><span>New product or service</span></label><label class="opt"><input type="radio" name="nature" value="Operations or sales improvement" required><span>Operations or sales improvement</span></label><label class="opt"><input type="radio" name="nature" value="Other" required><span>Other</span></label></fieldset>
 <fieldset class="iq"><legend>02 — What do you need? (multi-select)</legend><label class="opt"><input type="checkbox" name="needs" value="Feasibility study"><span>Feasibility study</span></label><label class="opt"><input type="checkbox" name="needs" value="Market research"><span>Market research</span></label><label class="opt"><input type="checkbox" name="needs" value="Competitor analysis"><span>Competitor analysis</span></label><label class="opt"><input type="checkbox" name="needs" value="Business plan"><span>Business plan</span></label><label class="opt"><input type="checkbox" name="needs" value="Growth strategy"><span>Growth strategy</span></label><label class="opt"><input type="checkbox" name="needs" value="Operations improvement"><span>Operations improvement</span></label><label class="opt"><input type="checkbox" name="needs" value="Product/service launch"><span>Product/service launch</span></label><label class="opt"><input type="checkbox" name="needs" value="Investment decision"><span>Investment decision</span></label><label class="opt"><input type="checkbox" name="needs" value="I need guidance"><span>I need guidance</span></label></fieldset>
 <fieldset class="iq" data-cond-on="2,3"><legend>03 — What stage is the project at?</legend><label class="opt"><input type="radio" name="stage" value="Just an idea" required><span>Just an idea</span></label><label class="opt"><input type="radio" name="stage" value="Ready to start" required><span>Ready to start</span></label><label class="opt"><input type="radio" name="stage" value="Running — slow or stalled growth" required><span>Running — slow or stalled growth</span></label><label class="opt"><input type="radio" name="stage" value="Running — want to expand" required><span>Running — want to expand</span></label></fieldset>
@@ -659,7 +662,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,te
   function summary(o){return String.fromCodePoint(0x1F514)+' New Project Inquiry\n'+(o.name||'')+' / '+(o.country||'')+'\nProject: '+(o.nature||'')+'\nNeed: '+(o.needs||'')+'\nStage: '+(o.stage||'')+'\nTimeline: '+(o.timeline||'');}
   form.addEventListener('submit',function(e){
     e.preventDefault();
-    if(!form.reportValidity())return;
+    if(!form.reportValidity()){var bad=form.querySelector(':invalid');if(bad){bad.scrollIntoView({block:'center',behavior:'smooth'});bad.focus();}return;}
     var o=collect(); if(!o.consent)return;
     o._subject='New Project Inquiry — '+(o.name||'')+' ('+(o.country||'')+')';
     o._captcha='false'; o._template='table';
@@ -884,7 +887,7 @@ var FORM_SENDING='Sending…';
   };
   var RAW = 'https://raw.githubusercontent.com/' + CMS.owner + '/' + CMS.repo + '/' + CMS.branch + '/';
   var root = document.body.getAttribute('data-root') || './';
-  var VER = '20260920u';
+  var VER = '20260920v';
   function vs(p){ return p + (p.indexOf('?') > -1 ? '' : '?v=' + VER); }
 
   function cb() { return '?t=' + Date.now(); }
