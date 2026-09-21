@@ -19,6 +19,7 @@ jobs:
           CBKEY: ${{ secrets.CB_APIKEY || secrets.CALLMBOTAPIKEY }}
           T: ${{ steps.topic.outputs.topic }}
         run: |
+          CBKEY=$(printf '%s' "$CBKEY" | tr -d '\n\r ')
           if [ -z "$CBKEY" ]; then echo "no CallMeBot key — skip"; exit 0; fi
           TEXT=$(python3 -c "import urllib.parse,os;print(urllib.parse.quote('📝 موضوع مقال اليوم: '+os.environ['T']+' — لوحة التحكم → المقالات → توليد مسودة اليوم'))")
           curl -s "https://api.callmebot.com/whatsapp.php?phone=%2B201146905560&apikey=$CBKEY&text=$TEXT"
