@@ -165,7 +165,7 @@ textarea{min-height:260px}
       <div class="card" id="dailyCard" style="margin-bottom:14px">
         <h3>⚙️ محرك المقال اليومي</h3>
         <p id="dailyInfo" style="color:var(--mut);font-size:13px;margin:6px 0"></p>
-        <img id="dThumb" alt="" hidden style="width:132px;height:69px;object-fit:cover;border-radius:8px;border:1px solid var(--line);margin-top:6px;display:block">
+        <img id="dThumb" alt="" hidden style="width:132px;height:69px;object-fit:cover;border-radius:8px;border:1px solid var(--line);margin-top:6px" onerror="this.hidden=true">
         <p style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn" id="dGen">توليد مسودة اليوم</button>
         <button class="btn ghost" id="dToEditor" hidden>إرسال إلى المحرر</button>
         <button class="btn ghost" id="dPosts" hidden>📣 توليد نصوص النشر</button> <button class="btn ghost" id="dCoverAi" hidden>🎨 غلاف AI (نانو بانانا)</button> <button class="btn ghost" id="dCover" hidden>🖼 غلاف نصي بالهوية</button> <button class="btn ghost" id="dRemind" hidden>⏰ تذكير واتساب بموضوع اليوم</button></p>
