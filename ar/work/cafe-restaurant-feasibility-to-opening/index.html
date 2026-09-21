@@ -9,9 +9,9 @@
 <meta name="author" content="Mohamed Elfedawy">
 <link rel="canonical" href="https://melfedawy.vercel.app/ar/work/cafe-restaurant-feasibility-to-opening/">
 <meta name="theme-color" content="#090C11">
-<meta name="mf-ver" content="20260920t">
-<link rel="alternate" hreflang="en" href="../../work/cafe-restaurant-feasibility-to-opening/">
-<link rel="alternate" hreflang="x-default" href="../../work/cafe-restaurant-feasibility-to-opening/">
+<meta name="mf-ver" content="20260920u">
+<link rel="alternate" hreflang="en" href="https://melfedawy.vercel.app/work/cafe-restaurant-feasibility-to-opening/">
+<link rel="alternate" hreflang="x-default" href="https://melfedawy.vercel.app/work/cafe-restaurant-feasibility-to-opening/">
 <meta property="og:type" content="website">
 <meta property="og:title" content="محمد الفداوي | مستشار أعمال واستراتيجي تطوير أعمال">
 <meta property="og:description" content="محمد الفداوي مستشار أعمال ومتخصص في تطوير الأعمال: دراسات الجدوى، أبحاث السوق، تخطيط الأعمال، استراتيجيات الشركات الناشئة والمنشآت الصغيرة والمتوسطة، العمليات، والنمو.">
@@ -22,7 +22,7 @@
 <meta name="twitter:description" content="محمد الفداوي مستشار أعمال ومتخصص في تطوير الأعمال: دراسات الجدوى، أبحاث السوق، تخطيط الأعمال، استراتيجيات الشركات الناشئة والمنشآت الصغيرة والمتوسطة، العمليات، والنمو.">
 <meta name="twitter:image" content="https://melfedawy.vercel.app/assets/img/mohamed-elfedawy.jpg">
 <link rel="icon" type="image/svg+xml" href="../../../assets/favicon.svg">
-<link rel="preload" as="image" href="../../../assets/img/mohamed-elfedawy.jpg?v=20260920t">
+<link rel="preload" as="image" href="../../../assets/img/mohamed-elfedawy.jpg?v=20260920u">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Inter:wght@400;500;600&family=IBM+Plex+Sans+Arabic:wght@400;500;700&display=swap" rel="stylesheet">
@@ -567,6 +567,10 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,te
 .iq-ok p{color:#A9B2BF;line-height:1.8}
 .prose{max-width:760px}
 .prose p{color:#A9B2BF;line-height:1.9;margin:0 0 16px}
+
+.iq-rec{margin-top:14px;border:1px solid rgba(255,143,143,.4);background:rgba(255,143,143,.06);border-radius:14px;padding:16px 18px}
+.iq-rec p{color:#F5F7FA;line-height:1.7;margin:0 0 10px}
+.iq-rec-btns{display:flex;gap:10px;flex-wrap:wrap}
 </style>
 <script>
 (function(){try{
@@ -626,7 +630,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,te
       <div class="flow"><span>الجدوى</span> <i>&#8594;</i> <span>الفكرة والمنيو</span> <i>&#8594;</i> <span>الفريق</span> <i>&#8594;</i> <span>الموردون</span> <i>&#8594;</i> <span>المطبخ والخدمة</span> <i>&#8594;</i> <span>الافتتاح</span></div>
     </div>
     <figure class="case-img">
-      <img src="../../../assets/img/case-cafe.jpg?v=20260920t" alt="صورة تحريرية توضيحية: كاونتر كافيه داكن مع فنجان قهوة وكارت منيو فارغ" loading="lazy">
+      <img src="../../../assets/img/case-cafe.jpg?v=20260920u" alt="صورة تحريرية توضيحية: كاونتر كافيه داكن مع فنجان قهوة وكارت منيو فارغ" loading="lazy">
       <figcaption>صورة توضيحية</figcaption>
     </figure>
   </div>
@@ -696,7 +700,9 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,te
     <button class="btn btn-ghost btn-sm" data-close>إغلاق</button>
   </div>
 </div>
-<script>/* Mohamed Elfedawy — site behaviour */
+<script>var FORM_ERR='تعذّر الإرسال التلقائي الآن — أعد المحاولة، أو تواصل مباشرة عبر بطاقة واتساب بالأعلى.';
+var FORM_SENDING='جارٍ الإرسال…';
+/* Mohamed Elfedawy — site behaviour */
 (function () {
   'use strict';
 
@@ -792,28 +798,34 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,te
     });
   }
 
-  /* contact form: Netlify Forms when hosted there, mailto fallback elsewhere */
+  /* contact form: FormSubmit ajax primary, visible status, WA-card fallback note */
   var form = document.querySelector('.con-form');
   if (form) {
     form.addEventListener('submit', function (e) {
       var onNetlify = /(^|\.)netlify\.app$|netlify\.com$/.test(location.hostname);
-      if (onNetlify) return; /* native POST → Netlify Forms */
+      if (onNetlify) return;
       e.preventDefault();
-      var d = new FormData(form);
-      var body =
-        'Name: ' + (d.get('name') || '') + '\n' +
-        'Email: ' + (d.get('email') || '') + '\n' +
-        'Phone / WhatsApp: ' + (d.get('phone') || '') + '\n' +
-        'Business / Project: ' + (d.get('business') || '') + '\n' +
-        'Project type: ' + (d.get('ptype') || '') + '\n' +
-        'Needs help with: ' + (d.get('need') || '') + '\n\n' +
-        (d.get('message') || '');
-      var mailto = 'mailto:' + (form.getAttribute('data-fallback-email') || '') +
-        '?subject=' + encodeURIComponent('Website inquiry — ' + (d.get('name') || '')) +
-        '&body=' + encodeURIComponent(body);
-      location.href = mailto;
+      var d = new FormData(form), o = {};
+      d.forEach(function (v, k) { o[k] = v; });
+      o._subject = 'Website inquiry — ' + (o.name || '');
+      o._captcha = 'false'; o._template = 'table';
+      var btn = form.querySelector('button[type=submit]') || form.querySelector('.btn');
       var note = form.querySelector('.form-note');
-      if (note) note.textContent = form.getAttribute('data-sent-note') || note.textContent;
+      var orig = btn ? btn.textContent : '';
+      if (btn) { btn.disabled = true; btn.textContent = FORM_SENDING; }
+      var ctl = new AbortController(); var to = setTimeout(function () { ctl.abort(); }, 12000);
+      fetch('https://formsubmit.co/ajax/m.elfedawy17@gmail.com', { method: 'POST', signal: ctl.signal,
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' }, body: JSON.stringify(o) })
+        .then(function (r) { clearTimeout(to); if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+        .then(function () {
+          if (note) { note.textContent = form.getAttribute('data-sent-note') || note.textContent; note.style.color = '#7ED39A'; }
+          form.reset();
+        })
+        .catch(function () {
+          clearTimeout(to);
+          if (note) { note.textContent = FORM_ERR; note.style.color = '#ff8f8f'; }
+        })
+        .then(function () { if (btn) { btn.disabled = false; btn.textContent = orig; } });
     });
   }
 })();
@@ -844,7 +856,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,te
   };
   var RAW = 'https://raw.githubusercontent.com/' + CMS.owner + '/' + CMS.repo + '/' + CMS.branch + '/';
   var root = document.body.getAttribute('data-root') || './';
-  var VER = '20260920t';
+  var VER = '20260920u';
   function vs(p){ return p + (p.indexOf('?') > -1 ? '' : '?v=' + VER); }
 
   function cb() { return '?t=' + Date.now(); }

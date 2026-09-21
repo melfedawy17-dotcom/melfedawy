@@ -9,9 +9,9 @@
 <meta name="author" content="Mohamed Elfedawy">
 <link rel="canonical" href="https://melfedawy.vercel.app/ar/start/">
 <meta name="theme-color" content="#090C11">
-<meta name="mf-ver" content="20260920t">
-<link rel="alternate" hreflang="en" href="../start/">
-<link rel="alternate" hreflang="x-default" href="../start/">
+<meta name="mf-ver" content="20260920u">
+<link rel="alternate" hreflang="en" href="https://melfedawy.vercel.app/start/">
+<link rel="alternate" hreflang="x-default" href="https://melfedawy.vercel.app/start/">
 <meta property="og:type" content="website">
 <meta property="og:title" content="ناقش مشروعك | محمد الفداوي">
 <meta property="og:description" content="قبل أن نتحدث، يمكنك مشاركة بعض التفاصيل عن مشروعك. هذه المعلومات تساعدني على فهم وضعك وإجراء بحث أولي مناسب قبل التواصل معك.">
@@ -22,7 +22,7 @@
 <meta name="twitter:description" content="قبل أن نتحدث، يمكنك مشاركة بعض التفاصيل عن مشروعك. هذه المعلومات تساعدني على فهم وضعك وإجراء بحث أولي مناسب قبل التواصل معك.">
 <meta name="twitter:image" content="../../assets/img/mohamed-elfedawy.jpg">
 <link rel="icon" type="image/svg+xml" href="../../assets/favicon.svg">
-<link rel="preload" as="image" href="../../assets/img/mohamed-elfedawy.jpg?v=20260920t">
+<link rel="preload" as="image" href="../../assets/img/mohamed-elfedawy.jpg?v=20260920u">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Inter:wght@400;500;600&family=IBM+Plex+Sans+Arabic:wght@400;500;700&display=swap" rel="stylesheet">
@@ -567,6 +567,10 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,te
 .iq-ok p{color:#A9B2BF;line-height:1.8}
 .prose{max-width:760px}
 .prose p{color:#A9B2BF;line-height:1.9;margin:0 0 16px}
+
+.iq-rec{margin-top:14px;border:1px solid rgba(255,143,143,.4);background:rgba(255,143,143,.06);border-radius:14px;padding:16px 18px}
+.iq-rec p{color:#F5F7FA;line-height:1.7;margin:0 0 10px}
+.iq-rec-btns{display:flex;gap:10px;flex-wrap:wrap}
 </style>
 <script>
 (function(){try{
@@ -635,14 +639,15 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,te
 <fieldset class="iq iq-magic"><legend>ما السؤال الذي تتمنى أن أساعدك في الإجابة عنه قبل أن نبدأ؟</legend><textarea name="magic_question" rows="3"></textarea></fieldset>
 <fieldset class="iq"><label class="iq-consent"><input type="checkbox" name="consent" required> <span>أوافق على استخدام المعلومات التي أقدمها لفهم احتياجات مشروعي والتواصل معي بخصوص طلب الاستشارة. <a href="../privacy/" target="_blank">سياسة الخصوصية</a></span></label></fieldset>
 <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off">
-<div class="iq-actions"><button type="submit" class="btn btn-gold">إرسال معلومات المشروع</button><span class="iq-err" id="iqErr" hidden>تعذّر الإرسال — أعد المحاولة، أو تواصل مباشرة من صفحة التواصل.</span></div>
+<div class="iq-actions"><button type="submit" class="btn btn-gold" data-label="إرسال معلومات المشروع" data-sending="جارٍ الإرسال…">إرسال معلومات المشروع</button><span class="iq-err" id="iqErr" hidden>تعذّر الإرسال — أعد المحاولة، أو تواصل مباشرة من صفحة التواصل.</span></div>
+<div class="iq-rec" id="iqRec" hidden><p>تعذّر الإرسال التلقائي الآن. رسالتك جاهزة — اختر قناة بديلة بضغطة واحدة:</p><p class="iq-rec-btns"><a id="recWa" class="btn btn-gold" href="#" target="_blank" rel="noopener">إرسال عبر واتساب</a> <a id="recMail" class="btn btn-ghost" href="#">إرسال عبر البريد</a></p></div>
 </form>
 <div class="iq-ok" id="iqOk" hidden><h2>تم استلام معلومات مشروعك بنجاح.</h2><p>سأراجع المعلومات الأساسية قبل التواصل معك، وقد أحتاج إلى بعض التفاصيل الإضافية لفهم المشروع بشكل أفضل.</p><p class="sum-cta"><a class="btn btn-ghost" href="../">العودة للرئيسية</a></p></div>
 <script>
 (function(){
   var FS='https://formsubmit.co/ajax/m.elfedawy17@gmail.com';
-  var CB_KEY=''; /* CallMeBot apikey — activate once from your WhatsApp, then paste here */
-  var CB_PHONE='+'+'201146905560';
+  var CB_KEY=''; /* CallMeBot apikey — paste here after one-time WhatsApp activation */
+  var WA_NUM='201146905560';
   var form=document.getElementById('intakeForm');
   var stageFs=form.querySelector('[data-cond-on]');
   if(stageFs){stageFs.addEventListener('change',function(e){
@@ -650,31 +655,33 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,te
     var box=document.getElementById('iqCond');
     if(box) box.hidden = on.indexOf(e.target.value)===-1;
   });}
+  function collect(){var d=new FormData(form),o={};d.forEach(function(v,k){if(k==='_honey')return;if(o[k]){o[k]+=' + '+v;}else{o[k]=v;}});return o;}
+  function summary(o){return String.fromCodePoint(0x1F514)+' New Project Inquiry\n'+(o.name||'')+' / '+(o.country||'')+'\nProject: '+(o.nature||'')+'\nNeed: '+(o.needs||'')+'\nStage: '+(o.stage||'')+'\nTimeline: '+(o.timeline||'');}
   form.addEventListener('submit',function(e){
     e.preventDefault();
-    if(!form.reportValidity()) return;
-    var d=new FormData(form), o={};
-    d.forEach(function(v,k){ if(k==='_honey')return; if(o[k]){o[k]+=' + '+v;} else {o[k]=v;} });
-    if(!o.consent) return;
+    if(!form.reportValidity())return;
+    var o=collect(); if(!o.consent)return;
     o._subject='New Project Inquiry — '+(o.name||'')+' ('+(o.country||'')+')';
     o._captcha='false'; o._template='table';
-    var btn=form.querySelector('button[type=submit]'); btn.disabled=true;
-    fetch(FS,{method:'POST',headers:{'Content-Type':'application/json',Accept:'application/json'},body:JSON.stringify(o)})
-    .then(function(r){ if(!r.ok) throw 0; return r.json(); })
-    .then(function(){
-      form.hidden=true; document.getElementById('iqOk').hidden=false;
-      window.scrollTo({top:0,behavior:'smooth'});
-      if(CB_KEY){
-        var t=String.fromCodePoint(0x1F514)+' New Project Inquiry
-'+(o.name||'')+' / '+(o.country||'')+'
-Project: '+(o.nature||'')+'
-Need: '+(o.needs||'')+'
-Stage: '+(o.stage||'')+'
-Timeline: '+(o.timeline||'');
-        new Image().src='https://api.callmebot.com/whatsapp.php?phone='+encodeURIComponent(CB_PHONE)+'&text='+encodeURIComponent(t)+'&apikey='+CB_KEY;
-      }
-    })
-    .catch(function(){ btn.disabled=false; document.getElementById('iqErr').hidden=false; });
+    var btn=form.querySelector('button[type=submit]');
+    var orig=btn.getAttribute('data-label')||btn.textContent;
+    btn.disabled=true; btn.textContent=btn.getAttribute('data-sending')||orig;
+    var ctl=new AbortController(); var to=setTimeout(function(){ctl.abort();},12000);
+    fetch(FS,{method:'POST',signal:ctl.signal,headers:{'Content-Type':'application/json','Accept':'application/json'},body:JSON.stringify(o)})
+      .then(function(r){clearTimeout(to); if(!r.ok)throw new Error('HTTP '+r.status); return r.json();})
+      .then(function(){
+        if(CB_KEY){ new Image().src='https://api.callmebot.com/whatsapp.php?phone=%2B'+WA_NUM+'&text='+encodeURIComponent(summary(o))+'&apikey='+CB_KEY; }
+        form.hidden=true; document.getElementById('iqOk').hidden=false; window.scrollTo({top:0,behavior:'smooth'});
+      })
+      .catch(function(){
+        clearTimeout(to); btn.disabled=false; btn.textContent=orig;
+        document.getElementById('iqErr').hidden=false;
+        var rec=document.getElementById('iqRec'); rec.hidden=false;
+        document.getElementById('recWa').href='https://wa.me/'+WA_NUM+'?text='+encodeURIComponent(summary(o));
+        var body=summary(o)+'\n\n'+Object.keys(o).filter(function(k){return k.charAt(0)!=='_';}).map(function(k){return k+': '+o[k];}).join('\n');
+        document.getElementById('recMail').href='mailto:m.elfedawy17@gmail.com?subject='+encodeURIComponent(o._subject)+'&body='+encodeURIComponent(body);
+        rec.scrollIntoView({behavior:'smooth',block:'center'});
+      });
   });
 })();
 </script>
@@ -721,7 +728,9 @@ Timeline: '+(o.timeline||'');
     <button class="btn btn-ghost btn-sm" data-close>إغلاق</button>
   </div>
 </div>
-<script>/* Mohamed Elfedawy — site behaviour */
+<script>var FORM_ERR='تعذّر الإرسال التلقائي الآن — أعد المحاولة، أو تواصل مباشرة عبر بطاقة واتساب بالأعلى.';
+var FORM_SENDING='جارٍ الإرسال…';
+/* Mohamed Elfedawy — site behaviour */
 (function () {
   'use strict';
 
@@ -817,28 +826,34 @@ Timeline: '+(o.timeline||'');
     });
   }
 
-  /* contact form: Netlify Forms when hosted there, mailto fallback elsewhere */
+  /* contact form: FormSubmit ajax primary, visible status, WA-card fallback note */
   var form = document.querySelector('.con-form');
   if (form) {
     form.addEventListener('submit', function (e) {
       var onNetlify = /(^|\.)netlify\.app$|netlify\.com$/.test(location.hostname);
-      if (onNetlify) return; /* native POST → Netlify Forms */
+      if (onNetlify) return;
       e.preventDefault();
-      var d = new FormData(form);
-      var body =
-        'Name: ' + (d.get('name') || '') + '\n' +
-        'Email: ' + (d.get('email') || '') + '\n' +
-        'Phone / WhatsApp: ' + (d.get('phone') || '') + '\n' +
-        'Business / Project: ' + (d.get('business') || '') + '\n' +
-        'Project type: ' + (d.get('ptype') || '') + '\n' +
-        'Needs help with: ' + (d.get('need') || '') + '\n\n' +
-        (d.get('message') || '');
-      var mailto = 'mailto:' + (form.getAttribute('data-fallback-email') || '') +
-        '?subject=' + encodeURIComponent('Website inquiry — ' + (d.get('name') || '')) +
-        '&body=' + encodeURIComponent(body);
-      location.href = mailto;
+      var d = new FormData(form), o = {};
+      d.forEach(function (v, k) { o[k] = v; });
+      o._subject = 'Website inquiry — ' + (o.name || '');
+      o._captcha = 'false'; o._template = 'table';
+      var btn = form.querySelector('button[type=submit]') || form.querySelector('.btn');
       var note = form.querySelector('.form-note');
-      if (note) note.textContent = form.getAttribute('data-sent-note') || note.textContent;
+      var orig = btn ? btn.textContent : '';
+      if (btn) { btn.disabled = true; btn.textContent = FORM_SENDING; }
+      var ctl = new AbortController(); var to = setTimeout(function () { ctl.abort(); }, 12000);
+      fetch('https://formsubmit.co/ajax/m.elfedawy17@gmail.com', { method: 'POST', signal: ctl.signal,
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' }, body: JSON.stringify(o) })
+        .then(function (r) { clearTimeout(to); if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+        .then(function () {
+          if (note) { note.textContent = form.getAttribute('data-sent-note') || note.textContent; note.style.color = '#7ED39A'; }
+          form.reset();
+        })
+        .catch(function () {
+          clearTimeout(to);
+          if (note) { note.textContent = FORM_ERR; note.style.color = '#ff8f8f'; }
+        })
+        .then(function () { if (btn) { btn.disabled = false; btn.textContent = orig; } });
     });
   }
 })();
@@ -869,7 +884,7 @@ Timeline: '+(o.timeline||'');
   };
   var RAW = 'https://raw.githubusercontent.com/' + CMS.owner + '/' + CMS.repo + '/' + CMS.branch + '/';
   var root = document.body.getAttribute('data-root') || './';
-  var VER = '20260920t';
+  var VER = '20260920u';
   function vs(p){ return p + (p.indexOf('?') > -1 ? '' : '?v=' + VER); }
 
   function cb() { return '?t=' + Date.now(); }

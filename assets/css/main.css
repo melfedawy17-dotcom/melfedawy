@@ -539,3 +539,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,te
 .iq-ok p{color:#A9B2BF;line-height:1.8}
 .prose{max-width:760px}
 .prose p{color:#A9B2BF;line-height:1.9;margin:0 0 16px}
+
+.iq-rec{margin-top:14px;border:1px solid rgba(255,143,143,.4);background:rgba(255,143,143,.06);border-radius:14px;padding:16px 18px}
+.iq-rec p{color:#F5F7FA;line-height:1.7;margin:0 0 10px}
+.iq-rec-btns{display:flex;gap:10px;flex-wrap:wrap}

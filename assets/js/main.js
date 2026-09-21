@@ -1,3 +1,5 @@
+var FORM_ERR='/*FORM_ERR*/';
+var FORM_SENDING='/*FORM_SENDING*/';
 /* Mohamed Elfedawy — site behaviour */
 (function () {
   'use strict';
@@ -94,28 +96,34 @@
     });
   }
 
-  /* contact form: Netlify Forms when hosted there, mailto fallback elsewhere */
+  /* contact form: FormSubmit ajax primary, visible status, WA-card fallback note */
   var form = document.querySelector('.con-form');
   if (form) {
     form.addEventListener('submit', function (e) {
       var onNetlify = /(^|\.)netlify\.app$|netlify\.com$/.test(location.hostname);
-      if (onNetlify) return; /* native POST → Netlify Forms */
+      if (onNetlify) return;
       e.preventDefault();
-      var d = new FormData(form);
-      var body =
-        'Name: ' + (d.get('name') || '') + '\n' +
-        'Email: ' + (d.get('email') || '') + '\n' +
-        'Phone / WhatsApp: ' + (d.get('phone') || '') + '\n' +
-        'Business / Project: ' + (d.get('business') || '') + '\n' +
-        'Project type: ' + (d.get('ptype') || '') + '\n' +
-        'Needs help with: ' + (d.get('need') || '') + '\n\n' +
-        (d.get('message') || '');
-      var mailto = 'mailto:' + (form.getAttribute('data-fallback-email') || '') +
-        '?subject=' + encodeURIComponent('Website inquiry — ' + (d.get('name') || '')) +
-        '&body=' + encodeURIComponent(body);
-      location.href = mailto;
+      var d = new FormData(form), o = {};
+      d.forEach(function (v, k) { o[k] = v; });
+      o._subject = 'Website inquiry — ' + (o.name || '');
+      o._captcha = 'false'; o._template = 'table';
+      var btn = form.querySelector('button[type=submit]') || form.querySelector('.btn');
       var note = form.querySelector('.form-note');
-      if (note) note.textContent = form.getAttribute('data-sent-note') || note.textContent;
+      var orig = btn ? btn.textContent : '';
+      if (btn) { btn.disabled = true; btn.textContent = FORM_SENDING; }
+      var ctl = new AbortController(); var to = setTimeout(function () { ctl.abort(); }, 12000);
+      fetch('https://formsubmit.co/ajax/m.elfedawy17@gmail.com', { method: 'POST', signal: ctl.signal,
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' }, body: JSON.stringify(o) })
+        .then(function (r) { clearTimeout(to); if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+        .then(function () {
+          if (note) { note.textContent = form.getAttribute('data-sent-note') || note.textContent; note.style.color = '#7ED39A'; }
+          form.reset();
+        })
+        .catch(function () {
+          clearTimeout(to);
+          if (note) { note.textContent = FORM_ERR; note.style.color = '#ff8f8f'; }
+        })
+        .then(function () { if (btn) { btn.disabled = false; btn.textContent = orig; } });
     });
   }
 })();
