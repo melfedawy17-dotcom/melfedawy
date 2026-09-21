@@ -1,0 +1,114 @@
+
+name: daily-auto-draft
+on:
+  schedule:
+    - cron: '0 5 * * *'   # 07:00 بتوقيت القاهرة
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  draft:
+    runs-on: ubuntu-latest
+    if: ${{ (secrets.GEMINI_KEY != '') || (secrets.GEMINIKEY != '') }}
+    steps:
+      - name: pick topic
+        id: t
+        run: |
+          IDX=$(( $(date -u +%s) / 86400 % 30 ))
+          DATA=$(curl -s https://raw.githubusercontent.com/${{ github.repository }}/main/assets/data/topics.json)
+          TOPIC=$(echo "$DATA" | python3 -c "import json,sys;print(json.load(sys.stdin)['topics'][$IDX]['t'])")
+          BANK=$(echo "$DATA" | python3 -c "import json,sys;print(json.load(sys.stdin)['topics'][$IDX]['img'])")
+          echo "topic=$TOPIC" >> "$GITHUB_OUTPUT"
+          echo "bank=$BANK" >> "$GITHUB_OUTPUT"
+          echo "slug=ai-$(date -u +%F)" >> "$GITHUB_OUTPUT"
+      - name: generate article + cover + commit draft
+        env:
+          GEMINI_KEY: ${{ secrets.GEMINI_KEY || secrets.GEMINIKEY }}
+          CB_APIKEY: ${{ secrets.CB_APIKEY || secrets.CALLMBOTAPIKEY }}
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          TOPIC: ${{ steps.t.outputs.topic }}
+          BANK: ${{ steps.t.outputs.bank }}
+          SLUG: ${{ steps.t.outputs.slug }}
+          AUTO_PUBLISH: ${{ secrets.AUTO_PUBLISH }}
+        run: |
+          python3 - <<'PY'
+          import json,os,urllib.request,base64,datetime,urllib.parse
+          key=os.environ['GEMINI_KEY']; topic=os.environ['TOPIC']; slug=os.environ['SLUG']
+          def gem(model,parts):
+              req=urllib.request.Request('https://generativelanguage.googleapis.com/v1beta/models/'+model+':generateContent?key='+key,
+                data=json.dumps({'contents':[{'parts':parts}]}).encode(),headers={'Content-Type':'application/json'})
+              return json.load(urllib.request.urlopen(req,timeout=120))
+          prompt=('أنت مساعد كتابة لمستشار أعمال مصري اسمه محمد الفداوي. اكتب مقالًا تعليميًا بالعربية (٤٥–٦٠٠ كلمة) بعنوان: '+topic+
+            ' . قواعد صارمة: لا تذكر عملاء بأسمائهم، لا أرقام إيرادات أو نسب نجاح مخترعة، لا شهادات أو جوائز، لا وعود بنتائج مضمونة؛ أمثلة عامة فقط. '
+            'أسلوب تنفيذي مباشر، فقرات قصيرة، عناوين فرعية، وخاتمة فيها دعوة لمناقشة المشروع عبر الموقع. أعد JSON فقط: {"title":..,"excerpt":..,"body":..} حيث body بصيغة Markdown.')
+          def pick_model():
+              try:
+                  rq=urllib.request.Request('https://generativelanguage.googleapis.com/v1beta/models?pageSize=200&key='+key)
+                  ms=json.load(urllib.request.urlopen(rq,timeout=60)).get('models',[])
+                  names=[m['name'].replace('models/','') for m in ms]
+                  names=[n for n in names if ('flash' in n or 'pro' in n) and not any(x in n for x in ['image','audio','video','tts','embedding','think'])]
+                  for p in ['gemini-flash-latest','gemini-pro-latest']:
+                      if p in names: return p
+                  for n in names:
+                      if 'flash' in n: return n
+                  return names[0] if names else 'gemini-flash-latest'
+              except Exception as e:
+                  print('model list fail',e); return 'gemini-flash-latest'
+          j=None
+          for tm in [pick_model(),'gemini-flash-latest']:
+              try:
+                  j=gem(tm,[{'text':prompt}]); break
+              except Exception as e: print('text model fail',tm,e)
+          if j is None: raise SystemExit('no text model available')
+          txt=j['candidates'][0]['content']['parts'][0]['text']
+          a=txt.find('{'); b=txt.rfind('}')
+          try: art=json.loads(txt[a:b+1])
+          except Exception: art={'title':topic,'excerpt':'مقال تعليمي عملي: '+topic,'body':txt}
+          cover=os.environ['BANK']; img_b64=None
+          IPROMPT='Editorial business illustration for an article titled: '+topic+'. Dark navy background #090C11, subtle gold #F3BD36 accent light, minimal executive-editorial style, abstract objects only, NO text, NO logos, NO recognizable faces, 16:9.'
+          def gen_image():
+              for m in ['gemini-2.5-flash-image','v1alpha|gemini-2.5-flash-image','gemini-2.5-flash-image-preview']:
+                  ver,mm=(m.split('|')+[None])[:2] if '|' in m else ('v1beta',m)
+                  try:
+                      r=gem2(ver,mm,[{'text':IPROMPT}])
+                      for p in r['candidates'][0]['content']['parts']:
+                          if 'inlineData' in p: return p['inlineData']['data']
+                  except Exception as e: print('img try fail',mm,e)
+              try:
+                  req=urllib.request.Request('https://generativelanguage.googleapis.com/v1beta/models/imagen-4.0-generate-001:predict?key='+key,
+                    data=json.dumps({'instances':[{'prompt':IPROMPT}],'parameters':{'aspectRatio':'16:9'}}).encode(),headers={'Content-Type':'application/json'})
+                  r=json.load(urllib.request.urlopen(req,timeout=120))
+                  return r['predictions'][0]['bytesBase64Encoded']
+              except Exception as e: print('imagen fail',e)
+              return None
+          def gem2(ver,model,parts):
+              req=urllib.request.Request('https://generativelanguage.googleapis.com/'+ver+'/models/'+model+':generateContent?key='+key,
+                data=json.dumps({'contents':[{'parts':parts}]}).encode(),headers={'Content-Type':'application/json'})
+              return json.load(urllib.request.urlopen(req,timeout=120))
+          img_b64=gen_image()
+          def put(path,b64,msg):
+              cur=None
+              r=urllib.request.Request('https://api.github.com/repos/'+os.environ['REPO']+'/contents/'+path,headers={'Authorization':'Bearer '+os.environ['GH_TOKEN'],'Accept':'application/vnd.github+json'})
+              try:
+                  cur=json.load(urllib.request.urlopen(r))
+              except Exception: pass
+              body={'message':msg,'content':b64}
+              if cur and 'sha' in cur: body['sha']=cur['sha']
+              rq=urllib.request.Request('https://api.github.com/repos/'+os.environ['REPO']+'/contents/'+path,data=json.dumps(body).encode(),method='PUT',headers={'Authorization':'Bearer '+os.environ['GH_TOKEN'],'Content-Type':'application/json'})
+              return json.load(urllib.request.urlopen(rq))
+          if img_b64:
+              put('assets/img/uploads/cover-'+slug+'.webp',img_b64,'ai cover: '+slug)
+              cover='assets/img/uploads/cover-'+slug+'.webp'
+          put('content/posts/'+slug+'.md',base64.b64encode(art['body'].encode()).decode(),'ai article: '+slug)
+          raw=urllib.request.urlopen('https://raw.githubusercontent.com/'+os.environ['REPO']+'/main/content/posts.json').read()
+          posts=json.loads(raw)
+          posts=[p for p in posts if p.get('slug')!=slug]
+          status='published' if os.environ.get('AUTO_PUBLISH','').lower()=='true' else 'draft'
+          posts.append({'slug':slug,'title':art['title'],'excerpt':art['excerpt'],'date':datetime.date.today().isoformat(),'lang':'ar','status':status,'cover':cover})
+          put('content/posts.json',base64.b64encode(json.dumps(posts,ensure_ascii=False,indent=1).encode()).decode(),'ai index: '+slug)
+          if os.environ.get('CB_APIKEY'):
+              msg='✍️ مسودة مقال اليوم جاهزة للمراجعة: '+art['title']+' — لوحة التحكم → المقالات → نشر بضغطة'
+              urllib.request.urlopen('https://api.callmebot.com/whatsapp.php?phone=%2B201146905560&apikey='+os.environ['CB_APIKEY']+'&text='+urllib.parse.quote(msg))
+          print('draft committed:',slug,status)
+          PY
