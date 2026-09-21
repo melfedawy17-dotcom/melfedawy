@@ -9,7 +9,7 @@
 <meta name="author" content="Mohamed Elfedawy">
 <link rel="canonical" href="https://melfedawy.vercel.app/start/">
 <meta name="theme-color" content="#090C11">
-<meta name="mf-ver" content="20260920v">
+<meta name="mf-ver" content="20260920w">
 <link rel="alternate" hreflang="ar" href="https://melfedawy.vercel.app/ar/start/">
 <link rel="alternate" hreflang="x-default" href="https://melfedawy.vercel.app/start/">
 <meta property="og:type" content="website">
@@ -22,7 +22,7 @@
 <meta name="twitter:description" content="Before we talk, you can share a few details about your project. This helps me understand your situation and prepare suitable preliminary research before reaching out.">
 <meta name="twitter:image" content="../assets/img/mohamed-elfedawy.jpg">
 <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
-<link rel="preload" as="image" href="../assets/img/mohamed-elfedawy.jpg?v=20260920v">
+<link rel="preload" as="image" href="../assets/img/mohamed-elfedawy.jpg?v=20260920w">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Inter:wght@400;500;600&family=IBM+Plex+Sans+Arabic:wght@400;500;700&display=swap" rel="stylesheet">
@@ -618,7 +618,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,te
 <main id="main">
 <section class="page-hero"><div class="container"><p class="label">Start your project</p><h1>Discuss your project</h1><p class="lead">Before we talk, you can share a few details about your project. This helps me understand your situation and prepare suitable preliminary research before reaching out.</p><p class="iq-meta"><span>Only 2–3 minutes.</span><span>The questionnaire is optional — you can also contact me directly.</span></p></div></section>
 <section class="section"><div class="container intake-wrap">
-<form id="intakeForm" novalidate action="https://formsubmit.co/m.elfedawy17@gmail.com" method="POST">
+<form id="intakeForm" novalidate action="https://formsubmit.co/m.elfedawy17@gmail.com" method="POST" onsubmit="return (window.__iqSubmit ? window.__iqSubmit(event) : false);">
 <input type="hidden" name="_subject" value="New Project Inquiry (direct post)">
 <input type="hidden" name="_captcha" value="false">
 <input type="hidden" name="_template" value="table">
@@ -643,6 +643,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,te
 <fieldset class="iq"><label class="iq-consent"><input type="checkbox" name="consent" required> <span>I agree that the information I provide may be used to understand my project needs and to contact me regarding this consulting request. <a href="../privacy/" target="_blank">Privacy Policy</a></span></label></fieldset>
 <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off">
 <div class="iq-actions"><button type="submit" class="btn btn-gold" data-label="Send project details" data-sending="Sending…">Send project details</button><span class="iq-err" id="iqErr" hidden>Sending failed — please retry, or contact me directly from the contact section.</span></div>
+<div class="iq-rec" id="iqAct" hidden style="border-color:rgba(243,189,54,.5);background:rgba(243,189,54,.07)"><p>The email service is not activated yet: the activation link was sent to the consultant inbox and not clicked yet. Until then, use a fallback channel below — your message will still arrive.</p></div>
 <div class="iq-rec" id="iqRec" hidden><p>Automatic sending failed right now. Your message is ready — pick a fallback channel with one click:</p><p class="iq-rec-btns"><a id="recWa" class="btn btn-gold" href="#" target="_blank" rel="noopener">Send via WhatsApp</a> <a id="recMail" class="btn btn-ghost" href="#">Send via Email</a></p></div>
 </form>
 <div class="iq-ok" id="iqOk" hidden><h2>Your project details were received successfully.</h2><p>I will review the key information before contacting you, and I may need a few extra details to understand the project better.</p><p class="sum-cta"><a class="btn btn-ghost" href="../">Back to home</a></p></div>
@@ -660,9 +661,9 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,te
   });}
   function collect(){var d=new FormData(form),o={};d.forEach(function(v,k){if(k==='_honey')return;if(o[k]){o[k]+=' + '+v;}else{o[k]=v;}});return o;}
   function summary(o){return String.fromCodePoint(0x1F514)+' New Project Inquiry\n'+(o.name||'')+' / '+(o.country||'')+'\nProject: '+(o.nature||'')+'\nNeed: '+(o.needs||'')+'\nStage: '+(o.stage||'')+'\nTimeline: '+(o.timeline||'');}
-  form.addEventListener('submit',function(e){
+  window.__iqSubmit=function(e){
     e.preventDefault();
-    if(!form.reportValidity()){var bad=form.querySelector(':invalid');if(bad){bad.scrollIntoView({block:'center',behavior:'smooth'});bad.focus();}return;}
+    if(!form.reportValidity()){var bad=form.querySelector(':invalid');if(bad){if(bad.scrollIntoView)bad.scrollIntoView({block:'center',behavior:'smooth'});bad.focus();}return false;}
     var o=collect(); if(!o.consent)return;
     o._subject='New Project Inquiry — '+(o.name||'')+' ('+(o.country||'')+')';
     o._captcha='false'; o._template='table';
@@ -672,20 +673,23 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,te
     var ctl=new AbortController(); var to=setTimeout(function(){ctl.abort();},12000);
     fetch(FS,{method:'POST',signal:ctl.signal,headers:{'Content-Type':'application/json','Accept':'application/json'},body:JSON.stringify(o)})
       .then(function(r){clearTimeout(to); if(!r.ok)throw new Error('HTTP '+r.status); return r.json();})
-      .then(function(){
+      .then(function(j){
+        if(j && (j.success===false || j.success==='false')) throw new Error(j.message || 'not delivered');
         if(CB_KEY){ new Image().src='https://api.callmebot.com/whatsapp.php?phone=%2B'+WA_NUM+'&text='+encodeURIComponent(summary(o))+'&apikey='+CB_KEY; }
         form.hidden=true; document.getElementById('iqOk').hidden=false; window.scrollTo({top:0,behavior:'smooth'});
       })
-      .catch(function(){
+      .catch(function(err){
         clearTimeout(to); btn.disabled=false; btn.textContent=orig;
-        document.getElementById('iqErr').hidden=false;
+        if(err && /activation/i.test(err.message||'')){document.getElementById('iqAct').hidden=false;}
+        else{document.getElementById('iqErr').hidden=false;}
         var rec=document.getElementById('iqRec'); rec.hidden=false;
         document.getElementById('recWa').href='https://wa.me/'+WA_NUM+'?text='+encodeURIComponent(summary(o));
         var body=summary(o)+'\n\n'+Object.keys(o).filter(function(k){return k.charAt(0)!=='_';}).map(function(k){return k+': '+o[k];}).join('\n');
         document.getElementById('recMail').href='mailto:m.elfedawy17@gmail.com?subject='+encodeURIComponent(o._subject)+'&body='+encodeURIComponent(body);
-        rec.scrollIntoView({behavior:'smooth',block:'center'});
+        if(rec.scrollIntoView)rec.scrollIntoView({behavior:'smooth',block:'center'});
       });
-  });
+    return false;
+  };
 })();
 </script>
 </div></section>
@@ -887,7 +891,7 @@ var FORM_SENDING='Sending…';
   };
   var RAW = 'https://raw.githubusercontent.com/' + CMS.owner + '/' + CMS.repo + '/' + CMS.branch + '/';
   var root = document.body.getAttribute('data-root') || './';
-  var VER = '20260920v';
+  var VER = '20260920w';
   function vs(p){ return p + (p.indexOf('?') > -1 ? '' : '?v=' + VER); }
 
   function cb() { return '?t=' + Date.now(); }
