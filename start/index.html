@@ -9,7 +9,7 @@
 <meta name="author" content="Mohamed Elfedawy">
 <link rel="canonical" href="https://melfedawy.vercel.app/start/">
 <meta name="theme-color" content="#090C11">
-<meta name="mf-ver" content="20260920x">
+<meta name="mf-ver" content="20260920y">
 <link rel="alternate" hreflang="ar" href="https://melfedawy.vercel.app/ar/start/">
 <link rel="alternate" hreflang="x-default" href="https://melfedawy.vercel.app/start/">
 <meta property="og:type" content="website">
@@ -22,7 +22,6 @@
 <meta name="twitter:description" content="Before we talk, you can share a few details about your project. This helps me understand your situation and prepare suitable preliminary research before reaching out.">
 <meta name="twitter:image" content="../assets/img/mohamed-elfedawy.jpg">
 <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
-<link rel="preload" as="image" href="../assets/img/mohamed-elfedawy.jpg?v=20260920x">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Inter:wght@400;500;600&family=IBM+Plex+Sans+Arabic:wght@400;500;700&display=swap" rel="stylesheet">
@@ -648,7 +647,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,te
 <div class="iq-rec" id="iqWatch" hidden style="border-color:rgba(243,189,54,.5);background:rgba(243,189,54,.07)"><p>The page script did not fully load on your device — emergency mode active: pressing send will take you directly to the email service to deliver your message.</p></div>
 <div class="iq-rec" id="iqAct" hidden style="border-color:rgba(243,189,54,.5);background:rgba(243,189,54,.07)"><p>The email service is not activated yet: the activation link was sent to the consultant inbox and not clicked yet. Until then, use a fallback channel below — your message will still arrive.</p></div>
 <div class="iq-rec" id="iqRec" hidden><p>Automatic sending failed right now. Your message is ready — pick a fallback channel with one click:</p><p class="iq-rec-btns"><a id="recWa" class="btn btn-gold" href="#" target="_blank" rel="noopener">Send via WhatsApp</a> <a id="recMail" class="btn btn-ghost" href="#">Send via Email</a></p></div>
-<p class="iq-ver">Page version: 20260920x</p>
+<p class="iq-ver">Page version: 20260920y</p>
 </form>
 <div class="iq-ok" id="iqOk" hidden><h2>Your project details were received successfully.</h2><p>I will review the key information before contacting you, and I may need a few extra details to understand the project better.</p><p class="sum-cta"><a class="btn btn-ghost" href="../">Back to home</a></p></div>
 <script>
@@ -657,16 +656,14 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,te
   var CB_KEY=''; /* CallMeBot apikey — paste here after one-time WhatsApp activation */
   var WA_NUM='201146905560';
   var form=document.getElementById('intakeForm');
+  function setCond(on){var box=document.getElementById('iqCond');if(!box)return;box.hidden=!on;var ins=box.querySelectorAll('input');for(var k=0;k<ins.length;k++){ins[k].disabled=!on;}}
   var stageFs=form.querySelector('[data-cond-on]');
-  if(stageFs){stageFs.addEventListener('change',function(e){
-    var on=(stageFs.getAttribute('data-cond-on')||'').split(',');
-    var box=document.getElementById('iqCond');
-    if(box) box.hidden = on.indexOf(e.target.value)===-1;
-  });}
+  if(stageFs){setCond(false);stageFs.addEventListener('change',function(e){var on=(stageFs.getAttribute('data-cond-on')||'').split(',');setCond(on.indexOf(e.target.value)!==-1);});}
   function collect(){var d=new FormData(form),o={};d.forEach(function(v,k){if(k==='_honey')return;if(o[k]){o[k]+=' + '+v;}else{o[k]=v;}});return o;}
   function summary(o){return String.fromCodePoint(0x1F514)+' New Project Inquiry\n'+(o.name||'')+' / '+(o.country||'')+'\nProject: '+(o.nature||'')+'\nNeed: '+(o.needs||'')+'\nStage: '+(o.stage||'')+'\nTimeline: '+(o.timeline||'');}
   window.__iqSubmit=function(e){
     e.preventDefault();
+    if(stageFs){var on2=(stageFs.getAttribute('data-cond-on')||'').split(',');var cur=stageFs.querySelector('input:checked');setCond(cur?on2.indexOf(cur.value)!==-1:false);}
     if(!form.reportValidity()){var bad=form.querySelector(':invalid');if(bad){if(bad.scrollIntoView)bad.scrollIntoView({block:'center',behavior:'smooth'});bad.focus();}return false;}
     var o=collect(); if(!o.consent)return;
     o._subject='New Project Inquiry — '+(o.name||'')+' ('+(o.country||'')+')';
@@ -904,7 +901,7 @@ var FORM_SENDING='Sending…';
   };
   var RAW = 'https://raw.githubusercontent.com/' + CMS.owner + '/' + CMS.repo + '/' + CMS.branch + '/';
   var root = document.body.getAttribute('data-root') || './';
-  var VER = '20260920x';
+  var VER = '20260920y';
   function vs(p){ return p + (p.indexOf('?') > -1 ? '' : '?v=' + VER); }
 
   function cb() { return '?t=' + Date.now(); }

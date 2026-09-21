@@ -10,7 +10,7 @@
   };
   var RAW = 'https://raw.githubusercontent.com/' + CMS.owner + '/' + CMS.repo + '/' + CMS.branch + '/';
   var root = document.body.getAttribute('data-root') || './';
-  var VER = '20260920x';
+  var VER = '20260920y';
   function vs(p){ return p + (p.indexOf('?') > -1 ? '' : '?v=' + VER); }
 
   function cb() { return '?t=' + Date.now(); }
