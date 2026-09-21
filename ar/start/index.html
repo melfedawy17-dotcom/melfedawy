@@ -9,7 +9,7 @@
 <meta name="author" content="Mohamed Elfedawy">
 <link rel="canonical" href="https://melfedawy.vercel.app/ar/start/">
 <meta name="theme-color" content="#090C11">
-<meta name="mf-ver" content="20260920z">
+<meta name="mf-ver" content="20260921a">
 <link rel="alternate" hreflang="en" href="https://melfedawy.vercel.app/start/">
 <link rel="alternate" hreflang="x-default" href="https://melfedawy.vercel.app/start/">
 <meta property="og:type" content="website">
@@ -647,7 +647,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,te
 <div class="iq-rec" id="iqWatch" hidden style="border-color:rgba(243,189,54,.5);background:rgba(243,189,54,.07)"><p>سكربت الصفحة لم يكتمل تحميله على جهازك — فُعّل الوضع الاضطراري: الضغط على إرسال سينقلك مباشرة إلى خدمة البريد لإرسال رسالتك.</p></div>
 <div class="iq-rec" id="iqAct" hidden style="border-color:rgba(243,189,54,.5);background:rgba(243,189,54,.07)"><p>خدمة البريد لم تُفعَّل بعد: رابط التفعيل أُرسل إلى بريد المستشار ولم يُنقر بعد. حتى يتم النقر عليه، استخدم قناة بديلة بالأسفل — رسالتك ستصل بالتأكيد.</p></div>
 <div class="iq-rec" id="iqRec" hidden><p>تعذّر الإرسال التلقائي الآن. رسالتك جاهزة — اختر قناة بديلة بضغطة واحدة:</p><p class="iq-rec-btns"><a id="recWa" class="btn btn-gold" href="#" target="_blank" rel="noopener">إرسال عبر واتساب</a> <a id="recMail" class="btn btn-ghost" href="#">إرسال عبر البريد</a></p></div>
-<p class="iq-ver">إصدار الصفحة: 20260920z</p>
+<p class="iq-ver">إصدار الصفحة: 20260921a</p>
 </form>
 <div class="iq-ok" id="iqOk" hidden><h2>تم استلام معلومات مشروعك بنجاح.</h2><p>سأراجع المعلومات الأساسية قبل التواصل معك، وقد أحتاج إلى بعض التفاصيل الإضافية لفهم المشروع بشكل أفضل.</p><p class="sum-cta"><a class="btn btn-ghost" href="../">العودة للرئيسية</a></p></div>
 <script>
@@ -665,7 +665,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,te
   function sending(on){var b=form.querySelector('button[type=submit]');if(!b)return;if(on){ORIG=b.getAttribute('data-label')||b.textContent;b.disabled=true;b.textContent=b.getAttribute('data-sending')||ORIG;}else{b.disabled=false;b.textContent=ORIG;}}
   function okDone(o){sending(false);if(CB_KEY){new Image().src='https://api.callmebot.com/whatsapp.php?phone=%2B'+WA_NUM+'&text='+encodeURIComponent(summary(o))+'&apikey='+CB_KEY;}form.hidden=true;document.getElementById('iqOk').hidden=false;if(window.scrollTo)window.scrollTo({top:0,behavior:'smooth'});}
   function recDone(o,activation){sending(false);form.target='';if(activation){document.getElementById('iqAct').hidden=false;}else{document.getElementById('iqErr').hidden=false;}var rec=document.getElementById('iqRec');rec.hidden=false;document.getElementById('recWa').href='https://wa.me/'+WA_NUM+'?text='+encodeURIComponent(summary(o));var body=summary(o)+'\n\n'+Object.keys(o).filter(function(k){return k.charAt(0)!=='_';}).map(function(k){return k+': '+o[k];}).join('\n');document.getElementById('recMail').href='mailto:m.elfedawy17@gmail.com?subject='+encodeURIComponent(o._subject)+'&body='+encodeURIComponent(body);if(rec.scrollIntoView)rec.scrollIntoView({behavior:'smooth',block:'center'});}
-  function iframeSend(o){var ifr=document.createElement('iframe');ifr.name='iqFrame';ifr.style.cssText='position:absolute;width:0;height:0;border:0;left:-9999px';document.body.appendChild(ifr);form.target='iqFrame';var done=false;var t=setTimeout(function(){if(done)return;done=true;recDone(o,false);},10000);ifr.onload=function(){if(done)return;try{var u=String(ifr.contentWindow.location.href);if(u==='about:blank'||u===''){return;}}catch(_e){}done=true;clearTimeout(t);okDone(o);};form.submit();}
+  function iframeSend(o){var ifr=document.createElement('iframe');ifr.name='iqFrame';ifr.style.cssText='position:absolute;width:0;height:0;border:0;left:-9999px';document.body.appendChild(ifr);form.target='iqFrame';var done=false;var t=setTimeout(function(){if(done)return;done=true;recDone(o,false);},25000);ifr.onload=function(){if(done)return;try{var u=String(ifr.contentWindow.location.href);if(u==='about:blank'||u===''){return;}}catch(_e){}done=true;clearTimeout(t);okDone(o);};form.submit();}
   window.__iqSubmit=function(e){
     e.preventDefault();
     if(stageFs){var on2=(stageFs.getAttribute('data-cond-on')||'').split(',');var cur=stageFs.querySelector('input:checked');setCond(cur?on2.indexOf(cur.value)!==-1:false);}
@@ -675,7 +675,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,te
     o._captcha='false'; o._template='table';
     sending(true);
     var fd=new FormData();Object.keys(o).forEach(function(k){fd.append(k,o[k]);});
-    var ctl=new AbortController(); var to=setTimeout(function(){ctl.abort();},15000);
+    var ctl=new AbortController(); var to=setTimeout(function(){ctl.abort();},8000);
     fetch(FS,{method:'POST',signal:ctl.signal,headers:{'Accept':'application/json'},body:fd})
       .then(function(r){clearTimeout(to); if(!r.ok)throw new Error('HTTP '+r.status); return r.json();})
       .then(function(j){
@@ -899,7 +899,7 @@ var FORM_SENDING='جارٍ الإرسال…';
   };
   var RAW = 'https://raw.githubusercontent.com/' + CMS.owner + '/' + CMS.repo + '/' + CMS.branch + '/';
   var root = document.body.getAttribute('data-root') || './';
-  var VER = '20260920z';
+  var VER = '20260921a';
   function vs(p){ return p + (p.indexOf('?') > -1 ? '' : '?v=' + VER); }
 
   function cb() { return '?t=' + Date.now(); }
