@@ -979,6 +979,10 @@ var FORM_SENDING='Sending…';
           '<h1>' + esc(p.title) + '</h1>' +
           (p.cover ? '<img class="article-cover" src="' + root + vs(p.cover) + '" alt="">' : '') +
           md2html(md) + share;
+        var ogi=document.querySelector('meta[property="og:image"]');if(ogi&&p.cover){ogi.setAttribute('content', location.origin+'/'+p.cover);}
+        var ogt=document.querySelector('meta[property="og:title"]');if(ogt){ogt.setAttribute('content', p.title);}
+        var ogd=document.querySelector('meta[property="og:description"]');if(ogd&&p.excerpt){ogd.setAttribute('content', p.excerpt);}
+        document.title=p.title+' | '+(p.lang==='ar'?'\u0645\u062d\u0645\u062f \u0627\u0644\u0641\u062f\u0627\u0648\u064a':'Mohamed Elfedawy');
       }).catch(function () { view.innerHTML = '<p class="err-note">Could not load the article body.</p>'; });
     }).catch(function () { view.innerHTML = '<p class="err-note">Could not load articles index.</p>'; });
   }
