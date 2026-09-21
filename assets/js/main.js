@@ -119,3 +119,17 @@
     });
   }
 })();
+
+
+/* v18: direct-connect contact icons (numbers never rendered as text) */
+(function () {
+  var rev = function (s) { return s.split('').reverse().join(''); };
+  document.addEventListener('click', function (e) {
+    var a = e.target.closest ? e.target.closest('[data-wa],[data-tel],[data-mail]') : null;
+    if (!a) return;
+    e.preventDefault();
+    if (a.getAttribute('data-wa')) location.href = 'https://wa.me/' + rev(a.getAttribute('data-wa'));
+    else if (a.getAttribute('data-tel')) location.href = 'tel:' + rev(a.getAttribute('data-tel'));
+    else if (a.getAttribute('data-mail')) location.href = 'mailto:' + rev(a.getAttribute('data-mail'));
+  });
+})();
