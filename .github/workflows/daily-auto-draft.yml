@@ -109,8 +109,13 @@ jobs:
           status='published' if os.environ.get('AUTO_PUBLISH','').lower()=='true' else 'draft'
           posts.append({'slug':slug,'title':art['title'],'excerpt':art['excerpt'],'date':datetime.date.today().isoformat(),'lang':'ar','status':status,'cover':cover})
           put('content/posts.json',base64.b64encode(json.dumps(posts,ensure_ascii=False,indent=1).encode()).decode(),'ai index: '+slug)
-          if os.environ.get('CB_APIKEY'):
-              msg='✍️ مسودة مقال اليوم جاهزة للمراجعة: '+art['title']+' — لوحة التحكم → المقالات → نشر بضغطة'
-              urllib.request.urlopen('https://api.callmebot.com/whatsapp.php?phone=%2B201146905560&apikey='+os.environ['CB_APIKEY']+'&text='+urllib.parse.quote(msg))
+          cb=os.environ.get('CB_APIKEY','').strip()
+          if cb:
+              try:
+                  msg='✍️ مسودة مقال اليوم جاهزة للمراجعة: '+art['title']+' — لوحة التحكم → المقالات → نشر بضغطة'
+                  msg=' '.join(msg.split())
+                  urllib.request.urlopen('https://api.callmebot.com/whatsapp.php?phone=%2B201146905560&apikey='+cb+'&text='+urllib.parse.quote(msg,safe=''))
+              except Exception as e:
+                  print('WA ping failed (draft already committed):',e)
           print('draft committed:',slug,status)
           PY
