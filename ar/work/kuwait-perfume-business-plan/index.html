@@ -597,7 +597,10 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,te
 }catch(e){}})();
 </script>
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"Person","name":"Mohamed Elfedawy","alternateName":"محمد الفداوي","url":"https://melfedawy.vercel.app/","jobTitle":"Business Consultant & Business Development Strategist","areaServed":"Egypt","knowsLanguage":["ar","en"],"knowsAbout":["Feasibility Studies","Business Plans","Market Research","Business Development","Operations Management","Project Management"],"sameAs":["https://www.linkedin.com/in/mohamed-elfedawy-3b3b94b0/","https://www.facebook.com/share/1HVUxeWwFy/"]}
+{"@context":"https://schema.org","@graph":[
+{"@type":"Person","@id":"../../../#person","name":"Mohamed Elfedawy","alternateName":"محمد الفداوي","url":"../../../","jobTitle":"Business Consultant & Business Development Strategist","description":"Business consultant specializing in feasibility studies, market research, business plans, business development, and production & operations management. Selected experience across Egypt, Saudi Arabia, and Kuwait in food & natural-products manufacturing, SMEs, and online education services.","areaServed":["Egypt","Saudi Arabia","Kuwait"],"knowsLanguage":["ar","en"],"knowsAbout":["Feasibility Studies","Business Consulting","Business Development","Market Research","Business Plans","Production & Operations Management","Operations Management","Project Management","Sales Planning","Pricing Strategy","Market Entry","دراسات الجدوى","استشارات الأعمال","تطوير الأعمال","بحوث السوق","خطط الأعمال","الإدارة والإنتاج","إدارة العمليات","تخطيط المبيعات","التسعير","التوسع الجغرافي"],"sameAs":["https://www.linkedin.com/in/mohamed-elfedawy-3b3b94b0/","https://www.facebook.com/share/1HVUxeWwFy/"]},
+{"@type":"ProfessionalService","@id":"../../../#service","name":"Mohamed Elfedawy — Business Consulting","alternateName":"محمد الفداوي — استشارات أعمال","url":"../../../","provider":{"@id":"../../../#person"},"description":"Feasibility studies, market research, business plans, business development, operations & production management, and sales planning for SMEs and startups.","serviceType":["Feasibility Studies","Market Research","Business Plans","Business Development","Operations & Production Management","Sales Planning"],"areaServed":["Egypt","Saudi Arabia","Kuwait"],"knowsLanguage":["ar","en"]},
+{"@type":"WebSite","@id":"../../../#site","name":"Mohamed Elfedawy — Business Consulting","alternateName":"محمد الفداوي — استشارات أعمال","url":"../../../","inLanguage":["ar","en"],"publisher":{"@id":"../../../#person"}}]}
 </script>
 </head>
 <body data-root="../../../">
@@ -965,6 +968,15 @@ var FORM_SENDING='جارٍ الإرسال…';
     });
   }).catch(function () { /* keep built-in defaults */ });
 
+
+  /* ---- runtime structured data (AEO) ---- */
+  function mfSchema(id, obj) { var o = document.getElementById(id); if (o) o.remove(); var el = document.createElement('script'); el.type = 'application/ld+json'; el.id = id; el.textContent = JSON.stringify(obj); document.head.appendChild(el); }
+  function mfListSchema(posts) {
+    mfSchema('mf-list-schema', { '@context': 'https://schema.org', '@type': 'ItemList', 'name': 'Business articles — Mohamed Elfedawy | مقالات أعمال — محمد الفداوي', 'itemListElement': posts.map(function (p, i) { return { '@type': 'ListItem', 'position': i + 1, 'url': new URL('read.html?slug=' + encodeURIComponent(p.slug), location.href).href, 'name': p.title }; }) });
+  }
+  function mfPostSchema(p) {
+    mfSchema('mf-post-schema', { '@context': 'https://schema.org', '@type': 'BlogPosting', 'headline': p.title, 'description': p.excerpt || '', 'inLanguage': p.lang === 'ar' ? 'ar' : 'en', 'datePublished': p.date || '', 'image': p.cover ? [new URL(root + p.cover, location.href).href] : [], 'author': { '@type': 'Person', '@id': location.origin + '/#person', 'name': 'Mohamed Elfedawy', 'alternateName': 'محمد الفداوي' }, 'publisher': { '@id': location.origin + '/#site' }, 'mainEntityOfPage': location.href, 'about': ['Feasibility Studies', 'Business Consulting', 'Market Research', 'Business Development', 'Operations Management', 'دراسات الجدوى', 'استشارات الأعمال'] });
+  }
   /* ---- articles hub ---- */
   var grid = document.getElementById('postsGrid');
   if (grid) {
@@ -979,6 +991,7 @@ var FORM_SENDING='جارٍ الإرسال…';
           ' <i class="lang-badge">' + (p.lang === 'ar' ? 'عربي' : 'EN') + '</i></span>' +
           '<h3>' + esc(p.title) + '</h3><p>' + esc(p.excerpt || '') + '</p></span></a>';
       }).join('');
+      try { mfListSchema(posts); } catch (e) {}
     }).catch(function () {
       var empty = document.getElementById('postsEmpty');
       if (empty) { empty.hidden = false; empty.setAttribute('data-err', '1'); }
@@ -996,6 +1009,7 @@ var FORM_SENDING='جارٍ الإرسال…';
       document.documentElement.lang = p.lang === 'ar' ? 'ar' : 'en';
       document.documentElement.dir = p.lang === 'ar' ? 'rtl' : 'ltr';
       document.title = p.title;
+      try { mfPostSchema(p); } catch (e) {}
       var back = document.getElementById('backToInsights');
       if (back) back.setAttribute('href', p.lang === 'ar' ? root + 'ar/insights/' : root + 'insights/');
       loadText('content/posts/' + slug + '.md').then(function (md) {

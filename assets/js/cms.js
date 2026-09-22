@@ -115,6 +115,15 @@
     });
   }).catch(function () { /* keep built-in defaults */ });
 
+
+  /* ---- runtime structured data (AEO) ---- */
+  function mfSchema(id, obj) { var o = document.getElementById(id); if (o) o.remove(); var el = document.createElement('script'); el.type = 'application/ld+json'; el.id = id; el.textContent = JSON.stringify(obj); document.head.appendChild(el); }
+  function mfListSchema(posts) {
+    mfSchema('mf-list-schema', { '@context': 'https://schema.org', '@type': 'ItemList', 'name': 'Business articles — Mohamed Elfedawy | مقالات أعمال — محمد الفداوي', 'itemListElement': posts.map(function (p, i) { return { '@type': 'ListItem', 'position': i + 1, 'url': new URL('read.html?slug=' + encodeURIComponent(p.slug), location.href).href, 'name': p.title }; }) });
+  }
+  function mfPostSchema(p) {
+    mfSchema('mf-post-schema', { '@context': 'https://schema.org', '@type': 'BlogPosting', 'headline': p.title, 'description': p.excerpt || '', 'inLanguage': p.lang === 'ar' ? 'ar' : 'en', 'datePublished': p.date || '', 'image': p.cover ? [new URL(root + p.cover, location.href).href] : [], 'author': { '@type': 'Person', '@id': location.origin + '/#person', 'name': 'Mohamed Elfedawy', 'alternateName': 'محمد الفداوي' }, 'publisher': { '@id': location.origin + '/#site' }, 'mainEntityOfPage': location.href, 'about': ['Feasibility Studies', 'Business Consulting', 'Market Research', 'Business Development', 'Operations Management', 'دراسات الجدوى', 'استشارات الأعمال'] });
+  }
   /* ---- articles hub ---- */
   var grid = document.getElementById('postsGrid');
   if (grid) {
@@ -129,6 +138,7 @@
           ' <i class="lang-badge">' + (p.lang === 'ar' ? 'عربي' : 'EN') + '</i></span>' +
           '<h3>' + esc(p.title) + '</h3><p>' + esc(p.excerpt || '') + '</p></span></a>';
       }).join('');
+      try { mfListSchema(posts); } catch (e) {}
     }).catch(function () {
       var empty = document.getElementById('postsEmpty');
       if (empty) { empty.hidden = false; empty.setAttribute('data-err', '1'); }
@@ -146,6 +156,7 @@
       document.documentElement.lang = p.lang === 'ar' ? 'ar' : 'en';
       document.documentElement.dir = p.lang === 'ar' ? 'rtl' : 'ltr';
       document.title = p.title;
+      try { mfPostSchema(p); } catch (e) {}
       var back = document.getElementById('backToInsights');
       if (back) back.setAttribute('href', p.lang === 'ar' ? root + 'ar/insights/' : root + 'insights/');
       loadText('content/posts/' + slug + '.md').then(function (md) {
