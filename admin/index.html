@@ -373,7 +373,10 @@ var CFG={owner:'melfedawy17-dotcom',repo:'melfedawy',branch:'main',token:''};
 var $=function(id){return document.getElementById(id)};
 function toast(msg,err){var t=$('toast');$('toastMsg').textContent=msg;t.className='toast show'+(err?' err':'');setTimeout(function(){t.className='toast'},3400);}
 function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
-function mAIcfg(){try{var v=mAIcfg();return (v&&typeof v==='object')?v:{};}catch(e){localStorage.removeItem('mf-ai');return {};}}
+function mAIcfg(){var v;try{v=JSON.parse(localStorage.getItem('mf-ai')||'{}');if(!v||typeof v!=='object')v={};}catch(e){localStorage.removeItem('mf-ai');v={};}
+try{if($('aiKey')&&$('aiKey').value.trim()){v.key=$('aiKey').value.trim();if($('aiProv'))v.provider=$('aiProv').value;if($('aiModel'))v.model=$('aiModel').value.trim();}
+if($('cbKey')&&$('cbKey').value.trim())v.cb=$('cbKey').value.trim();}catch(e2){}
+return v;}
 window.addEventListener('error',function(ev){try{toast('⚠️ خطأ داخلي: '+String(ev.message).slice(0,90),1);}catch(e){}});
 function api(path,opts){opts=opts||{};opts.headers=Object.assign({'Authorization':'Bearer '+CFG.token,'Accept':'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28'},opts.headers||{});
   return fetch('https://api.github.com/repos/'+CFG.owner+'/'+CFG.repo+'/contents/'+path,opts).then(function(r){
