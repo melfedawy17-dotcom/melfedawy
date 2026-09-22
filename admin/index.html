@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@500;600;700&display=swap">
 <title>لوحة التحكم — محمد الفداوي</title>
 <style>
 :root{--bg:#090C11;--panel:#111720;--panel2:#0d131b;--line:rgba(255,255,255,.09);--text:#F5F7FA;--muted:#A9B2BF;--gold:#F3BD36;--gold2:#FFE08A;--r:14px}
@@ -14,7 +15,7 @@ a{color:var(--gold)}
 /* login */
 .login-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
 .login-card{background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:40px 34px;width:100%;max-width:420px;text-align:center}
-.login-card .logo{font:800 34px/1 'Manrope',sans-serif;letter-spacing:.02em}
+.login-card .logo{font:800 34px/1 'Inter',sans-serif;letter-spacing:.02em}
 .login-card .logo span{color:var(--gold)}
 .login-card p.sub{color:var(--muted);margin:6px 0 22px;font-size:14px}
 .conn-pill{display:inline-flex;gap:8px;align-items:center;border:1px solid var(--line);background:var(--panel2);border-radius:999px;padding:8px 16px;color:var(--muted);font-size:13px;margin-bottom:18px}
@@ -31,7 +32,7 @@ details.help{text-align:right;margin-top:18px;color:var(--muted);font-size:12.5p
 /* shell */
 .shell{display:flex;min-height:100vh}
 .side{width:230px;flex:0 0 230px;background:var(--panel);border-left:1px solid var(--line);padding:22px 16px;position:sticky;top:0;height:100vh;overflow-y:auto}
-.side .logo{font:800 20px/1 'Manrope',sans-serif;margin-bottom:2px}
+.side .logo{font:800 20px/1 'Inter',sans-serif;margin-bottom:2px}
 .side .logo span{color:var(--gold)}
 .side .tag{color:var(--muted);font-size:11px;letter-spacing:.14em;margin-bottom:20px}
 .side .grp{color:var(--muted);font-size:10.5px;letter-spacing:.16em;margin:16px 8px 6px}
@@ -48,7 +49,7 @@ details.help{text-align:right;margin-top:18px;color:var(--muted);font-size:12.5p
 /* cards */
 .cards{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:18px 0}
 .card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:18px 20px}
-.card .big{font:800 30px/1.2 'Manrope',sans-serif;color:var(--gold)}
+.card .big{font:800 30px/1.2 'Inter',sans-serif;color:var(--gold)}
 .card .lbl{color:var(--muted);font-size:13px;margin-top:4px}
 .card.wide{grid-column:1/-1}
 .card h3{font-size:15px;margin-bottom:10px}
@@ -92,6 +93,7 @@ textarea{min-height:260px}
 </style>
 </head>
 <body>
+<div id="staleBanner" hidden style="position:fixed;top:0;left:0;right:0;z-index:9999;background:#F3BD36;color:#090C11;padding:10px 16px;font-weight:700;text-align:center;font-size:14px">⚠️ نسخة أحدث من اللوحة متاحة على الخادم — <button id="staleBtn" style="background:#090C11;color:#F3BD36;border:0;border-radius:6px;padding:6px 14px;font-weight:700;cursor:pointer;margin:0 6px">تحديث الآن</button></div>
 
 <!-- LOGIN -->
 <div class="login-wrap" id="login">
@@ -161,6 +163,35 @@ textarea{min-height:260px}
 
     <!-- ARTICLES -->
     <section id="v-articles" class="hide">
+      <div class="card" id="dailyCard" style="margin-bottom:14px">
+        <h3>⚙️ محرك المقال اليومي</h3>
+        <p id="dailyInfo" style="color:var(--mut);font-size:13px;margin:6px 0"></p>
+        <img id="dThumb" alt="" hidden style="width:132px;height:69px;object-fit:cover;border-radius:8px;border:1px solid var(--line);margin-top:6px" onerror="this.hidden=true">
+        <p style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn" id="dGen">توليد مسودة اليوم</button>
+        <button class="btn ghost" id="dToEditor" hidden>إرسال إلى المحرر</button>
+        <button class="btn ghost" id="dPosts" hidden>📣 توليد نصوص النشر</button> <button class="btn ghost" id="dCoverAi" hidden>🎨 غلاف AI (نانو بانانا)</button> <button class="btn ghost" id="dCover" hidden>🖼 غلاف نصي بالهوية</button> <button class="btn ghost" id="dRemind" hidden>⏰ تذكير واتساب بموضوع اليوم</button>
+<div style="display:flex;gap:8px;align-items:center;margin-top:10px;flex-wrap:wrap;width:100%">
+<label style="margin:0">أرشيف مسودات AI: <select id="dHist" style="min-width:240px;background:var(--panel);color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:6px"></select></label>
+<button class="btn ghost sm" id="dHistOpen">فتح في المحرر</button>
+<button class="btn ghost sm" id="dHistLoad">عرض في المحرك</button>
+</div></p>
+        <div id="dWrap" hidden style="margin-top:10px">
+          <label style="display:block;margin-bottom:8px">العنوان<input id="dTitle" style="width:100%"></label>
+          <label style="display:block;margin-bottom:8px">المقتطف<input id="dExcerpt" style="width:100%"></label>
+          <label style="display:block">المحتوى (Markdown)<textarea id="dBody" rows="10" style="width:100%"></textarea></label>
+        </div>
+        <div id="dShare" hidden style="margin-top:12px;border-top:1px solid var(--line);padding-top:10px">
+          <p style="font-size:13px;color:var(--mut)">لينكدإن: ينسخ النص ويفتح نافذة النشر ومعها بطاقة المقال — ألصق النص (Ctrl+V) وراجع ثم اضغط نشر. فيسبوك: نافذة المشاركة بالنص جاهزًا — راجع واضغط نشر.</p>
+          <label style="display:block;margin:8px 0">نص لينكدإن<textarea id="dLi" rows="5" style="width:100%"></textarea></label>
+          <p style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px">
+            <button class="btn ghost sm" id="dCopyLi">نسخ نص لينكدإن</button>
+            <button class="btn ghost sm" id="dOpenLi">نسخ + فتح صفحة نشر لينكدإن</button></p>
+          <label style="display:block;margin:8px 0">نص فيسبوك<textarea id="dFb" rows="4" style="width:100%"></textarea></label>
+          <p style="display:flex;gap:8px;flex-wrap:wrap">
+            <button class="btn ghost sm" id="dOpenFb">فتح مشاركة فيسبوك بالنص</button>
+            <button class="btn ghost sm" id="dWa">مشاركة واتساب</button></p>
+        </div>
+      </div>
       <div class="topbar" style="margin-bottom:12px">
         <button class="btn" id="newPost">+ مقال جديد</button>
         <input id="postSearch" placeholder="ابحث بالعنوان…" style="max-width:260px;margin:0">
@@ -175,7 +206,7 @@ textarea{min-height:260px}
         <h1 id="edTitle" style="font-size:18px">مقال جديد</h1>
         <button class="btn ghost sm" id="edBack">← رجوع للقائمة</button>
       </div>
-      <input type="hidden" id="pEditSlug"><input type="hidden" id="pOldCover">
+      <input type="hidden" id="pEditSlug"><input type="hidden" id="pCoverExist" value=""><input type="hidden" id="pOldCover">
       <label>عنوان المقال<input id="pTitle"></label>
       <label>نبذة قصيرة (تظهر في الكارت)<input id="pExcerpt"></label>
       <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px">
@@ -282,7 +313,7 @@ textarea{min-height:260px}
       <label>المزوّد <select id="aiProv"><option value="gemini">Gemini (مجاني)</option><option value="openai">OpenAI</option></select></label>
       <label>API Key <input id="aiKey" type="password" placeholder="الصق المفتاح هنا"></label>
       <label>الموديل <input id="aiModel" placeholder="gemini-2.5-flash"></label>
-      <button class="btn ghost sm" id="aiSave">حفظ الإعدادات</button>
+      <label style="display:block;margin-top:8px">مفتاح واتساب CallMeBot <input id="cbKey" placeholder="API key"></label><button class="btn ghost sm" id="aiTest">🔬 اختبار الإعدادات</button> <button class="btn ghost sm" id="aiSave">حفظ الإعدادات</button>
       <p style="color:var(--muted);font-size:12px">المفتاح لا يغادر متصفحك إلا في طلب مباشر للمزوّد عند ضغط «توليد بالـAI». بدون مفتاح استخدم «توليد هيكل».</p>
     </div>
   </section>
@@ -327,7 +358,7 @@ textarea{min-height:260px}
         <div class="rowline"><span>المستودع</span><span class="m" id="ghRepo">–</span></div>
         <div class="rowline"><span>الفرع</span><span class="m" id="ghBranch">–</span></div>
         <div class="rowline"><span>آخر مزامنة</span><span class="m" id="ghLast">–</span></div>
-        <p style="margin-top:12px"><button class="btn ghost sm" id="ghTest">اختبار الاتصال</button>
+        <p style="margin-top:12px"><button class="btn ghost sm" id="ghTest">اختبار الاتصال</button> <button class="btn" id="wfInstall">⚙️ تثبيت الأتمتة الصباحية في GitHub</button>
         <button class="btn ghost sm" id="ghChange">تغيير الرمز</button></p>
       </div>
       <div class="card wide" style="margin-top:14px">
@@ -343,11 +374,25 @@ textarea{min-height:260px}
 <script>
 (function(){
 'use strict';
-var ADMIN_VER='20260921a';
+var ADMIN_VER='20260922b';
+(function(){try{
+  fetch('../assets/data/ver.json?cb='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.json():null;}).then(function(j){
+    if(!j||!j.v||j.v===ADMIN_VER){try{sessionStorage.removeItem('mf-stale');}catch(e){}return;}
+    if(!sessionStorage.getItem('mf-stale')){sessionStorage.setItem('mf-stale','1');location.href=location.pathname+'?v='+Date.now();return;}
+    sessionStorage.removeItem('mf-stale');
+    var b=document.getElementById('staleBanner');if(b){b.hidden=false;
+      document.getElementById('staleBtn').onclick=function(){location.href=location.pathname+'?v='+Date.now();};}
+  }).catch(function(){});
+}catch(e){}})();
 var CFG={owner:'melfedawy17-dotcom',repo:'melfedawy',branch:'main',token:''};
 var $=function(id){return document.getElementById(id)};
 function toast(msg,err){var t=$('toast');$('toastMsg').textContent=msg;t.className='toast show'+(err?' err':'');setTimeout(function(){t.className='toast'},3400);}
 function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function mAIcfg(){var v;try{v=JSON.parse(localStorage.getItem('mf-ai')||'{}');if(!v||typeof v!=='object')v={};}catch(e){localStorage.removeItem('mf-ai');v={};}
+try{if($('aiKey')&&$('aiKey').value.trim()){v.key=$('aiKey').value.trim();if($('aiProv'))v.provider=$('aiProv').value;if($('aiModel'))v.model=$('aiModel').value.trim();}
+if($('cbKey')&&$('cbKey').value.trim())v.cb=$('cbKey').value.trim();}catch(e2){}
+return v;}
+window.addEventListener('error',function(ev){try{toast('⚠️ خطأ داخلي: '+String(ev.message).slice(0,90),1);}catch(e){}});
 function api(path,opts){opts=opts||{};opts.headers=Object.assign({'Authorization':'Bearer '+CFG.token,'Accept':'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28'},opts.headers||{});
   return fetch('https://api.github.com/repos/'+CFG.owner+'/'+CFG.repo+'/contents/'+path,opts).then(function(r){
     if(!r.ok)return r.text().then(function(t){throw new Error(r.status+': '+t.slice(0,140))});
@@ -415,7 +460,7 @@ function refreshHome(){getJSON('content/posts.json',[]).then(function(p){var pub
     if(cs&&cs[0])$('lastCommit').textContent=new Date(cs[0].commit.committer.date).toLocaleString('ar-EG');}).catch(function(){$('activity').innerHTML='<p style="color:var(--muted);font-size:13px">تعذر قراءة السجل</p>';});}
 function checkLive(){fetch('../?t='+Date.now()).then(function(r){return r.text()}).then(function(html){var m=html.match(/name="mf-ver" content="([^"]+)"/);var live=m?m[1]:'؟';
   $('liveVer').textContent=live;$('adminVer').textContent=ADMIN_VER;
-  var ok=(live===ADMIN_VER);$('liveDot').className='dot'+(ok?'':' warn');$('liveTxt').textContent=ok?'الموقع مباشر ومتزامن ✅':'الموقع مباشر — نسخة الكود أقدم من هذه اللوحة';
+  var ok=(live===ADMIN_VER);$('liveDot').className='dot'+(ok?'':' warn');$('liveTxt').textContent=ok?'الموقع مباشر ومتزامن ✅':(live>ADMIN_VER?'الموقع مباشر — اللوحة أقدم من الموقع: ارفع ملف اللوحة الأحدث':'الموقع مباشر — نسخة الموقع أقدم من اللوحة: انشر آخر بناء');
   }).catch(function(){$('liveDot').className='dot bad';$('liveTxt').textContent='تعذر فحص الموقع';});}
 function refreshSystem(){$('ghRepo').textContent=CFG.owner+'/'+CFG.repo;$('ghBranch').textContent=CFG.branch;
   fetch('https://api.github.com/user',{headers:{'Authorization':'Bearer '+CFG.token}}).then(function(r){if(!r.ok)throw new Error(r.status);return r.json();}).then(function(u){
@@ -423,6 +468,13 @@ function refreshSystem(){$('ghRepo').textContent=CFG.owner+'/'+CFG.repo;$('ghBra
   commits(1).then(function(cs){$('ghLast').textContent=cs&&cs[0]?new Date(cs[0].commit.committer.date).toLocaleString('ar-EG'):'–';}).catch(function(){});
   checkLive();}
 $('ghTest').onclick=function(){refreshSystem();toast('تم تحديث حالة الاتصال');};
+$('wfInstall').onclick=function(){if(!CFG.token){toast('ادخل token أولًا',1);return;}
+  $('wfInstall').disabled=true;toast('جارٍ تثبيت ملفات الأتمتة في GitHub…');
+  putText('.github/workflows/daily-auto-draft.yml',$('wf1src').textContent,'install daily-auto-draft workflow')
+  .then(function(){return putText('.github/workflows/daily-article-reminder.yml',$('wf2src').textContent,'install daily-article-reminder workflow');})
+  .then(function(){return delFile('github/workflows/daily-auto-draft.yml','remove misplaced workflow').catch(function(){return null;}).then(function(){return delFile('github/workflows/workflow-1-daily-auto-draft.yml','remove misplaced workflow copy').catch(function(){return null;});});})
+  .then(function(){toast('✅ تم التثبيت وتنظيف المجلد الخاطئ — افتح تبويب Actions في GitHub وشغّل daily-auto-draft');})
+  .catch(function(e){toast('فشل التثبيت: '+e.message,1);}).then(function(){$('wfInstall').disabled=false;});};
 
 /* ---------- articles ---------- */
 var POSTS=[];
@@ -432,12 +484,12 @@ function renderPosts(){var q=($('postSearch').value||'').trim();var rows=(POSTS|
     return '<tr><td>'+esc(p.title)+'</td><td><span class="badge lang">'+(p.lang==='ar'?'عربي':'EN')+'</span></td><td class="m">'+(p.date||'')+'</td><td>'+st+'</td>'+
     '<td style="white-space:nowrap"><button class="btn ghost sm" data-edit="'+esc(p.slug)+'">تعديل</button> <button class="btn danger sm" data-del="'+esc(p.slug)+'">حذف</button></td></tr>';}).join('')||'<tr><td colspan="5" style="color:var(--muted)">لا مقالات — ابدأ بـ «+ مقال جديد»</td></tr>';
   $('postsList').querySelectorAll('[data-edit]').forEach(function(b){b.onclick=function(){editPost(POSTS.find(function(p){return p.slug===b.getAttribute('data-edit')}))};});
-  $('postsList').querySelectorAll('[data-del]').forEach(function(b){b.onclick=function(){var p=POSTS.find(function(x){return x.slug===b.getAttribute('data-del')});if(confirm('حذف المقال نهائيًا؟'))delPost(p)};});}
+  $('postsList').querySelectorAll('[data-del]').forEach(function(b){b.onclick=function(){var p=POSTS.find(function(x){return x.slug===b.getAttribute('data-del')});if(confirm('حذف المقال نهائيًا؟'))delPost(p)};});if($('dHist'))dHistPop();}
 $('postSearch').oninput=renderPosts;
 $('newPost').onclick=function(){clearPostForm();show('editor');};
 $('edBack').onclick=function(){show('articles')};
 function clearPostForm(){$('pEditSlug').value='';$('pOldCover').value='';$('pTitle').value='';$('pExcerpt').value='';$('pBody').value='';$('pCover').value='';$('pDate').value=today();$('pLang').value='ar';$('pStatus').value='published';$('edTitle').textContent='مقال جديد';$('pPreview').innerHTML='<p style="color:var(--muted)">معاينة فورية…</p>';$('pOpen').style.display='none';}
-function editPost(p){$('pEditSlug').value=p.slug;$('pOldCover').value=p.cover||'';$('pTitle').value=p.title;$('pExcerpt').value=p.excerpt||'';$('pLang').value=p.lang;$('pDate').value=p.date||today();$('pStatus').value=p.status||'published';
+function editPost(p){$('pEditSlug').value=p.slug;$('pOldCover').value=p.cover||'';$('pCoverExist').value=p.cover||'';$('pTitle').value=p.title;$('pExcerpt').value=p.excerpt||'';$('pLang').value=p.lang;$('pDate').value=p.date||today();$('pStatus').value=p.status||'published';
   $('edTitle').textContent='تعديل: '+p.title;$('pBody').value='';$('pOpen').style.display='inline-flex';$('pOpen').href='../'+(p.lang==='ar'?'ar/':'')+'insights/read.html?slug='+p.slug;
   fetch('https://raw.githubusercontent.com/'+CFG.owner+'/'+CFG.repo+'/'+CFG.branch+'/content/posts/'+p.slug+'.md?t='+Date.now()).then(function(r){return r.ok?r.text():''}).then(function(t){$('pBody').value=t;preview();});
   show('editor');}
@@ -450,11 +502,12 @@ $('pSave').onclick=function(){var title=$('pTitle').value.trim();if(!title){toas
   $('pSave').disabled=true;var chain=Promise.resolve(null);var coverPath=null;
   if($('pCover').files[0]){var f=$('pCover').files[0];var ext=(f.name.match(/\.(png|jpe?g|webp)$/i)||['','.jpg'])[0].replace('jpeg','jpg');
     coverPath='assets/img/uploads/cover-'+slug+ext;chain=fileB64(f).then(function(b){return putB64(coverPath,b,'upload cover: '+slug)});}
+  else if($('pCoverExist').value){coverPath=$('pCoverExist').value;}
   chain.then(function(){return putText('content/posts/'+slug+'.md',$('pBody').value,'article: '+slug)}).then(function(){
     return getJSON('content/posts.json',[]).then(function(posts){posts=(posts||[]).filter(function(p){return p.slug!==slug});
       posts.push({slug:slug,title:title,excerpt:$('pExcerpt').value.trim(),date:date,lang:lang,status:status,cover:coverPath||$('pOldCover').value||'assets/img/case-feasibility.jpg'});
       return putText('content/posts.json',JSON.stringify(posts,null,1),'article index: '+slug);});}).then(function(){
-    toast(status==='draft'?'تم حفظ المسودة 🟡':'تم النشر ✅ ظهر في الموقع فورًا');refreshPosts();show('articles');}).catch(function(e){toast('فشل الحفظ: '+e.message,1)}).then(function(){$('pSave').disabled=false;});};
+    toast(status==='draft'?'تم حفظ المسودة 🟡':'تم النشر ✅ ظهر في الموقع فورًا');if(status!=='draft'){waPing('✅ تم نشر مقال جديد: '+title+' — '+location.origin+'/'+(lang==='ar'?'ar/':'')+'insights/read.html?slug='+slug);}refreshPosts();show('articles');}).catch(function(e){toast('فشل الحفظ: '+e.message,1)}).then(function(){$('pSave').disabled=false;});};
 function delPost(p){delFile('content/posts/'+p.slug+'.md','delete article: '+p.slug).then(function(){
   return getJSON('content/posts.json',[]).then(function(posts){posts=(posts||[]).filter(function(x){return x.slug!==p.slug});
     return putText('content/posts.json',JSON.stringify(posts,null,1),'remove from index: '+p.slug)});}).then(function(){toast('تم الحذف');refreshPosts()}).catch(function(e){toast('فشل الحذف: '+e.message,1)});}
@@ -602,10 +655,14 @@ function aiPrompt(kind,l){var base='أنت مساعد بحثي داخلي لمس
   if(kind==='call')return base+'المطلوب: صفحة تحضير مكالمة بالعربية: من العميل، ماذا يريد، مشكلته، سوقه، ما نعرفه، ما لا نعرفه، ٥ أسئلة ذكية للمكالمة (ابدأ بسؤال العميل الأهم)، الخدمة المحتملة. بدون اختراع وقائع.';
   return base+'المطلوب: مسودة عرض (Proposal) بالعربية: فهم التحدي، نطاق العمل وسلّمات كل خدمة طلبها، الجدول الزمني، مكان السعر [قوس فارغ]، متطلبات من العميل، بند سرية. بدون أرقام مختلقة.';}
 function aiCall(kind,l){
-  var cfg=JSON.parse(localStorage.getItem('mf-ai')||'{}');
+  var cfg=mAIcfg();
   if(!cfg.key){toast('لا يوجد مفتاح AI — احفظ المفتاح أسفل الصفحة، أو استخدم «توليد هيكل»',1);return;}
   var prompt=aiPrompt(kind,l);toast('جارٍ التوليد…');
   var req;
+  if(cfg.provider!=='openai'){
+    aiText(prompt,cfg).then(function(txt){LEADS[LD_CUR][kind]=txt;saveLeads();LD_TAB=kind;renderLdTab();toast('تم التوليد ✅ راجع وعدّل قبل الاستخدام');})
+       .catch(function(e){toast('فشل التوليد: '+String(e.message).slice(0,100),1);});
+    return;}
   if(cfg.provider==='openai'){
     req=fetch('https://api.openai.com/v1/chat/completions',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+cfg.key},body:JSON.stringify({model:cfg.model||'gpt-4o-mini',messages:[{role:'user',content:prompt}]})})
       .then(function(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.json();})
@@ -625,14 +682,303 @@ $('ldSkel').onclick=function(){if(LD_CUR<0)return;var k=LD_TAB==='answers'?'rese
 $('ldCopy').onclick=function(){var t=$('ldOut');if(t){navigator.clipboard.writeText(t.value);toast('تم النسخ');}};
 $('ldDl').onclick=function(){var t=$('ldOut');if(!t)return;var b=new Blob([t.value],{type:'text/markdown'});
   var a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='mf-'+LD_TAB+'-'+(LEADS[LD_CUR].answers.name||'lead')+'.md';a.click();};
-$('aiSave').onclick=function(){localStorage.setItem('mf-ai',JSON.stringify({provider:$('aiProv').value,key:$('aiKey').value.trim(),model:$('aiModel').value.trim()}));toast('تم حفظ إعدادات AI في متصفحك');};
-(function(){var cfg=JSON.parse(localStorage.getItem('mf-ai')||'{}');if(cfg.provider)$('aiProv').value=cfg.provider;if(cfg.key)$('aiKey').value=cfg.key;if(cfg.model)$('aiModel').value=cfg.model;})();
+$('aiTest').onclick=function(){toast('🔬 جارٍ فحص الإعدادات…');var cfg=mAIcfg();var out=[];var pend=3;var settled=false;
+  function done(){if(settled)return;settled=true;toast(out.join(' | '),out.some(function(x){return x.indexOf('✖')===0;})?1:0);}
+  function fin(s2){out.push(s2);pend--;if(pend===0)done();}
+  setTimeout(function(){if(!settled&&pend>0){fin('⏳ مهلة: بعض الفحوص لم تكتمل');}},45000);
+  try{if(!cfg.key){fin('✖ نص: لا مفتاح');}else{aiText('قل: تمام',cfg).then(function(){fin('✅ نص: يعمل ('+(AI_MODELS_CACHE?AI_MODELS_CACHE[0]:'؟')+')');}).catch(function(e){fin('✖ نص: '+String(e.message).slice(0,60));});}}catch(e){fin('✖ نص: '+String(e.message).slice(0,60));}
+  try{if(!cfg.key){fin('✖ صورة: لا مفتاح');}else{aiImage('gold line on dark background, abstract',cfg).then(function(d){fin('✅ صورة: يعمل ('+d.model+')');}).catch(function(e){fin('✖ صورة: '+String(e.message).slice(0,70));});}}catch(e){fin('✖ صورة: '+String(e.message).slice(0,70));}
+  try{if(!cfg.cb){fin('✖ واتساب: لا مفتاح');}else{fetch('https://api.callmebot.com/whatsapp.php?phone=%2B201146905560&text='+encodeURIComponent('🔬 اختبار تنبيهات الموقع')+'&apikey='+encodeURIComponent(cfg.cb),{mode:'no-cors'}).then(function(){fin('✅ واتساب: تم الإرسال — تفقد هاتفك');}).catch(function(){fin('✖ واتساب: فشل شبكة');});}}catch(e){fin('✖ واتساب: '+String(e.message).slice(0,60));}
+};
+$('aiSave').onclick=function(){localStorage.setItem('mf-ai',JSON.stringify({provider:$('aiProv').value,key:$('aiKey').value.trim(),model:$('aiModel').value.trim(),cb:$('cbKey').value.trim()}));toast('تم حفظ إعدادات AI في متصفحك');};
+(function(){var cfg=mAIcfg();if(cfg.provider)$('aiProv').value=cfg.provider;if(cfg.key)$('aiKey').value=cfg.key;if(cfg.model)$('aiModel').value=cfg.model;if(cfg.cb)$('cbKey').value=cfg.cb;/* ===== محرك المقال اليومي ===== */
+var D_TOPICS=['هل فكرة مشروعك تستحق التنفيذ؟ ٥ أسئلة تجيب قبل ما تصرف جنيه','أخطاء شائعة في دراسات الجدوى تقع فيها المشاريع الصغيرة','كيف تختار السوق المستهدف الأول لمشروعك؟','دراسة جدوى أم خطة عمل؟ الفرق الذي يحدد من أين تبدأ','تحليل المنافسين بدون ميزانية: أدوات مجانية ونتائج عملية','تسعير المنتج الجديد: ثلاثة نماذج وأيها يناسب مشروعك','لماذا تتوقف المبيعات بعد أول ٦ أشهر؟ تشخيص عملي','من فكرة إلى خطة: خارطة طريق الـ ٩٠ يومًا الأولى','إدارة التدفق النقدي في المشاريع الناشئة: قواعد البقاء','متى تتوسع جغرافيًا؟ علامات الجاهزية التي يغفلها أصحاب المشاريع','بحث السوق بالمقابلات: كيف تسأل العميل سؤالًا لا يضلك','الفرق بين الربح والكاش: قصة كل مشروع متعثر','بناء عرض قيمة واضح في جملة واحدة','اختيار اسم وعلامة تجارية: ما الذي يؤثر فعلًا على المبيعات؟','قراءة قائمة دخل لمشروع صغير في ١٠ دقائق','نقطة التعادل: كم وحدة تبيع قبل أن تربح؟','التفاوض مع الموردين: ٥ روافع تكلفة صفرية','توظيف أول موظف: متى ولمن وكيف تحسبها؟','أتمتة العمليات الصغيرة: أين تبدأ بدون ميزانية تقنية؟','مؤشرات أداء بسيطة لصاحب مشروع غير مالي','دخول سوق خليجي جديد: ما الذي يختلف عن السوق المصري؟','التصدير خطوة صفر: جاهزية المنتج قبل جاهزية السوق','تحويل عميل مرة واحدة إلى عميل متكرر','تقييم فرصة امتياز تجاري: قائمة فحص عملية','العروض والباقات: كيف تبني سلم أسعار لا يحرق هامشك؟','دراسة الجدوى البنكية: ما الذي يبحث عنه الممول فعلًا؟','إدارة المخزون في التجارة: تكلفة مخفية تستهلك هامشك','خطة التسويق الأولى بميزانية محدودة: قنوات تستحق البدء','من مشروع فردي إلى منشأة: متى تؤسس كياناتك الرسمية؟','قياس رضا العملاء بدون أنظمة: ٣ طرق سريعة','إعادة إطلاق منتج متوقف: تشخيص قبل القرار'];
+function dToday(){return Math.floor(Date.now()/86400000)%D_TOPICS.length;}
+var D_ITEMS=null;
+function dItem(){if(D_ITEMS&&D_ITEMS.length)return D_ITEMS[Math.floor(Date.now()/86400000)%D_ITEMS.length];return {t:D_TOPICS[dToday()],img:''};}
+var AI_MODELS_CACHE=null;
+function aiModels(cfg){
+  if(AI_MODELS_CACHE)return Promise.resolve(AI_MODELS_CACHE);
+  return fetch('https://generativelanguage.googleapis.com/v1beta/models?pageSize=200&key='+encodeURIComponent(cfg.key)).then(function(r){if(!r.ok)throw new Error('list HTTP '+r.status);return r.json();}).then(function(j){
+    var names=((j.models||[]).map(function(m){return (m.name||'').replace('models/','');}).filter(function(n){return n&&mOk(n);}));
+    function mOk(n){return /flash|pro/.test(n)&&!/image|audio|video|tts|embedding|think/i.test(n);}
+    var pref=['gemini-flash-latest','gemini-pro-latest'];
+    var pick=null;pref.forEach(function(p2){if(!pick&&names.indexOf(p2)!==-1)pick=p2;});
+    if(!pick){names.forEach(function(n){if(!pick&&/flash-latest|flash$|flash-2|flash-3/.test(n))pick=n;});}
+    if(!pick)pick=names[0]||'gemini-flash-latest';
+    AI_MODELS_CACHE=[pick].concat(names.filter(function(n){return n!==pick;})).slice(0,4);
+    return AI_MODELS_CACHE;}).catch(function(){return ['gemini-flash-latest','gemini-2.5-flash-lite'];});}
+function aiText(prompt,cfg){cfg=cfg||mAIcfg();
+  return aiModels(cfg).then(function(models){
+  function go(i,q){var m=models[i];return fetch('https://generativelanguage.googleapis.com/v1beta/models/'+m+':generateContent?key='+encodeURIComponent(cfg.key),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contents:[{parts:[{text:prompt}]}]})}).then(function(r){if(!r.ok)return r.json().then(function(j){var msg=(j.error&&j.error.message)||('HTTP '+r.status);if(/quota|rate.limit|retry in/i.test(msg)&&(q||0)<2){return new Promise(function(res){setTimeout(res,12000);}).then(function(){return go(i,(q||0)+1);});}if(/no longer available|not found|deprecated/i.test(msg)&&i+1<models.length)return go(i+1);throw new Error(msg);});return r.json();}).then(function(j){return j.candidates[0].content.parts[0].text;});}
+  return go(0);});}
+function aiImage(prompt,cfg){
+  var G={contents:[{parts:[{text:prompt}]}]};
+  function pickGC(j){var d=null;((j.candidates&&j.candidates[0].content.parts)||[]).forEach(function(p){if(p.inlineData)d=p.inlineData;});return d?{b64:d.data,mime:d.mimeType||'image/png'}:null;}
+  function pickIM(j){var q=j.predictions&&j.predictions[0];return q&&q.bytesBase64Encoded?{b64:q.bytesBase64Encoded,mime:'image/png'}:null;}
+  var chain=[
+    {u:'v1beta/models/gemini-2.5-flash-image:generateContent',b:G,p:pickGC},
+    {u:'v1alpha/models/gemini-2.5-flash-image:generateContent',b:G,p:pickGC},
+    {u:'v1beta/models/gemini-2.5-flash-image-preview:generateContent',b:G,p:pickGC},
+    {u:'v1beta/models/imagen-4.0-generate-001:predict',b:{instances:[{prompt:prompt}],parameters:{aspectRatio:'16:9'}},p:pickIM}
+  ];
+  function go(i){var c=chain[i];return fetch('https://generativelanguage.googleapis.com/'+c.u+'?key='+encodeURIComponent(cfg.key),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(c.b)}).then(function(r){if(!r.ok)return r.json().then(function(j){throw new Error((j.error&&j.error.message||'HTTP '+r.status));});return r.json();}).then(function(j){var d=c.p(j);if(!d)throw new Error('no image in response');d.model=c.u.split('/models/')[1].split(':')[0];return d;}).catch(function(e){if(i+1<chain.length)return go(i+1);e.chain=true;throw e;});}
+  return go(0);}
+function waPing(text){var cfg=mAIcfg();if(!cfg.cb){toast('احفظ مفتاح CallMeBot أولًا في إعدادات AI أسفل الصفحة',1);return;}
+  fetch('https://api.callmebot.com/whatsapp.php?phone=%2B201146905560&text='+encodeURIComponent(text)+'&apikey='+encodeURIComponent(cfg.cb),{mode:'no-cors'}).then(function(){toast('واتساب: تم التسليم لقناة الإرسال — تفقد هاتفك 📱');}).catch(function(){toast('واتساب: فشل اتصال الشبكة بـ CallMeBot',1);});}
+function dLoad(){try{return JSON.parse(localStorage.getItem('mf-draft')||'null');}catch(e){return null;}}
+function dSave(d){localStorage.setItem('mf-draft',JSON.stringify(d));}
+function dRefreshInfo(){var last='';try{last=(POSTS||[]).map(function(p){return p.date||'';}).sort().pop();}catch(e){}
+  var days=last?Math.floor((Date.now()-new Date(last).getTime())/86400000):'؟';
+  $('dailyInfo').textContent='موضوع اليوم المقترح: '+dItem().t+' — آخر نشر قبل '+days+' يومًا.';
+  if(dItem().img){$('dThumb').hidden=false;$('dThumb').src='../'+dItem().img;}else{$('dThumb').hidden=true;}}
+
+function skelArticle(topic){return {title:topic,excerpt:'أسئلة عملية وإجابات مباشرة حول: '+topic+' — خلاصة تصلح للتطبيق هذا الأسبوع.',body:'# '+topic+'\n\n## لماذا يهم هذا الموضوع الآن؟\n[اكتب هنا من خبرتك: ٣–٤ أسطر]\n\n## ثلاث نقاط عملية\n١. [نقطة من خبرتك]\n٢. [نقطة من خبرتك]\n٣. [نقطة من خبرتك]\n\n## خطأ شائع يجب تجنبه\n[مثال واقعي عام بدون أسماء أو أرقام غير موثقة]\n\n## الخلاصة\n[سطران]\n\n---\n*لديك سؤال عن حالتك الخاصة؟ ناقش مشروعك عبر الموقع.*'};}
+function dRender(d){$('dWrap').hidden=false;$('dToEditor').hidden=false;$('dPosts').hidden=false;$('dCover').hidden=false;$('dCoverAi').hidden=false;$('dRemind').hidden=false;if(d.img){$('dThumb').hidden=false;$('dThumb').src='../'+d.img;}$('dTitle').value=d.title||'';$('dExcerpt').value=d.excerpt||'';$('dBody').value=d.body||'';}
+$('dGen').onclick=function(){var item=dItem();var topic=item.t;
+  var prompt='أنت مساعد كتابة لمستشار أعمال مصري اسمه محمد الفداوي. اكتب مقالًا تعليميًا بالعربية (٤٥٠–٦٠٠ كلمة) بعنوان: '+topic+' . قواعد صارمة: لا تذكر عملاء بأسمائهم، لا أرقام إيرادات أو نسب نجاح مخترعة، لا شهادات أو جوائز، لا وعود بنتائج مضمونة؛ أمثلة عامة فقط. أسلوب: تنفيذي مباشر، فقرات قصيرة، عناوين فرعية، وخاتمة فيها دعوة لمناقشة المشروع عبر الموقع. أعد JSON فقط بالشكل: {"title":..,"excerpt":..,"body":..} حيث body بصيغة Markdown.';
+  var cfg=mAIcfg();
+  if(!cfg.key){var nd0=skelArticle(topic);nd0.topic=topic;nd0.img=item.img;dSave(nd0);dRender(nd0);toast('لا مفتاح AI — وُلّد هيكل جاهز لتكملة من خبرتك');return;}
+  toast('جارٍ توليد مسودة اليوم…');
+  aiText(prompt,cfg).then(function(txt){var j=null;try{var a=txt.indexOf('{'),b=txt.lastIndexOf('}');j=JSON.parse(txt.slice(a,b+1));}catch(e){}
+    var nd=j&&j.title?{topic:topic,title:j.title,excerpt:j.excerpt||'',body:j.body||txt}:{topic:topic,title:topic,excerpt:'مقال تعليمي عملي: '+topic,body:txt};nd.img=item.img;
+    dSave(nd);dRender(nd);
+    dCommit(nd,topic).then(function(sl){renderPosts();toast('✅ مسودة جديدة محفوظة في الأرشيف: '+sl+' — ترجع لها وقتما تشاء');}).catch(function(e){toast('المسودة في المحرك لكن فشل حفظها بالأرشيف: '+e.message,1);});})
+  .catch(function(e){if(String(e.message)==='no-key'){var nd=skelArticle(topic);nd.topic=topic;nd.img=item.img;dSave(nd);dRender(nd);toast('لا مفتاح AI — وُلّد هيكل جاهز لتكملة من خبرتك');}else{toast('فشل التوليد: '+e.message,1);}});};
+function dCommit(art,topic){var t=new Date();var slug='ai-'+today()+'-'+String(t.getHours()).padStart(2,'0')+String(t.getMinutes()).padStart(2,'0');
+  return putText('content/posts/'+slug+'.md',art.body,'ai draft: '+slug).then(function(){
+    var list=(POSTS||[]).filter(function(pp){return pp.slug!==slug;});
+    list.push({slug:slug,title:art.title,excerpt:art.excerpt||'',date:today(),lang:'ar',status:'draft'});
+    POSTS=list;return putText('content/posts.json',JSON.stringify(list,null,1),'ai draft index: '+slug).then(function(){return slug;});});}
+function dHistPop(){var list=(POSTS||[]).filter(function(pp){return String(pp.slug).indexOf('ai-')===0&&pp.status==='draft';}).sort(function(a,b){return String(b.slug).localeCompare(String(a.slug));});
+  $('dHist').innerHTML=list.map(function(pp){return '<option value="'+esc(pp.slug)+'">'+esc(String(pp.title).slice(0,45))+' ('+String(pp.slug).slice(-4)+')</option>';}).join('')||'<option value="">لا مسودات AI بعد</option>';}
+$('dHistOpen').onclick=function(){var sl=$('dHist').value;if(!sl){toast('لا مسودات بعد — ولّد أولًا',1);return;}var pp=POSTS.find(function(x){return x.slug===sl;});if(pp){editPost(pp);show('editor');toast('فُتحت المسودة في المحرر — راجع أو انشر');}};
+$('dHistLoad').onclick=function(){var sl=$('dHist').value;if(!sl){toast('لا مسودات بعد',1);return;}var pp=POSTS.find(function(x){return x.slug===sl;});if(!pp)return;
+  api('content/posts/'+sl+'.md').then(function(cur){var body=decodeB64(cur.content);var d={topic:pp.title,title:pp.title,excerpt:pp.excerpt||'',body:body};dSave(d);dRender(d);toast('عُرضت المسودة في المحرك');}).catch(function(e){toast('فشل فتح المسودة: '+e.message,1);});};
+$('dToEditor').onclick=function(){var d={title:$('dTitle').value,excerpt:$('dExcerpt').value,body:$('dBody').value};if(!d.title){toast('اكتب عنوانًا أولًا',1);return;}
+  $('pTitle').value=d.title;$('pExcerpt').value=d.excerpt;$('pBody').value=d.body;
+  if($('pDate'))$('pDate').value=new Date().toISOString().slice(0,10);
+  if($('pLang'))$('pLang').value='ar';
+  if(d.img){$('pCoverExist').value=d.img;toast('صورة المقال التمثيلية مُرفقة بالمحرر ✅');}else if($('pCover').files.length===0){dAttachCover();}
+  show('editor');
+  toast('المسودة في المحرر — راجع ثم حفظ/نشر ✅');};
+function dUrl(){var slug=slugify($('dTitle').value||'post');return location.origin+'/ar/insights/read.html?slug='+slug;}
+function dMakePosts(){var t=$('dTitle').value.trim(),ex=$('dExcerpt').value.trim(),u=dUrl();
+  var li=t+'\n\n'+ex+'\n\nفي المقال الكامل على الموقع، تفاصيل عملية تصلح للتطبيق هذا الأسبوع:\n'+u+'\n\n#استشارات_أعمال #دراسات_جدوى #ريادة_أعمال';
+  var fb=t+'\n\n'+ex+'\n\nاقرأ المقال كاملًا هنا:\n'+u;
+  $('dLi').value=li;$('dFb').value=fb;$('dShare').hidden=false;}
+
+function dMakeCover(){var title=$('dTitle').value.trim()||D_TOPICS[dToday()];
+  var fr=(document.fonts&&document.fonts.ready)?document.fonts.ready:Promise.resolve();
+  return fr.then(function(){
+  var c=document.createElement('canvas');c.width=1200;c.height=630;var x=c.getContext('2d');
+  if(!x)return null;
+  x.fillStyle='#090C11';x.fillRect(0,0,1200,630);
+  var g=x.createRadialGradient(1050,80,10,1050,80,520);g.addColorStop(0,'rgba(243,189,54,.16)');g.addColorStop(1,'rgba(243,189,54,0)');x.fillStyle=g;x.fillRect(0,0,1200,630);
+  x.strokeStyle='rgba(243,189,54,.55)';x.lineWidth=3;x.beginPath();x.moveTo(800,150);x.lineTo(1120,150);x.stroke();
+  x.textAlign='right';x.direction='rtl';
+  x.fillStyle='#F3BD36';x.font='600 30px "IBM Plex Sans Arabic",system-ui,sans-serif';
+  x.fillText('محمد الفداوي | مستشار أعمال وتطوير أعمال',1120,118);
+  x.fillStyle='#F5F7FA';x.font='700 60px "IBM Plex Sans Arabic",system-ui,sans-serif';
+  var words=title.split(' '),lines=[],cur='';
+  for(var i=0;i<words.length;i++){var t2=cur?cur+' '+words[i]:words[i];if(x.measureText(t2).width>960&&cur){lines.push(cur);cur=words[i];}else{cur=t2;}if(lines.length===3)break;}
+  if(cur&&lines.length<3)lines.push(cur);
+  var y=268;lines.slice(0,3).forEach(function(L){x.fillText(L,1120,y);y+=84;});
+  x.fillStyle='#A9B2BF';x.font='500 26px "IBM Plex Sans Arabic",system-ui,sans-serif';
+  x.fillText(new Date().toISOString().slice(0,10)+'  ·  melfedawy.vercel.app',1120,576);
+  return new Promise(function(res){c.toBlob(function(b){res(b);},'image/webp',0.85);});});}
+function dAttachCover(){return dMakeCover().then(function(b){if(!b){toast('متصفحك لا يدعم توليد الغلاف — ارفع صورة يدويًا',1);return;}
+  var f=new File([b],'cover-'+slugify($('dTitle').value||'post')+'.webp',{type:'image/webp'});
+  var dt=new DataTransfer();dt.items.add(f);$('pCover').files=dt.files;
+  toast('الغلاف بالهوية جاهز — سيُرفع مع الحفظ ✅');}).catch(function(e){toast('تعذر الغلاف: '+e.message,1);});}
+$('dCover').onclick=function(){dAttachCover();};
+$('dCoverAi').onclick=function(){var cfg=mAIcfg();if(!cfg.key){toast('احفظ مفتاح Gemini أولًا في إعدادات AI',1);return;}
+  toast('جارٍ توليد غلاف AI (قد يجرب عدة نماذج)…');
+  var IPROMPT='Editorial business illustration for an article titled: '+($('dTitle').value||'')+ '. Dark navy background #090C11, subtle gold #F3BD36 accent light, minimal executive-editorial style, abstract objects only, NO text, NO logos, NO recognizable faces, 16:9.';
+  aiImage(IPROMPT,cfg).then(function(d){
+    var bin=atob(d.b64);var arr=new Uint8Array(bin.length);for(var k=0;k<bin.length;k++)arr[k]=bin.charCodeAt(k);
+    var f=new File([new Blob([arr],{type:d.mime})],'cover-'+slugify($('dTitle').value||'post')+'.webp',{type:d.mime});
+    var dt=new DataTransfer();dt.items.add(f);$('pCover').files=dt.files;$('pCoverExist').value='';
+    toast('غلاف AI جاهز عبر نموذج '+d.model+' — سيُرفع مع الحفظ ✅');})
+  .catch(function(e){toast('فشل غلاف AI: '+String(e.message).slice(0,140)+' — استخدم غلاف الصورة أو الهوية',1);});};
+$('dRemind').onclick=function(){waPing('📝 موضوع مقال اليوم: '+dItem().t+' — لوحة التحكم → المقالات → توليد مسودة اليوم');};
+$('dPosts').onclick=dMakePosts;
+$('dCopyLi').onclick=function(){navigator.clipboard.writeText($('dLi').value).then(function(){toast('تم نسخ نص لينكدإن');});};
+$('dOpenLi').onclick=function(){navigator.clipboard.writeText($('dLi').value).then(function(){toast('النص منسوخ — ألصقه في نافذة النشر (Ctrl+V) ثم اضغط نشر');window.open('https://www.linkedin.com/sharing/share-offsite/?url='+encodeURIComponent(dUrl()),'_blank');});};
+$('dOpenFb').onclick=function(){window.open('https://www.facebook.com/sharer/sharer.php?u='+encodeURIComponent(dUrl())+'&quote='+encodeURIComponent($('dFb').value),'_blank');};
+$('dWa').onclick=function(){window.open('https://wa.me/?text='+encodeURIComponent($('dTitle').value+' '+dUrl()),'_blank');};
+fetch('assets/data/topics.json?t='+Date.now()).then(function(r){return r.ok?r.json():null;}).then(function(j){if(j&&j.topics&&j.topics.length){D_ITEMS=j.topics;dRefreshInfo();var d2=dLoad();if(d2&&d2.img){$('dThumb').hidden=false;$('dThumb').src='../'+d2.img;}}}).catch(function(){});getJSON('assets/data/topics.json',null).then(function(j){if(j&&j.topics&&j.topics.length&&!D_ITEMS){D_ITEMS=j.topics;dRefreshInfo();}}).catch(function(){});
+(function(){var d=dLoad();if(d&&d.body)dRender(d);setTimeout(dRefreshInfo,600);})();
+})();
 function refreshLeads(){renderLeads();}
 
 /* ---------- boot ---------- */
 function refreshAll(){refreshPosts();refreshWorks();refreshReviews();refreshHome();}
 if(loadCfg()){enter();}
 })();
+
+</script>
+
+<script type="text/plain" id="wf1src">
+name: daily-auto-draft
+on:
+  schedule:
+    - cron: '0 5 * * *'   # 07:00 بتوقيت القاهرة
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  draft:
+    runs-on: ubuntu-latest
+    steps:
+      - name: pick topic
+        id: t
+        run: |
+          IDX=$(( $(date -u +%s) / 86400 % 30 ))
+          DATA=$(curl -s https://raw.githubusercontent.com/${{ github.repository }}/main/assets/data/topics.json)
+          TOPIC=$(echo "$DATA" | python3 -c "import json,sys;print(json.load(sys.stdin)['topics'][$IDX]['t'])")
+          BANK=$(echo "$DATA" | python3 -c "import json,sys;print(json.load(sys.stdin)['topics'][$IDX]['img'])")
+          echo "topic=$TOPIC" >> "$GITHUB_OUTPUT"
+          echo "bank=$BANK" >> "$GITHUB_OUTPUT"
+          echo "slug=ai-$(date -u +%F)" >> "$GITHUB_OUTPUT"
+      - name: generate article + cover + commit draft
+        env:
+          GEMINI_KEY: ${{ secrets.GEMINI_KEY || secrets.GEMINIKEY }}
+          CB_APIKEY: ${{ secrets.CB_APIKEY || secrets.CALLMBOTAPIKEY }}
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          TOPIC: ${{ steps.t.outputs.topic }}
+          BANK: ${{ steps.t.outputs.bank }}
+          SLUG: ${{ steps.t.outputs.slug }}
+          AUTO_PUBLISH: ${{ secrets.AUTO_PUBLISH }}
+        run: |
+          python3 - <<'PY'
+          import json,os,urllib.request,base64,datetime,urllib.parse,time
+          key=os.environ.get('GEMINI_KEY','') or ''
+          if not key:
+              print('لا يوجد مفتاح GEMINI_KEY — تخطٍ'); raise SystemExit(0)
+          topic=os.environ['TOPIC']; slug=os.environ['SLUG']
+          def gem(model,parts):
+              req=urllib.request.Request('https://generativelanguage.googleapis.com/v1beta/models/'+model+':generateContent?key='+key,
+                data=json.dumps({'contents':[{'parts':parts}]}).encode(),headers={'Content-Type':'application/json'})
+              return json.load(urllib.request.urlopen(req,timeout=120))
+          prompt=('أنت مساعد كتابة لمستشار أعمال مصري اسمه محمد الفداوي. اكتب مقالًا تعليميًا بالعربية (٤٥–٦٠٠ كلمة) بعنوان: '+topic+
+            ' . قواعد صارمة: لا تذكر عملاء بأسمائهم، لا أرقام إيرادات أو نسب نجاح مخترعة، لا شهادات أو جوائز، لا وعود بنتائج مضمونة؛ أمثلة عامة فقط. '
+            'أسلوب تنفيذي مباشر، فقرات قصيرة، عناوين فرعية، وخاتمة فيها دعوة لمناقشة المشروع عبر الموقع. أعد JSON فقط: {"title":..,"excerpt":..,"body":..} حيث body بصيغة Markdown.')
+          def pick_model():
+              try:
+                  rq=urllib.request.Request('https://generativelanguage.googleapis.com/v1beta/models?pageSize=200&key='+key)
+                  ms=json.load(urllib.request.urlopen(rq,timeout=60)).get('models',[])
+                  names=[m['name'].replace('models/','') for m in ms]
+                  names=[n for n in names if ('flash' in n or 'pro' in n) and not any(x in n for x in ['image','audio','video','tts','embedding','think'])]
+                  for p in ['gemini-flash-latest','gemini-pro-latest']:
+                      if p in names: return p
+                  for n in names:
+                      if 'flash' in n: return n
+                  return names[0] if names else 'gemini-flash-latest'
+              except Exception as e:
+                  print('model list fail',e); return 'gemini-flash-latest'
+          art=None; lasterr=''
+          for attempt in range(3):
+              for tm in [pick_model(),'gemini-flash-latest']:
+                  try:
+                      j=gem(tm,[{'text':prompt}])
+                      txt=j['candidates'][0]['content']['parts'][0]['text']
+                      a=txt.find('{'); b=txt.rfind('}')
+                      try: art=json.loads(txt[a:b+1])
+                      except Exception: art={'title':topic,'excerpt':'مقال تعليمي عملي: '+topic,'body':txt}
+                      break
+                  except Exception as e:
+                      lasterr=str(e); print('text model fail',tm,e)
+              if art is not None: break
+              if attempt<2: print('attempt',attempt+1,'failed — retry in 30s'); time.sleep(30)
+          if art is None:
+              cb=os.environ.get('CB_APIKEY','').strip()
+              if cb:
+                  try:
+                      m2='⚠️ فشل توليد مسودة اليوم بعد 3 محاولات: '+lasterr[:250]
+                      m2=' '.join(m2.split())
+                      urllib.request.urlopen('https://api.callmebot.com/whatsapp.php?phone=%2B201146905560&apikey='+cb+'&text='+urllib.parse.quote(m2,safe=''))
+                  except Exception as e2: print('WA fail-notify error:',e2)
+              print('GENERATION FAILED after retries:',lasterr); raise SystemExit(0)
+          cover=os.environ['BANK']; img_b64=None
+          IPROMPT='Editorial business illustration for an article titled: '+topic+'. Dark navy background #090C11, subtle gold #F3BD36 accent light, minimal executive-editorial style, abstract objects only, NO text, NO logos, NO recognizable faces, 16:9.'
+          def gen_image():
+              for m in ['gemini-2.5-flash-image','v1alpha|gemini-2.5-flash-image','gemini-2.5-flash-image-preview']:
+                  ver,mm=(m.split('|')+[None])[:2] if '|' in m else ('v1beta',m)
+                  try:
+                      r=gem2(ver,mm,[{'text':IPROMPT}])
+                      for p in r['candidates'][0]['content']['parts']:
+                          if 'inlineData' in p: return p['inlineData']['data']
+                  except Exception as e: print('img try fail',mm,e)
+              try:
+                  req=urllib.request.Request('https://generativelanguage.googleapis.com/v1beta/models/imagen-4.0-generate-001:predict?key='+key,
+                    data=json.dumps({'instances':[{'prompt':IPROMPT}],'parameters':{'aspectRatio':'16:9'}}).encode(),headers={'Content-Type':'application/json'})
+                  r=json.load(urllib.request.urlopen(req,timeout=120))
+                  return r['predictions'][0]['bytesBase64Encoded']
+              except Exception as e: print('imagen fail',e)
+              return None
+          def gem2(ver,model,parts):
+              req=urllib.request.Request('https://generativelanguage.googleapis.com/'+ver+'/models/'+model+':generateContent?key='+key,
+                data=json.dumps({'contents':[{'parts':parts}]}).encode(),headers={'Content-Type':'application/json'})
+              return json.load(urllib.request.urlopen(req,timeout=120))
+          img_b64=gen_image()
+          def put(path,b64,msg):
+              cur=None
+              r=urllib.request.Request('https://api.github.com/repos/'+os.environ['REPO']+'/contents/'+path,headers={'Authorization':'Bearer '+os.environ['GH_TOKEN'],'Accept':'application/vnd.github+json'})
+              try:
+                  cur=json.load(urllib.request.urlopen(r))
+              except Exception: pass
+              body={'message':msg,'content':b64}
+              if cur and 'sha' in cur: body['sha']=cur['sha']
+              rq=urllib.request.Request('https://api.github.com/repos/'+os.environ['REPO']+'/contents/'+path,data=json.dumps(body).encode(),method='PUT',headers={'Authorization':'Bearer '+os.environ['GH_TOKEN'],'Content-Type':'application/json'})
+              return json.load(urllib.request.urlopen(rq))
+          if img_b64:
+              put('assets/img/uploads/cover-'+slug+'.webp',img_b64,'ai cover: '+slug)
+              cover='assets/img/uploads/cover-'+slug+'.webp'
+          put('content/posts/'+slug+'.md',base64.b64encode(art['body'].encode()).decode(),'ai article: '+slug)
+          raw=urllib.request.urlopen('https://raw.githubusercontent.com/'+os.environ['REPO']+'/main/content/posts.json').read()
+          posts=json.loads(raw)
+          posts=[p for p in posts if p.get('slug')!=slug]
+          status='published' if os.environ.get('AUTO_PUBLISH','').lower()=='true' else 'draft'
+          posts.append({'slug':slug,'title':art['title'],'excerpt':art['excerpt'],'date':datetime.date.today().isoformat(),'lang':'ar','status':status,'cover':cover})
+          put('content/posts.json',base64.b64encode(json.dumps(posts,ensure_ascii=False,indent=1).encode()).decode(),'ai index: '+slug)
+          cb=os.environ.get('CB_APIKEY','').strip()
+          if cb:
+              try:
+                  msg='✍️ مسودة مقال اليوم جاهزة للمراجعة: '+art['title']+' — لوحة التحكم → المقالات → نشر بضغطة'
+                  msg=' '.join(msg.split())
+                  urllib.request.urlopen('https://api.callmebot.com/whatsapp.php?phone=%2B201146905560&apikey='+cb+'&text='+urllib.parse.quote(msg,safe=''))
+              except Exception as e:
+                  print('WA ping failed (draft already committed):',e)
+          print('draft committed:',slug,status)
+          PY
+</script>
+<script type="text/plain" id="wf2src">
+name: daily-article-reminder
+on:
+  schedule:
+    - cron: '0 6 * * *'   # 08:00 بتوقيت القاهرة
+  workflow_dispatch:
+jobs:
+  remind:
+    runs-on: ubuntu-latest
+    steps:
+      - name: pick today topic
+        id: topic
+        run: |
+          IDX=$(( $(date -u +%s) / 86400 % 30 ))
+          TOPIC=$(curl -s https://raw.githubusercontent.com/${{ github.repository }}/main/assets/data/topics.json | python3 -c "import json,sys;print(json.load(sys.stdin)['topics'][$IDX]['t'])")
+          echo "topic=$TOPIC" >> "$GITHUB_OUTPUT"
+      - name: whatsapp reminder via CallMeBot
+        env:
+          CBKEY: ${{ secrets.CB_APIKEY || secrets.CALLMBOTAPIKEY }}
+          T: ${{ steps.topic.outputs.topic }}
+        run: |
+          CBKEY=$(printf '%s' "$CBKEY" | tr -d '\n\r ')
+          if [ -z "$CBKEY" ]; then echo "no CallMeBot key — skip"; exit 0; fi
+          TEXT=$(python3 -c "import urllib.parse,os;print(urllib.parse.quote('📝 موضوع مقال اليوم: '+os.environ['T']+' — لوحة التحكم → المقالات → توليد مسودة اليوم'))")
+          curl -s "https://api.callmebot.com/whatsapp.php?phone=%2B201146905560&apikey=$CBKEY&text=$TEXT"
 </script>
 </body>
 </html>
