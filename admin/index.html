@@ -310,8 +310,9 @@ textarea{min-height:260px}
     </div>
     <div class="card">
       <h3>إعدادات الـAI (تُحفظ في متصفحك فقط)</h3>
-      <label>المزوّد <select id="aiProv"><option value="gemini">Gemini (مجاني)</option><option value="openai">OpenAI</option></select></label>
+      <label>المزوّد <select id="aiProv"><option value="gemini">Gemini (مجاني)</option><option value="groq">Groq (مجاني — احتياطي تلقائي)</option><option value="openai">OpenAI</option></select></label>
       <label>API Key <input id="aiKey" type="password" placeholder="الصق المفتاح هنا"></label>
+      <label>مفتاح Groq احتياطي (اختياري — نفس مفتاح GitHub) <input id="aiGKey" type="password" placeholder="gsk_..."></label>
       <label>الموديل <input id="aiModel" placeholder="gemini-2.5-flash"></label>
       <label style="display:block;margin-top:8px">مفتاح واتساب CallMeBot <input id="cbKey" placeholder="API key"></label><button class="btn ghost sm" id="aiTest">🔬 اختبار الإعدادات</button> <button class="btn ghost sm" id="aiSave">حفظ الإعدادات</button>
       <p style="color:var(--muted);font-size:12px">المفتاح لا يغادر متصفحك إلا في طلب مباشر للمزوّد عند ضغط «توليد بالـAI». بدون مفتاح استخدم «توليد هيكل».</p>
@@ -374,7 +375,7 @@ textarea{min-height:260px}
 <script>
 (function(){
 'use strict';
-var ADMIN_VER='20260922b';
+var ADMIN_VER='20260923a';
 (function(){try{
   fetch('../assets/data/ver.json?cb='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.json():null;}).then(function(j){
     if(!j||!j.v||j.v===ADMIN_VER){try{sessionStorage.removeItem('mf-stale');}catch(e){}return;}
@@ -390,6 +391,7 @@ function toast(msg,err){var t=$('toast');$('toastMsg').textContent=msg;t.classNa
 function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 function mAIcfg(){var v;try{v=JSON.parse(localStorage.getItem('mf-ai')||'{}');if(!v||typeof v!=='object')v={};}catch(e){localStorage.removeItem('mf-ai');v={};}
 try{if($('aiKey')&&$('aiKey').value.trim()){v.key=$('aiKey').value.trim();if($('aiProv'))v.provider=$('aiProv').value;if($('aiModel'))v.model=$('aiModel').value.trim();}
+if($('aiGKey')&&$('aiGKey').value.trim())v.gkey=$('aiGKey').value.trim();
 if($('cbKey')&&$('cbKey').value.trim())v.cb=$('cbKey').value.trim();}catch(e2){}
 return v;}
 window.addEventListener('error',function(ev){try{toast('⚠️ خطأ داخلي: '+String(ev.message).slice(0,90),1);}catch(e){}});
@@ -686,12 +688,12 @@ $('aiTest').onclick=function(){toast('🔬 جارٍ فحص الإعدادات…
   function done(){if(settled)return;settled=true;toast(out.join(' | '),out.some(function(x){return x.indexOf('✖')===0;})?1:0);}
   function fin(s2){out.push(s2);pend--;if(pend===0)done();}
   setTimeout(function(){if(!settled&&pend>0){fin('⏳ مهلة: بعض الفحوص لم تكتمل');}},45000);
-  try{if(!cfg.key){fin('✖ نص: لا مفتاح');}else{aiText('قل: تمام',cfg).then(function(){fin('✅ نص: يعمل ('+(AI_MODELS_CACHE?AI_MODELS_CACHE[0]:'؟')+')');}).catch(function(e){fin('✖ نص: '+String(e.message).slice(0,60));});}}catch(e){fin('✖ نص: '+String(e.message).slice(0,60));}
+  try{if(!cfg.key){fin('✖ نص: لا مفتاح');}else{aiText('قل: تمام',cfg).then(function(){fin('✅ نص: يعمل ('+(cfg.provider==='groq'?'groq':(AI_MODELS_CACHE?AI_MODELS_CACHE[0]:'؟'))+')');}).catch(function(e){fin('✖ نص: '+String(e.message).slice(0,60));});}}catch(e){fin('✖ نص: '+String(e.message).slice(0,60));}
   try{if(!cfg.key){fin('✖ صورة: لا مفتاح');}else{aiImage('gold line on dark background, abstract',cfg).then(function(d){fin('✅ صورة: يعمل ('+d.model+')');}).catch(function(e){fin('✖ صورة: '+String(e.message).slice(0,70));});}}catch(e){fin('✖ صورة: '+String(e.message).slice(0,70));}
   try{if(!cfg.cb){fin('✖ واتساب: لا مفتاح');}else{fetch('https://api.callmebot.com/whatsapp.php?phone=%2B201146905560&text='+encodeURIComponent('🔬 اختبار تنبيهات الموقع')+'&apikey='+encodeURIComponent(cfg.cb),{mode:'no-cors'}).then(function(){fin('✅ واتساب: تم الإرسال — تفقد هاتفك');}).catch(function(){fin('✖ واتساب: فشل شبكة');});}}catch(e){fin('✖ واتساب: '+String(e.message).slice(0,60));}
 };
-$('aiSave').onclick=function(){localStorage.setItem('mf-ai',JSON.stringify({provider:$('aiProv').value,key:$('aiKey').value.trim(),model:$('aiModel').value.trim(),cb:$('cbKey').value.trim()}));toast('تم حفظ إعدادات AI في متصفحك');};
-(function(){var cfg=mAIcfg();if(cfg.provider)$('aiProv').value=cfg.provider;if(cfg.key)$('aiKey').value=cfg.key;if(cfg.model)$('aiModel').value=cfg.model;if(cfg.cb)$('cbKey').value=cfg.cb;/* ===== محرك المقال اليومي ===== */
+$('aiSave').onclick=function(){localStorage.setItem('mf-ai',JSON.stringify({provider:$('aiProv').value,key:$('aiKey').value.trim(),model:$('aiModel').value.trim(),cb:$('cbKey').value.trim(),gkey:$('aiGKey').value.trim()}));toast('تم حفظ إعدادات AI في متصفحك');};
+(function(){var cfg=mAIcfg();if(cfg.provider)$('aiProv').value=cfg.provider;if(cfg.key)$('aiKey').value=cfg.key;if(cfg.model)$('aiModel').value=cfg.model;if(cfg.cb)$('cbKey').value=cfg.cb;if(cfg.gkey&&$('aiGKey'))$('aiGKey').value=cfg.gkey;/* ===== محرك المقال اليومي ===== */
 var D_TOPICS=['هل فكرة مشروعك تستحق التنفيذ؟ ٥ أسئلة تجيب قبل ما تصرف جنيه','أخطاء شائعة في دراسات الجدوى تقع فيها المشاريع الصغيرة','كيف تختار السوق المستهدف الأول لمشروعك؟','دراسة جدوى أم خطة عمل؟ الفرق الذي يحدد من أين تبدأ','تحليل المنافسين بدون ميزانية: أدوات مجانية ونتائج عملية','تسعير المنتج الجديد: ثلاثة نماذج وأيها يناسب مشروعك','لماذا تتوقف المبيعات بعد أول ٦ أشهر؟ تشخيص عملي','من فكرة إلى خطة: خارطة طريق الـ ٩٠ يومًا الأولى','إدارة التدفق النقدي في المشاريع الناشئة: قواعد البقاء','متى تتوسع جغرافيًا؟ علامات الجاهزية التي يغفلها أصحاب المشاريع','بحث السوق بالمقابلات: كيف تسأل العميل سؤالًا لا يضلك','الفرق بين الربح والكاش: قصة كل مشروع متعثر','بناء عرض قيمة واضح في جملة واحدة','اختيار اسم وعلامة تجارية: ما الذي يؤثر فعلًا على المبيعات؟','قراءة قائمة دخل لمشروع صغير في ١٠ دقائق','نقطة التعادل: كم وحدة تبيع قبل أن تربح؟','التفاوض مع الموردين: ٥ روافع تكلفة صفرية','توظيف أول موظف: متى ولمن وكيف تحسبها؟','أتمتة العمليات الصغيرة: أين تبدأ بدون ميزانية تقنية؟','مؤشرات أداء بسيطة لصاحب مشروع غير مالي','دخول سوق خليجي جديد: ما الذي يختلف عن السوق المصري؟','التصدير خطوة صفر: جاهزية المنتج قبل جاهزية السوق','تحويل عميل مرة واحدة إلى عميل متكرر','تقييم فرصة امتياز تجاري: قائمة فحص عملية','العروض والباقات: كيف تبني سلم أسعار لا يحرق هامشك؟','دراسة الجدوى البنكية: ما الذي يبحث عنه الممول فعلًا؟','إدارة المخزون في التجارة: تكلفة مخفية تستهلك هامشك','خطة التسويق الأولى بميزانية محدودة: قنوات تستحق البدء','من مشروع فردي إلى منشأة: متى تؤسس كياناتك الرسمية؟','قياس رضا العملاء بدون أنظمة: ٣ طرق سريعة','إعادة إطلاق منتج متوقف: تشخيص قبل القرار'];
 function dToday(){return Math.floor(Date.now()/86400000)%D_TOPICS.length;}
 var D_ITEMS=null;
@@ -708,10 +710,13 @@ function aiModels(cfg){
     if(!pick)pick=names[0]||'gemini-flash-latest';
     AI_MODELS_CACHE=[pick].concat(names.filter(function(n){return n!==pick;})).slice(0,4);
     return AI_MODELS_CACHE;}).catch(function(){return ['gemini-flash-latest','gemini-2.5-flash-lite'];});}
+function groqModels(key){return fetch('https://api.groq.com/openai/v1/models',{headers:{'Authorization':'Bearer '+key}}).then(function(r){if(!r.ok)throw new Error('groq list HTTP '+r.status);return r.json();}).then(function(j){var names=(j.data||[]).map(function(m){return m.id;}).filter(function(n){return n&&!/whisper|guard|compound/i.test(n);});var pref=names.filter(function(n){return /qwen|gpt-oss|kimi/i.test(n);});var pick=pref[0]||names[0]||'';if(!pick)throw new Error('no groq model');return [pick].concat(names.filter(function(n){return n!==pick;})).slice(0,4);});}
+function groqText(prompt,key){return groqModels(key).then(function(models){function go(i){var m=models[i];return fetch('https://api.groq.com/openai/v1/chat/completions',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+key},body:JSON.stringify({model:m,temperature:0.7,messages:[{role:'user',content:prompt}]})}).then(function(r){if(!r.ok)return r.json().then(function(j){throw new Error(((j.error&&j.error.message)||('HTTP '+r.status)));});return r.json();}).then(function(j){return j.choices[0].message.content;}).catch(function(e){if(/not found|deprecated|unavailable/i.test(String(e.message))&&i+1<models.length)return go(i+1);throw e;});}return go(0);});}
 function aiText(prompt,cfg){cfg=cfg||mAIcfg();
+  if(cfg.provider==='groq')return groqText(prompt,cfg.key);
   return aiModels(cfg).then(function(models){
   function go(i,q){var m=models[i];return fetch('https://generativelanguage.googleapis.com/v1beta/models/'+m+':generateContent?key='+encodeURIComponent(cfg.key),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contents:[{parts:[{text:prompt}]}]})}).then(function(r){if(!r.ok)return r.json().then(function(j){var msg=(j.error&&j.error.message)||('HTTP '+r.status);if(/quota|rate.limit|retry in/i.test(msg)&&(q||0)<2){return new Promise(function(res){setTimeout(res,12000);}).then(function(){return go(i,(q||0)+1);});}if(/no longer available|not found|deprecated/i.test(msg)&&i+1<models.length)return go(i+1);throw new Error(msg);});return r.json();}).then(function(j){return j.candidates[0].content.parts[0].text;});}
-  return go(0);});}
+  return go(0).catch(function(e){if(cfg.gkey)return groqText(prompt,cfg.gkey);throw e;});});}
 function aiImage(prompt,cfg){
   var G={contents:[{parts:[{text:prompt}]}]};
   function pickGC(j){var d=null;((j.candidates&&j.candidates[0].content.parts)||[]).forEach(function(p){if(p.inlineData)d=p.inlineData;});return d?{b64:d.data,mime:d.mimeType||'image/png'}:null;}
@@ -844,6 +849,7 @@ jobs:
       - name: generate article + cover + commit draft
         env:
           GEMINI_KEY: ${{ secrets.GEMINI_KEY || secrets.GEMINIKEY }}
+          GROQ_KEY: ${{ secrets.GROQ_API_KEY }}
           CB_APIKEY: ${{ secrets.CB_APIKEY || secrets.CALLMBOTAPIKEY }}
           GH_TOKEN: ${{ github.token }}
           REPO: ${{ github.repository }}
@@ -892,6 +898,31 @@ jobs:
                       lasterr=str(e); print('text model fail',tm,e)
               if art is not None: break
               if attempt<2: print('attempt',attempt+1,'failed — retry in 30s'); time.sleep(30)
+          provider='Gemini'
+          if art is None:
+              gk=os.environ.get('GROQ_KEY','').strip()
+              if gk:
+                  try:
+                      rq=urllib.request.Request('https://api.groq.com/openai/v1/models',headers={'Authorization':'Bearer '+gk})
+                      names=[m['id'] for m in json.load(urllib.request.urlopen(rq,timeout=60)).get('data',[])]
+                      names=[n for n in names if n and not any(x in n for x in ['whisper','guard','compound'])]
+                      pref=[n for n in names if any(k in n for k in ['qwen','gpt-oss','kimi'])]
+                      cands=(pref+ [n for n in names if n not in pref])[:2]
+                      for gm in cands:
+                          try:
+                              req=urllib.request.Request('https://api.groq.com/openai/v1/chat/completions',
+                                data=json.dumps({'model':gm,'temperature':0.7,'messages':[{'role':'user','content':prompt}]}).encode(),
+                                headers={'Authorization':'Bearer '+gk,'Content-Type':'application/json'})
+                              j=json.load(urllib.request.urlopen(req,timeout=120))
+                              txt=j['choices'][0]['message']['content']
+                              a=txt.find('{'); b=txt.rfind('}')
+                              try: art=json.loads(txt[a:b+1])
+                              except Exception: art={'title':topic,'excerpt':'مقال تعليمي عملي: '+topic,'body':txt}
+                              provider='Groq ('+gm+')'; print('groq ok:',gm); break
+                          except Exception as e:
+                              lasterr=str(e); print('groq model fail',gm,e)
+                  except Exception as e:
+                      print('groq list fail',e)
           if art is None:
               cb=os.environ.get('CB_APIKEY','').strip()
               if cb:
@@ -946,7 +977,7 @@ jobs:
           cb=os.environ.get('CB_APIKEY','').strip()
           if cb:
               try:
-                  msg='✍️ مسودة مقال اليوم جاهزة للمراجعة: '+art['title']+' — لوحة التحكم → المقالات → نشر بضغطة'
+                  msg='✍️ مسودة مقال اليوم جاهزة للمراجعة: '+art['title']+' — عبر '+provider+' — لوحة التحكم → المقالات → نشر بضغطة'
                   msg=' '.join(msg.split())
                   urllib.request.urlopen('https://api.callmebot.com/whatsapp.php?phone=%2B201146905560&apikey='+cb+'&text='+urllib.parse.quote(msg,safe=''))
               except Exception as e:
