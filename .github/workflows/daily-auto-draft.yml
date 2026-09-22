@@ -32,7 +32,7 @@ jobs:
           AUTO_PUBLISH: ${{ secrets.AUTO_PUBLISH }}
         run: |
           python3 - <<'PY'
-          import json,os,urllib.request,base64,datetime,urllib.parse
+          import json,os,urllib.request,base64,datetime,urllib.parse,time
           key=os.environ.get('GEMINI_KEY','') or ''
           if not key:
               print('لا يوجد مفتاح GEMINI_KEY — تخطٍ'); raise SystemExit(0)
@@ -57,16 +57,29 @@ jobs:
                   return names[0] if names else 'gemini-flash-latest'
               except Exception as e:
                   print('model list fail',e); return 'gemini-flash-latest'
-          j=None
-          for tm in [pick_model(),'gemini-flash-latest']:
-              try:
-                  j=gem(tm,[{'text':prompt}]); break
-              except Exception as e: print('text model fail',tm,e)
-          if j is None: raise SystemExit('no text model available')
-          txt=j['candidates'][0]['content']['parts'][0]['text']
-          a=txt.find('{'); b=txt.rfind('}')
-          try: art=json.loads(txt[a:b+1])
-          except Exception: art={'title':topic,'excerpt':'مقال تعليمي عملي: '+topic,'body':txt}
+          art=None; lasterr=''
+          for attempt in range(3):
+              for tm in [pick_model(),'gemini-flash-latest']:
+                  try:
+                      j=gem(tm,[{'text':prompt}])
+                      txt=j['candidates'][0]['content']['parts'][0]['text']
+                      a=txt.find('{'); b=txt.rfind('}')
+                      try: art=json.loads(txt[a:b+1])
+                      except Exception: art={'title':topic,'excerpt':'مقال تعليمي عملي: '+topic,'body':txt}
+                      break
+                  except Exception as e:
+                      lasterr=str(e); print('text model fail',tm,e)
+              if art is not None: break
+              if attempt<2: print('attempt',attempt+1,'failed — retry in 30s'); time.sleep(30)
+          if art is None:
+              cb=os.environ.get('CB_APIKEY','').strip()
+              if cb:
+                  try:
+                      m2='⚠️ فشل توليد مسودة اليوم بعد 3 محاولات: '+lasterr[:250]
+                      m2=' '.join(m2.split())
+                      urllib.request.urlopen('https://api.callmebot.com/whatsapp.php?phone=%2B201146905560&apikey='+cb+'&text='+urllib.parse.quote(m2,safe=''))
+                  except Exception as e2: print('WA fail-notify error:',e2)
+              print('GENERATION FAILED after retries:',lasterr); raise SystemExit(0)
           cover=os.environ['BANK']; img_b64=None
           IPROMPT='Editorial business illustration for an article titled: '+topic+'. Dark navy background #090C11, subtle gold #F3BD36 accent light, minimal executive-editorial style, abstract objects only, NO text, NO logos, NO recognizable faces, 16:9.'
           def gen_image():
