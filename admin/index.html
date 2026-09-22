@@ -678,7 +678,7 @@ $('aiTest').onclick=function(){toast('🔬 جارٍ فحص الإعدادات…
   setTimeout(function(){if(!settled&&pend>0){fin('⏳ مهلة: بعض الفحوص لم تكتمل');}},45000);
   try{if(!cfg.key){fin('✖ نص: لا مفتاح');}else{aiText('قل: تمام',cfg).then(function(){fin('✅ نص: يعمل ('+(AI_MODELS_CACHE?AI_MODELS_CACHE[0]:'؟')+')');}).catch(function(e){fin('✖ نص: '+String(e.message).slice(0,60));});}}catch(e){fin('✖ نص: '+String(e.message).slice(0,60));}
   try{if(!cfg.key){fin('✖ صورة: لا مفتاح');}else{aiImage('gold line on dark background, abstract',cfg).then(function(d){fin('✅ صورة: يعمل ('+d.model+')');}).catch(function(e){fin('✖ صورة: '+String(e.message).slice(0,70));});}}catch(e){fin('✖ صورة: '+String(e.message).slice(0,70));}
-  try{if(!cfg.cb){fin('✖ واتساب: لا مفتاح');}else{var ti=new Image();ti.onload=function(){fin('✅ واتساب: الاتصال يعمل — تفقد هاتفك');};ti.onerror=function(){fin('✖ واتساب: فشل شبكة');};ti.src='https://api.callmebot.com/whatsapp.php?phone=%2B201146905560&text='+encodeURIComponent('🔬 اختبار تنبيهات الموقع')+'&apikey='+encodeURIComponent(cfg.cb);}}catch(e){fin('✖ واتساب: '+String(e.message).slice(0,60));}
+  try{if(!cfg.cb){fin('✖ واتساب: لا مفتاح');}else{fetch('https://api.callmebot.com/whatsapp.php?phone=%2B201146905560&text='+encodeURIComponent('🔬 اختبار تنبيهات الموقع')+'&apikey='+encodeURIComponent(cfg.cb),{mode:'no-cors'}).then(function(){fin('✅ واتساب: تم الإرسال — تفقد هاتفك');}).catch(function(){fin('✖ واتساب: فشل شبكة');});}}catch(e){fin('✖ واتساب: '+String(e.message).slice(0,60));}
 };
 $('aiSave').onclick=function(){localStorage.setItem('mf-ai',JSON.stringify({provider:$('aiProv').value,key:$('aiKey').value.trim(),model:$('aiModel').value.trim(),cb:$('cbKey').value.trim()}));toast('تم حفظ إعدادات AI في متصفحك');};
 (function(){var cfg=mAIcfg();if(cfg.provider)$('aiProv').value=cfg.provider;if(cfg.key)$('aiKey').value=cfg.key;if(cfg.model)$('aiModel').value=cfg.model;if(cfg.cb)$('cbKey').value=cfg.cb;/* ===== محرك المقال اليومي ===== */
@@ -700,7 +700,7 @@ function aiModels(cfg){
     return AI_MODELS_CACHE;}).catch(function(){return ['gemini-flash-latest','gemini-2.5-flash-lite'];});}
 function aiText(prompt,cfg){cfg=cfg||mAIcfg();
   return aiModels(cfg).then(function(models){
-  function go(i){var m=models[i];return fetch('https://generativelanguage.googleapis.com/v1beta/models/'+m+':generateContent?key='+encodeURIComponent(cfg.key),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contents:[{parts:[{text:prompt}]}]})}).then(function(r){if(!r.ok)return r.json().then(function(j){var msg=(j.error&&j.error.message)||('HTTP '+r.status);if(/no longer available|not found|deprecated/i.test(msg)&&i+1<models.length)return go(i+1);throw new Error(msg);});return r.json();}).then(function(j){return j.candidates[0].content.parts[0].text;});}
+  function go(i,q){var m=models[i];return fetch('https://generativelanguage.googleapis.com/v1beta/models/'+m+':generateContent?key='+encodeURIComponent(cfg.key),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contents:[{parts:[{text:prompt}]}]})}).then(function(r){if(!r.ok)return r.json().then(function(j){var msg=(j.error&&j.error.message)||('HTTP '+r.status);if(/quota|rate.limit|retry in/i.test(msg)&&(q||0)<2){return new Promise(function(res){setTimeout(res,12000);}).then(function(){return go(i,(q||0)+1);});}if(/no longer available|not found|deprecated/i.test(msg)&&i+1<models.length)return go(i+1);throw new Error(msg);});return r.json();}).then(function(j){return j.candidates[0].content.parts[0].text;});}
   return go(0);});}
 function aiImage(prompt,cfg){
   var G={contents:[{parts:[{text:prompt}]}]};
@@ -715,7 +715,7 @@ function aiImage(prompt,cfg){
   function go(i){var c=chain[i];return fetch('https://generativelanguage.googleapis.com/'+c.u+'?key='+encodeURIComponent(cfg.key),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(c.b)}).then(function(r){if(!r.ok)return r.json().then(function(j){throw new Error((j.error&&j.error.message||'HTTP '+r.status));});return r.json();}).then(function(j){var d=c.p(j);if(!d)throw new Error('no image in response');d.model=c.u.split('/models/')[1].split(':')[0];return d;}).catch(function(e){if(i+1<chain.length)return go(i+1);e.chain=true;throw e;});}
   return go(0);}
 function waPing(text){var cfg=mAIcfg();if(!cfg.cb){toast('احفظ مفتاح CallMeBot أولًا في إعدادات AI أسفل الصفحة',1);return;}
-  var im=new Image();im.onload=function(){toast('واتساب: تم التسليم لقناة الإرسال — تفقد هاتفك 📱');};im.onerror=function(){toast('واتساب: فشل اتصال الشبكة بـ CallMeBot',1);};im.src='https://api.callmebot.com/whatsapp.php?phone=%2B201146905560&text='+encodeURIComponent(text)+'&apikey='+encodeURIComponent(cfg.cb);}
+  fetch('https://api.callmebot.com/whatsapp.php?phone=%2B201146905560&text='+encodeURIComponent(text)+'&apikey='+encodeURIComponent(cfg.cb),{mode:'no-cors'}).then(function(){toast('واتساب: تم التسليم لقناة الإرسال — تفقد هاتفك 📱');}).catch(function(){toast('واتساب: فشل اتصال الشبكة بـ CallMeBot',1);});}
 function dLoad(){try{return JSON.parse(localStorage.getItem('mf-draft')||'null');}catch(e){return null;}}
 function dSave(d){localStorage.setItem('mf-draft',JSON.stringify(d));}
 function dRefreshInfo(){var last='';try{last=(POSTS||[]).map(function(p){return p.date||'';}).sort().pop();}catch(e){}
