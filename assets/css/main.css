@@ -47,6 +47,9 @@ h1,h2,h3,h4{font-family:var(--font-h);line-height:1.15;letter-spacing:-.01em}
 .nav-in{height:var(--nav-h);display:flex;align-items:center;justify-content:space-between;gap:20px}
 .logo{font-family:var(--font-h);font-weight:800;font-size:19px;letter-spacing:.06em}
 .logo span{color:var(--gold)}
+.logo img{height:48px;width:auto;display:block}
+.f-brand .logo img{height:104px;width:auto;max-width:236px}
+@media(max-width:760px){.logo img{height:40px}.f-brand .logo img{height:88px}}
 .links{display:flex;align-items:center;gap:26px}
 .links>a:not(.btn):not(.lang-switch){font-size:14px;font-weight:600;color:var(--muted);transition:.2s;position:relative}
 .links>a:not(.btn):not(.lang-switch):hover{color:var(--text)}
