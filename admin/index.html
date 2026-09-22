@@ -168,7 +168,12 @@ textarea{min-height:260px}
         <img id="dThumb" alt="" hidden style="width:132px;height:69px;object-fit:cover;border-radius:8px;border:1px solid var(--line);margin-top:6px" onerror="this.hidden=true">
         <p style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn" id="dGen">توليد مسودة اليوم</button>
         <button class="btn ghost" id="dToEditor" hidden>إرسال إلى المحرر</button>
-        <button class="btn ghost" id="dPosts" hidden>📣 توليد نصوص النشر</button> <button class="btn ghost" id="dCoverAi" hidden>🎨 غلاف AI (نانو بانانا)</button> <button class="btn ghost" id="dCover" hidden>🖼 غلاف نصي بالهوية</button> <button class="btn ghost" id="dRemind" hidden>⏰ تذكير واتساب بموضوع اليوم</button></p>
+        <button class="btn ghost" id="dPosts" hidden>📣 توليد نصوص النشر</button> <button class="btn ghost" id="dCoverAi" hidden>🎨 غلاف AI (نانو بانانا)</button> <button class="btn ghost" id="dCover" hidden>🖼 غلاف نصي بالهوية</button> <button class="btn ghost" id="dRemind" hidden>⏰ تذكير واتساب بموضوع اليوم</button>
+<div style="display:flex;gap:8px;align-items:center;margin-top:10px;flex-wrap:wrap;width:100%">
+<label style="margin:0">أرشيف مسودات AI: <select id="dHist" style="min-width:240px;background:var(--panel);color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:6px"></select></label>
+<button class="btn ghost sm" id="dHistOpen">فتح في المحرر</button>
+<button class="btn ghost sm" id="dHistLoad">عرض في المحرك</button>
+</div></p>
         <div id="dWrap" hidden style="margin-top:10px">
           <label style="display:block;margin-bottom:8px">العنوان<input id="dTitle" style="width:100%"></label>
           <label style="display:block;margin-bottom:8px">المقتطف<input id="dExcerpt" style="width:100%"></label>
@@ -469,7 +474,7 @@ function renderPosts(){var q=($('postSearch').value||'').trim();var rows=(POSTS|
     return '<tr><td>'+esc(p.title)+'</td><td><span class="badge lang">'+(p.lang==='ar'?'عربي':'EN')+'</span></td><td class="m">'+(p.date||'')+'</td><td>'+st+'</td>'+
     '<td style="white-space:nowrap"><button class="btn ghost sm" data-edit="'+esc(p.slug)+'">تعديل</button> <button class="btn danger sm" data-del="'+esc(p.slug)+'">حذف</button></td></tr>';}).join('')||'<tr><td colspan="5" style="color:var(--muted)">لا مقالات — ابدأ بـ «+ مقال جديد»</td></tr>';
   $('postsList').querySelectorAll('[data-edit]').forEach(function(b){b.onclick=function(){editPost(POSTS.find(function(p){return p.slug===b.getAttribute('data-edit')}))};});
-  $('postsList').querySelectorAll('[data-del]').forEach(function(b){b.onclick=function(){var p=POSTS.find(function(x){return x.slug===b.getAttribute('data-del')});if(confirm('حذف المقال نهائيًا؟'))delPost(p)};});}
+  $('postsList').querySelectorAll('[data-del]').forEach(function(b){b.onclick=function(){var p=POSTS.find(function(x){return x.slug===b.getAttribute('data-del')});if(confirm('حذف المقال نهائيًا؟'))delPost(p)};});if($('dHist'))dHistPop();}
 $('postSearch').oninput=renderPosts;
 $('newPost').onclick=function(){clearPostForm();show('editor');};
 $('edBack').onclick=function(){show('articles')};
@@ -723,16 +728,26 @@ function aiText(prompt){var cfg=mAIcfg();
   return fetch('https://generativelanguage.googleapis.com/v1beta/models/'+(cfg.model||'gemini-2.5-flash')+':generateContent?key='+encodeURIComponent(cfg.key),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contents:[{parts:[{text:prompt}]}]})}).then(function(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.json();}).then(function(j){return j.candidates[0].content.parts[0].text;});}
 function skelArticle(topic){return {title:topic,excerpt:'أسئلة عملية وإجابات مباشرة حول: '+topic+' — خلاصة تصلح للتطبيق هذا الأسبوع.',body:'# '+topic+'\n\n## لماذا يهم هذا الموضوع الآن؟\n[اكتب هنا من خبرتك: ٣–٤ أسطر]\n\n## ثلاث نقاط عملية\n١. [نقطة من خبرتك]\n٢. [نقطة من خبرتك]\n٣. [نقطة من خبرتك]\n\n## خطأ شائع يجب تجنبه\n[مثال واقعي عام بدون أسماء أو أرقام غير موثقة]\n\n## الخلاصة\n[سطران]\n\n---\n*لديك سؤال عن حالتك الخاصة؟ ناقش مشروعك عبر الموقع.*'};}
 function dRender(d){$('dWrap').hidden=false;$('dToEditor').hidden=false;$('dPosts').hidden=false;$('dCover').hidden=false;$('dCoverAi').hidden=false;$('dRemind').hidden=false;if(d.img){$('dThumb').hidden=false;$('dThumb').src='../'+d.img;}$('dTitle').value=d.title||'';$('dExcerpt').value=d.excerpt||'';$('dBody').value=d.body||'';}
-$('dGen').onclick=function(){var item=dItem();var topic=item.t;var d=dLoad();
-  if(d&&d.topic===topic&&d.body){dRender(d);toast('مسودة اليوم موجودة — عدّل أو أرسل للمحرر');return;}
+$('dGen').onclick=function(){var item=dItem();var topic=item.t;
   var prompt='أنت مساعد كتابة لمستشار أعمال مصري اسمه محمد الفداوي. اكتب مقالًا تعليميًا بالعربية (٤٥٠–٦٠٠ كلمة) بعنوان: '+topic+' . قواعد صارمة: لا تذكر عملاء بأسمائهم، لا أرقام إيرادات أو نسب نجاح مخترعة، لا شهادات أو جوائز، لا وعود بنتائج مضمونة؛ أمثلة عامة فقط. أسلوب: تنفيذي مباشر، فقرات قصيرة، عناوين فرعية، وخاتمة فيها دعوة لمناقشة المشروع عبر الموقع. أعد JSON فقط بالشكل: {"title":..,"excerpt":..,"body":..} حيث body بصيغة Markdown.';
   var cfg=mAIcfg();
   if(!cfg.key){var nd0=skelArticle(topic);nd0.topic=topic;nd0.img=item.img;dSave(nd0);dRender(nd0);toast('لا مفتاح AI — وُلّد هيكل جاهز لتكملة من خبرتك');return;}
   toast('جارٍ توليد مسودة اليوم…');
   aiText(prompt,cfg).then(function(txt){var j=null;try{var a=txt.indexOf('{'),b=txt.lastIndexOf('}');j=JSON.parse(txt.slice(a,b+1));}catch(e){}
     var nd=j&&j.title?{topic:topic,title:j.title,excerpt:j.excerpt||'',body:j.body||txt}:{topic:topic,title:topic,excerpt:'مقال تعليمي عملي: '+topic,body:txt};nd.img=item.img;
-    dSave(nd);dRender(nd);toast('مسودة اليوم جاهزة — راجع وعدّل قبل النشر ✅');})
+    dSave(nd);dRender(nd);
+    dCommit(nd,topic).then(function(sl){renderPosts();toast('✅ مسودة جديدة محفوظة في الأرشيف: '+sl+' — ترجع لها وقتما تشاء');}).catch(function(e){toast('المسودة في المحرك لكن فشل حفظها بالأرشيف: '+e.message,1);});})
   .catch(function(e){if(String(e.message)==='no-key'){var nd=skelArticle(topic);nd.topic=topic;nd.img=item.img;dSave(nd);dRender(nd);toast('لا مفتاح AI — وُلّد هيكل جاهز لتكملة من خبرتك');}else{toast('فشل التوليد: '+e.message,1);}});};
+function dCommit(art,topic){var t=new Date();var slug='ai-'+today()+'-'+String(t.getHours()).padStart(2,'0')+String(t.getMinutes()).padStart(2,'0');
+  return putText('content/posts/'+slug+'.md',art.body,'ai draft: '+slug).then(function(){
+    var list=(POSTS||[]).filter(function(pp){return pp.slug!==slug;});
+    list.push({slug:slug,title:art.title,excerpt:art.excerpt||'',date:today(),lang:'ar',status:'draft'});
+    POSTS=list;return putText('content/posts.json',JSON.stringify(list,null,1),'ai draft index: '+slug).then(function(){return slug;});});}
+function dHistPop(){var list=(POSTS||[]).filter(function(pp){return String(pp.slug).indexOf('ai-')===0&&pp.status==='draft';}).sort(function(a,b){return String(b.slug).localeCompare(String(a.slug));});
+  $('dHist').innerHTML=list.map(function(pp){return '<option value="'+esc(pp.slug)+'">'+esc(String(pp.title).slice(0,45))+' ('+String(pp.slug).slice(-4)+')</option>';}).join('')||'<option value="">لا مسودات AI بعد</option>';}
+$('dHistOpen').onclick=function(){var sl=$('dHist').value;if(!sl){toast('لا مسودات بعد — ولّد أولًا',1);return;}var pp=POSTS.find(function(x){return x.slug===sl;});if(pp){editPost(pp);show('editor');toast('فُتحت المسودة في المحرر — راجع أو انشر');}};
+$('dHistLoad').onclick=function(){var sl=$('dHist').value;if(!sl){toast('لا مسودات بعد',1);return;}var pp=POSTS.find(function(x){return x.slug===sl;});if(!pp)return;
+  api('content/posts/'+sl+'.md').then(function(cur){var body=decodeB64(cur.content);var d={topic:pp.title,title:pp.title,excerpt:pp.excerpt||'',body:body};dSave(d);dRender(d);toast('عُرضت المسودة في المحرك');}).catch(function(e){toast('فشل فتح المسودة: '+e.message,1);});};
 $('dToEditor').onclick=function(){var d={title:$('dTitle').value,excerpt:$('dExcerpt').value,body:$('dBody').value};if(!d.title){toast('اكتب عنوانًا أولًا',1);return;}
   $('pTitle').value=d.title;$('pExcerpt').value=d.excerpt;$('pBody').value=d.body;
   if($('pDate'))$('pDate').value=new Date().toISOString().slice(0,10);
