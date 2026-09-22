@@ -368,7 +368,7 @@ textarea{min-height:260px}
 <script>
 (function(){
 'use strict';
-var ADMIN_VER='20260921a';
+var ADMIN_VER='20260921f';
 var CFG={owner:'melfedawy17-dotcom',repo:'melfedawy',branch:'main',token:''};
 var $=function(id){return document.getElementById(id)};
 function toast(msg,err){var t=$('toast');$('toastMsg').textContent=msg;t.className='toast show'+(err?' err':'');setTimeout(function(){t.className='toast'},3400);}
@@ -440,7 +440,7 @@ function refreshHome(){getJSON('content/posts.json',[]).then(function(p){var pub
     if(cs&&cs[0])$('lastCommit').textContent=new Date(cs[0].commit.committer.date).toLocaleString('ar-EG');}).catch(function(){$('activity').innerHTML='<p style="color:var(--muted);font-size:13px">تعذر قراءة السجل</p>';});}
 function checkLive(){fetch('../?t='+Date.now()).then(function(r){return r.text()}).then(function(html){var m=html.match(/name="mf-ver" content="([^"]+)"/);var live=m?m[1]:'؟';
   $('liveVer').textContent=live;$('adminVer').textContent=ADMIN_VER;
-  var ok=(live===ADMIN_VER);$('liveDot').className='dot'+(ok?'':' warn');$('liveTxt').textContent=ok?'الموقع مباشر ومتزامن ✅':'الموقع مباشر — نسخة الكود أقدم من هذه اللوحة';
+  var ok=(live===ADMIN_VER);$('liveDot').className='dot'+(ok?'':' warn');$('liveTxt').textContent=ok?'الموقع مباشر ومتزامن ✅':(live>ADMIN_VER?'الموقع مباشر — اللوحة أقدم من الموقع: ارفع ملف اللوحة الأحدث':'الموقع مباشر — نسخة الموقع أقدم من اللوحة: انشر آخر بناء');
   }).catch(function(){$('liveDot').className='dot bad';$('liveTxt').textContent='تعذر فحص الموقع';});}
 function refreshSystem(){$('ghRepo').textContent=CFG.owner+'/'+CFG.repo;$('ghBranch').textContent=CFG.branch;
   fetch('https://api.github.com/user',{headers:{'Authorization':'Bearer '+CFG.token}}).then(function(r){if(!r.ok)throw new Error(r.status);return r.json();}).then(function(u){
@@ -825,7 +825,7 @@ jobs:
           AUTO_PUBLISH: ${{ secrets.AUTO_PUBLISH }}
         run: |
           python3 - <<'PY'
-          import json,os,urllib.request,base64,datetime,urllib.parse
+          import json,os,urllib.request,base64,datetime,urllib.parse,time
           key=os.environ.get('GEMINI_KEY','') or ''
           if not key:
               print('لا يوجد مفتاح GEMINI_KEY — تخطٍ'); raise SystemExit(0)
@@ -850,16 +850,29 @@ jobs:
                   return names[0] if names else 'gemini-flash-latest'
               except Exception as e:
                   print('model list fail',e); return 'gemini-flash-latest'
-          j=None
-          for tm in [pick_model(),'gemini-flash-latest']:
-              try:
-                  j=gem(tm,[{'text':prompt}]); break
-              except Exception as e: print('text model fail',tm,e)
-          if j is None: raise SystemExit('no text model available')
-          txt=j['candidates'][0]['content']['parts'][0]['text']
-          a=txt.find('{'); b=txt.rfind('}')
-          try: art=json.loads(txt[a:b+1])
-          except Exception: art={'title':topic,'excerpt':'مقال تعليمي عملي: '+topic,'body':txt}
+          art=None; lasterr=''
+          for attempt in range(3):
+              for tm in [pick_model(),'gemini-flash-latest']:
+                  try:
+                      j=gem(tm,[{'text':prompt}])
+                      txt=j['candidates'][0]['content']['parts'][0]['text']
+                      a=txt.find('{'); b=txt.rfind('}')
+                      try: art=json.loads(txt[a:b+1])
+                      except Exception: art={'title':topic,'excerpt':'مقال تعليمي عملي: '+topic,'body':txt}
+                      break
+                  except Exception as e:
+                      lasterr=str(e); print('text model fail',tm,e)
+              if art is not None: break
+              if attempt<2: print('attempt',attempt+1,'failed — retry in 30s'); time.sleep(30)
+          if art is None:
+              cb=os.environ.get('CB_APIKEY','').strip()
+              if cb:
+                  try:
+                      m2='⚠️ فشل توليد مسودة اليوم بعد 3 محاولات: '+lasterr[:250]
+                      m2=' '.join(m2.split())
+                      urllib.request.urlopen('https://api.callmebot.com/whatsapp.php?phone=%2B201146905560&apikey='+cb+'&text='+urllib.parse.quote(m2,safe=''))
+                  except Exception as e2: print('WA fail-notify error:',e2)
+              print('GENERATION FAILED after retries:',lasterr); raise SystemExit(0)
           cover=os.environ['BANK']; img_b64=None
           IPROMPT='Editorial business illustration for an article titled: '+topic+'. Dark navy background #090C11, subtle gold #F3BD36 accent light, minimal executive-editorial style, abstract objects only, NO text, NO logos, NO recognizable faces, 16:9.'
           def gen_image():
