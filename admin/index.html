@@ -373,6 +373,8 @@ var CFG={owner:'melfedawy17-dotcom',repo:'melfedawy',branch:'main',token:''};
 var $=function(id){return document.getElementById(id)};
 function toast(msg,err){var t=$('toast');$('toastMsg').textContent=msg;t.className='toast show'+(err?' err':'');setTimeout(function(){t.className='toast'},3400);}
 function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function mAIcfg(){try{var v=mAIcfg();return (v&&typeof v==='object')?v:{};}catch(e){localStorage.removeItem('mf-ai');return {};}}
+window.addEventListener('error',function(ev){try{toast('⚠️ خطأ داخلي: '+String(ev.message).slice(0,90),1);}catch(e){}});
 function api(path,opts){opts=opts||{};opts.headers=Object.assign({'Authorization':'Bearer '+CFG.token,'Accept':'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28'},opts.headers||{});
   return fetch('https://api.github.com/repos/'+CFG.owner+'/'+CFG.repo+'/contents/'+path,opts).then(function(r){
     if(!r.ok)return r.text().then(function(t){throw new Error(r.status+': '+t.slice(0,140))});
@@ -635,7 +637,7 @@ function aiPrompt(kind,l){var base='أنت مساعد بحثي داخلي لمس
   if(kind==='call')return base+'المطلوب: صفحة تحضير مكالمة بالعربية: من العميل، ماذا يريد، مشكلته، سوقه، ما نعرفه، ما لا نعرفه، ٥ أسئلة ذكية للمكالمة (ابدأ بسؤال العميل الأهم)، الخدمة المحتملة. بدون اختراع وقائع.';
   return base+'المطلوب: مسودة عرض (Proposal) بالعربية: فهم التحدي، نطاق العمل وسلّمات كل خدمة طلبها، الجدول الزمني، مكان السعر [قوس فارغ]، متطلبات من العميل، بند سرية. بدون أرقام مختلقة.';}
 function aiCall(kind,l){
-  var cfg=JSON.parse(localStorage.getItem('mf-ai')||'{}');
+  var cfg=mAIcfg();
   if(!cfg.key){toast('لا يوجد مفتاح AI — احفظ المفتاح أسفل الصفحة، أو استخدم «توليد هيكل»',1);return;}
   var prompt=aiPrompt(kind,l);toast('جارٍ التوليد…');
   var req;
@@ -662,15 +664,16 @@ $('ldSkel').onclick=function(){if(LD_CUR<0)return;var k=LD_TAB==='answers'?'rese
 $('ldCopy').onclick=function(){var t=$('ldOut');if(t){navigator.clipboard.writeText(t.value);toast('تم النسخ');}};
 $('ldDl').onclick=function(){var t=$('ldOut');if(!t)return;var b=new Blob([t.value],{type:'text/markdown'});
   var a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='mf-'+LD_TAB+'-'+(LEADS[LD_CUR].answers.name||'lead')+'.md';a.click();};
-$('aiTest').onclick=function(){var cfg=JSON.parse(localStorage.getItem('mf-ai')||'{}');var out=[];
-  function done(){toast(out.join(' | '),out.some(function(x){return x.indexOf('✖')===0;})?1:0);}
-  var pend=3;
-  function fin(s){out.push(s);pend--;if(pend===0)done();}
-  if(!cfg.key){fin('✖ نص: لا مفتاح');}else{aiText('قل: تمام',cfg).then(function(){fin('✅ نص: يعمل ('+(AI_MODELS_CACHE?AI_MODELS_CACHE[0]:'؟')+')');}).catch(function(e){fin('✖ نص: '+String(e.message).slice(0,60));});}
-  if(!cfg.key){fin('✖ صورة: لا مفتاح');}else{aiImage('gold line on dark background, abstract',cfg).then(function(d){fin('✅ صورة: يعمل ('+d.model+')');}).catch(function(e){fin('✖ صورة: '+String(e.message).slice(0,70));});}
-  if(!cfg.cb){fin('✖ واتساب: لا مفتاح');}else{var ti=new Image();ti.onload=function(){fin('✅ واتساب: الاتصال يعمل — تفقد هاتفك');};ti.onerror=function(){fin('✖ واتساب: فشل شبكة');};ti.src='https://api.callmebot.com/whatsapp.php?phone=%2B201146905560&text='+encodeURIComponent('🔬 اختبار تنبيهات الموقع')+'&apikey='+encodeURIComponent(cfg.cb);}};
+$('aiTest').onclick=function(){toast('🔬 جارٍ فحص الإعدادات…');var cfg=mAIcfg();var out=[];var pend=3;var settled=false;
+  function done(){if(settled)return;settled=true;toast(out.join(' | '),out.some(function(x){return x.indexOf('✖')===0;})?1:0);}
+  function fin(s2){out.push(s2);pend--;if(pend===0)done();}
+  setTimeout(function(){if(!settled&&pend>0){fin('⏳ مهلة: بعض الفحوص لم تكتمل');}},45000);
+  try{if(!cfg.key){fin('✖ نص: لا مفتاح');}else{aiText('قل: تمام',cfg).then(function(){fin('✅ نص: يعمل ('+(AI_MODELS_CACHE?AI_MODELS_CACHE[0]:'؟')+')');}).catch(function(e){fin('✖ نص: '+String(e.message).slice(0,60));});}}catch(e){fin('✖ نص: '+String(e.message).slice(0,60));}
+  try{if(!cfg.key){fin('✖ صورة: لا مفتاح');}else{aiImage('gold line on dark background, abstract',cfg).then(function(d){fin('✅ صورة: يعمل ('+d.model+')');}).catch(function(e){fin('✖ صورة: '+String(e.message).slice(0,70));});}}catch(e){fin('✖ صورة: '+String(e.message).slice(0,70));}
+  try{if(!cfg.cb){fin('✖ واتساب: لا مفتاح');}else{var ti=new Image();ti.onload=function(){fin('✅ واتساب: الاتصال يعمل — تفقد هاتفك');};ti.onerror=function(){fin('✖ واتساب: فشل شبكة');};ti.src='https://api.callmebot.com/whatsapp.php?phone=%2B201146905560&text='+encodeURIComponent('🔬 اختبار تنبيهات الموقع')+'&apikey='+encodeURIComponent(cfg.cb);}}catch(e){fin('✖ واتساب: '+String(e.message).slice(0,60));}
+};
 $('aiSave').onclick=function(){localStorage.setItem('mf-ai',JSON.stringify({provider:$('aiProv').value,key:$('aiKey').value.trim(),model:$('aiModel').value.trim(),cb:$('cbKey').value.trim()}));toast('تم حفظ إعدادات AI في متصفحك');};
-(function(){var cfg=JSON.parse(localStorage.getItem('mf-ai')||'{}');if(cfg.provider)$('aiProv').value=cfg.provider;if(cfg.key)$('aiKey').value=cfg.key;if(cfg.model)$('aiModel').value=cfg.model;if(cfg.cb)$('cbKey').value=cfg.cb;/* ===== محرك المقال اليومي ===== */
+(function(){var cfg=mAIcfg();if(cfg.provider)$('aiProv').value=cfg.provider;if(cfg.key)$('aiKey').value=cfg.key;if(cfg.model)$('aiModel').value=cfg.model;if(cfg.cb)$('cbKey').value=cfg.cb;/* ===== محرك المقال اليومي ===== */
 var D_TOPICS=['هل فكرة مشروعك تستحق التنفيذ؟ ٥ أسئلة تجيب قبل ما تصرف جنيه','أخطاء شائعة في دراسات الجدوى تقع فيها المشاريع الصغيرة','كيف تختار السوق المستهدف الأول لمشروعك؟','دراسة جدوى أم خطة عمل؟ الفرق الذي يحدد من أين تبدأ','تحليل المنافسين بدون ميزانية: أدوات مجانية ونتائج عملية','تسعير المنتج الجديد: ثلاثة نماذج وأيها يناسب مشروعك','لماذا تتوقف المبيعات بعد أول ٦ أشهر؟ تشخيص عملي','من فكرة إلى خطة: خارطة طريق الـ ٩٠ يومًا الأولى','إدارة التدفق النقدي في المشاريع الناشئة: قواعد البقاء','متى تتوسع جغرافيًا؟ علامات الجاهزية التي يغفلها أصحاب المشاريع','بحث السوق بالمقابلات: كيف تسأل العميل سؤالًا لا يضلك','الفرق بين الربح والكاش: قصة كل مشروع متعثر','بناء عرض قيمة واضح في جملة واحدة','اختيار اسم وعلامة تجارية: ما الذي يؤثر فعلًا على المبيعات؟','قراءة قائمة دخل لمشروع صغير في ١٠ دقائق','نقطة التعادل: كم وحدة تبيع قبل أن تربح؟','التفاوض مع الموردين: ٥ روافع تكلفة صفرية','توظيف أول موظف: متى ولمن وكيف تحسبها؟','أتمتة العمليات الصغيرة: أين تبدأ بدون ميزانية تقنية؟','مؤشرات أداء بسيطة لصاحب مشروع غير مالي','دخول سوق خليجي جديد: ما الذي يختلف عن السوق المصري؟','التصدير خطوة صفر: جاهزية المنتج قبل جاهزية السوق','تحويل عميل مرة واحدة إلى عميل متكرر','تقييم فرصة امتياز تجاري: قائمة فحص عملية','العروض والباقات: كيف تبني سلم أسعار لا يحرق هامشك؟','دراسة الجدوى البنكية: ما الذي يبحث عنه الممول فعلًا؟','إدارة المخزون في التجارة: تكلفة مخفية تستهلك هامشك','خطة التسويق الأولى بميزانية محدودة: قنوات تستحق البدء','من مشروع فردي إلى منشأة: متى تؤسس كياناتك الرسمية؟','قياس رضا العملاء بدون أنظمة: ٣ طرق سريعة','إعادة إطلاق منتج متوقف: تشخيص قبل القرار'];
 function dToday(){return Math.floor(Date.now()/86400000)%D_TOPICS.length;}
 var D_ITEMS=null;
@@ -703,7 +706,7 @@ function aiImage(prompt,cfg){
   ];
   function go(i){var c=chain[i];return fetch('https://generativelanguage.googleapis.com/'+c.u+'?key='+encodeURIComponent(cfg.key),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(c.b)}).then(function(r){if(!r.ok)return r.json().then(function(j){throw new Error((j.error&&j.error.message||'HTTP '+r.status));});return r.json();}).then(function(j){var d=c.p(j);if(!d)throw new Error('no image in response');d.model=c.u.split('/models/')[1].split(':')[0];return d;}).catch(function(e){if(i+1<chain.length)return go(i+1);e.chain=true;throw e;});}
   return go(0);}
-function waPing(text){var cfg=JSON.parse(localStorage.getItem('mf-ai')||'{}');if(!cfg.cb){toast('احفظ مفتاح CallMeBot أولًا في إعدادات AI أسفل الصفحة',1);return;}
+function waPing(text){var cfg=mAIcfg();if(!cfg.cb){toast('احفظ مفتاح CallMeBot أولًا في إعدادات AI أسفل الصفحة',1);return;}
   var im=new Image();im.onload=function(){toast('واتساب: تم التسليم لقناة الإرسال — تفقد هاتفك 📱');};im.onerror=function(){toast('واتساب: فشل اتصال الشبكة بـ CallMeBot',1);};im.src='https://api.callmebot.com/whatsapp.php?phone=%2B201146905560&text='+encodeURIComponent(text)+'&apikey='+encodeURIComponent(cfg.cb);}
 function dLoad(){try{return JSON.parse(localStorage.getItem('mf-draft')||'null');}catch(e){return null;}}
 function dSave(d){localStorage.setItem('mf-draft',JSON.stringify(d));}
@@ -711,7 +714,7 @@ function dRefreshInfo(){var last='';try{last=(POSTS||[]).map(function(p){return 
   var days=last?Math.floor((Date.now()-new Date(last).getTime())/86400000):'؟';
   $('dailyInfo').textContent='موضوع اليوم المقترح: '+dItem().t+' — آخر نشر قبل '+days+' يومًا.';
   if(dItem().img){$('dThumb').hidden=false;$('dThumb').src='../'+dItem().img;}else{$('dThumb').hidden=true;}}
-function aiText(prompt){var cfg=JSON.parse(localStorage.getItem('mf-ai')||'{}');
+function aiText(prompt){var cfg=mAIcfg();
   if(!cfg.key)return Promise.reject(new Error('no-key'));
   if(cfg.provider==='openai'){return fetch('https://api.openai.com/v1/chat/completions',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+cfg.key},body:JSON.stringify({model:cfg.model||'gpt-4o-mini',messages:[{role:'user',content:prompt}]})}).then(function(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.json();}).then(function(j){return j.choices[0].message.content;});}
   return fetch('https://generativelanguage.googleapis.com/v1beta/models/'+(cfg.model||'gemini-2.5-flash')+':generateContent?key='+encodeURIComponent(cfg.key),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contents:[{parts:[{text:prompt}]}]})}).then(function(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.json();}).then(function(j){return j.candidates[0].content.parts[0].text;});}
@@ -720,7 +723,7 @@ function dRender(d){$('dWrap').hidden=false;$('dToEditor').hidden=false;$('dPost
 $('dGen').onclick=function(){var item=dItem();var topic=item.t;var d=dLoad();
   if(d&&d.topic===topic&&d.body){dRender(d);toast('مسودة اليوم موجودة — عدّل أو أرسل للمحرر');return;}
   var prompt='أنت مساعد كتابة لمستشار أعمال مصري اسمه محمد الفداوي. اكتب مقالًا تعليميًا بالعربية (٤٥٠–٦٠٠ كلمة) بعنوان: '+topic+' . قواعد صارمة: لا تذكر عملاء بأسمائهم، لا أرقام إيرادات أو نسب نجاح مخترعة، لا شهادات أو جوائز، لا وعود بنتائج مضمونة؛ أمثلة عامة فقط. أسلوب: تنفيذي مباشر، فقرات قصيرة، عناوين فرعية، وخاتمة فيها دعوة لمناقشة المشروع عبر الموقع. أعد JSON فقط بالشكل: {"title":..,"excerpt":..,"body":..} حيث body بصيغة Markdown.';
-  var cfg=JSON.parse(localStorage.getItem('mf-ai')||'{}');
+  var cfg=mAIcfg();
   if(!cfg.key){var nd0=skelArticle(topic);nd0.topic=topic;nd0.img=item.img;dSave(nd0);dRender(nd0);toast('لا مفتاح AI — وُلّد هيكل جاهز لتكملة من خبرتك');return;}
   toast('جارٍ توليد مسودة اليوم…');
   aiText(prompt,cfg).then(function(txt){var j=null;try{var a=txt.indexOf('{'),b=txt.lastIndexOf('}');j=JSON.parse(txt.slice(a,b+1));}catch(e){}
@@ -764,7 +767,7 @@ function dAttachCover(){return dMakeCover().then(function(b){if(!b){toast('مت�
   var dt=new DataTransfer();dt.items.add(f);$('pCover').files=dt.files;
   toast('الغلاف بالهوية جاهز — سيُرفع مع الحفظ ✅');}).catch(function(e){toast('تعذر الغلاف: '+e.message,1);});}
 $('dCover').onclick=function(){dAttachCover();};
-$('dCoverAi').onclick=function(){var cfg=JSON.parse(localStorage.getItem('mf-ai')||'{}');if(!cfg.key){toast('احفظ مفتاح Gemini أولًا في إعدادات AI',1);return;}
+$('dCoverAi').onclick=function(){var cfg=mAIcfg();if(!cfg.key){toast('احفظ مفتاح Gemini أولًا في إعدادات AI',1);return;}
   toast('جارٍ توليد غلاف AI (قد يجرب عدة نماذج)…');
   var IPROMPT='Editorial business illustration for an article titled: '+($('dTitle').value||'')+ '. Dark navy background #090C11, subtle gold #F3BD36 accent light, minimal executive-editorial style, abstract objects only, NO text, NO logos, NO recognizable faces, 16:9.';
   aiImage(IPROMPT,cfg).then(function(d){
