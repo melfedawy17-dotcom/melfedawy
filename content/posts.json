@@ -75,5 +75,14 @@
   "date": "2026-09-25",
   "lang": "ar",
   "status": "draft"
+ },
+ {
+  "slug": "sometimes-the-problem-is-not-a-lack-of-sales",
+  "title": "Sometimes, the problem is not a lack of sales.",
+  "excerpt": "Sometimes, the problem is what happens after the sale.",
+  "date": "2026-09-25",
+  "lang": "en",
+  "status": "published",
+  "cover": "assets/img/uploads/cover-sometimes-the-problem-is-not-a-lack-of-sales.jpg"
  }
 ]
