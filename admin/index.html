@@ -463,7 +463,7 @@ function refreshHome(){getJSON('content/posts.json',[]).then(function(p){var pub
   commits(6).then(function(cs){$('activity').innerHTML=(cs||[]).map(function(c){var d=new Date(c.commit.committer.date);
     return '<div class="rowline"><span>'+esc((c.commit.message||'').split('\n')[0])+'</span><span class="m">'+d.toLocaleDateString('ar-EG')+' '+d.toLocaleTimeString('ar-EG',{hour:'2-digit',minute:'2-digit'})+'</span></div>';}).join('')||'<p style="color:var(--muted);font-size:13px">لا نشاط بعد</p>';
     if(cs&&cs[0])$('lastCommit').textContent=new Date(cs[0].commit.committer.date).toLocaleString('ar-EG');}).catch(function(){$('activity').innerHTML='<p style="color:var(--muted);font-size:13px">تعذر قراءة السجل</p>';});}
-function checkLive(){fetch('../?t='+Date.now()).then(function(r){return r.text()}).then(function(html){var m=html.match(/name="mf-ver" content="([^"]+)"/);var live=m?m[1]:'؟';
+function checkLive(){fetch('../assets/data/ver.json?t='+Date.now(),{cache:'no-store'}).then(function(r){if(!r.ok)throw new Error('ver');return r.json()}).then(function(j){var live=j&&j.v?j.v:'؟';
   $('liveVer').textContent=live;$('adminVer').textContent=ADMIN_VER;
   var ok=(live===ADMIN_VER);$('liveDot').className='dot'+(ok?'':' warn');$('liveTxt').textContent=ok?'الموقع مباشر ومتزامن ✅':(live>ADMIN_VER?'الموقع مباشر — اللوحة أقدم من الموقع: ارفع ملف اللوحة الأحدث':'الموقع مباشر — نسخة الموقع أقدم من اللوحة: انشر آخر بناء');
   }).catch(function(){$('liveDot').className='dot bad';$('liveTxt').textContent='تعذر فحص الموقع';});}
