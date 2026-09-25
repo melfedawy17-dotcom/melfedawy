@@ -375,7 +375,7 @@ textarea{min-height:260px}
 <script>
 (function(){
 'use strict';
-var ADMIN_VER='20260923a';
+var ADMIN_VER='20260925b';
 (function(){try{
   fetch('../assets/data/ver.json?cb='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.json():null;}).then(function(j){
     if(!j||!j.v||j.v===ADMIN_VER){try{sessionStorage.removeItem('mf-stale');}catch(e){}return;}
@@ -501,7 +501,7 @@ document.querySelectorAll('.toolbar button').forEach(function(b){b.onclick=funct
   t.value=v.slice(0,s)+ins+v.slice(e);t.focus();preview();};});
 $('pSave').onclick=function(){var title=$('pTitle').value.trim();if(!title){toast('اكتب عنوان المقال',1);return;}
   var slug=$('pEditSlug').value||slugify(title);var date=$('pDate').value||today();var lang=$('pLang').value;var status=$('pStatus').value;
-  $('pSave').disabled=true;var chain=Promise.resolve(null);var coverPath=null;
+  $('pSave').disabled=true;$('pSave').textContent='جارٍ الحفظ…';var chain=Promise.resolve(null);var coverPath=null;
   if($('pCover').files[0]){var f=$('pCover').files[0];var ext=(f.name.match(/\.(png|jpe?g|webp)$/i)||['','.jpg'])[0].replace('jpeg','jpg');
     coverPath='assets/img/uploads/cover-'+slug+ext;chain=fileB64(f).then(function(b){return putB64(coverPath,b,'upload cover: '+slug)});}
   else if($('pCoverExist').value){coverPath=$('pCoverExist').value;}
@@ -509,7 +509,14 @@ $('pSave').onclick=function(){var title=$('pTitle').value.trim();if(!title){toas
     return getJSON('content/posts.json',[]).then(function(posts){posts=(posts||[]).filter(function(p){return p.slug!==slug});
       posts.push({slug:slug,title:title,excerpt:$('pExcerpt').value.trim(),date:date,lang:lang,status:status,cover:coverPath||$('pOldCover').value||'assets/img/case-feasibility.jpg'});
       return putText('content/posts.json',JSON.stringify(posts,null,1),'article index: '+slug);});}).then(function(){
-    toast(status==='draft'?'تم حفظ المسودة 🟡':'تم النشر ✅ ظهر في الموقع فورًا');if(status!=='draft'){waPing('✅ تم نشر مقال جديد: '+title+' — '+location.origin+'/'+(lang==='ar'?'ar/':'')+'insights/read.html?slug='+slug);}refreshPosts();show('articles');}).catch(function(e){toast('فشل الحفظ: '+e.message,1)}).then(function(){$('pSave').disabled=false;});};
+    var waMsg='✅ تم نشر مقال جديد: '+title+' — '+location.origin+'/'+(lang==='ar'?'ar/':'')+'insights/read.html?slug='+slug;
+    if(status==='draft'){toast('تم حفظ المسودة 🟡');refreshPosts();show('articles');}
+    else{getJSON('content/posts.json',[]).then(function(rp){var inApi=(rp||[]).some(function(x){return x.slug===slug;});
+      return fetch('https://raw.githubusercontent.com/'+CFG.owner+'/'+CFG.repo+'/'+CFG.branch+'/content/posts.json?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.json():[];}).catch(function(){return [];}).then(function(rw){var inRaw=(rw||[]).some(function(x){return x.slug===slug;});
+        if(inApi&&inRaw){toast('تم النشر ✅ وتحققت ظهوره في مصدر الموقع');waPing(waMsg);}
+        else if(inApi){toast('تم النشر ✅ المصدر الفوري يحمل المقال — إن تأخرت القائمة دقائق فالمرآة تتزامن؛ الرابط المباشر يعمل الآن');waPing(waMsg);}
+        else{toast('تحذير: المقال غير موجود في المصدر بعد — أعد الحفظ',1);}
+        refreshPosts();show('articles');});});}}).catch(function(e){toast('فشل الحفظ: '+e.message,1)}).then(function(){$('pSave').disabled=false;$('pSave').textContent='حفظ';});};
 function delPost(p){delFile('content/posts/'+p.slug+'.md','delete article: '+p.slug).then(function(){
   return getJSON('content/posts.json',[]).then(function(posts){posts=(posts||[]).filter(function(x){return x.slug!==p.slug});
     return putText('content/posts.json',JSON.stringify(posts,null,1),'remove from index: '+p.slug)});}).then(function(){toast('تم الحذف');refreshPosts()}).catch(function(e){toast('فشل الحذف: '+e.message,1)});}
