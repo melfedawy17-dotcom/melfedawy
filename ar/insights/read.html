@@ -608,7 +608,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,te
 {"@type":"ProfessionalService","@id":"../../#service","name":"Mohamed Elfedawy — Business Consulting","alternateName":"محمد الفداوي — استشارات أعمال","url":"../../","provider":{"@id":"../../#person"},"description":"Feasibility studies, market research, business plans, business development, operations & production management, and sales planning for SMEs and startups.","serviceType":["Feasibility Studies","Market Research","Business Plans","Business Development","Operations & Production Management","Sales Planning"],"areaServed":["Egypt","Saudi Arabia","Kuwait"],"knowsLanguage":["ar","en"]},
 {"@type":"WebSite","@id":"../../#site","name":"Mohamed Elfedawy — Business Consulting","alternateName":"محمد الفداوي — استشارات أعمال","url":"../../","inLanguage":["ar","en"],"publisher":{"@id":"../../#person"}}]}
 </script>
-</head>
+<style>.toc-box{background:#111720;border:1px solid #232a36;border-radius:12px;padding:14px 16px;margin:14px 0}.toc-box b{color:#F3BD36;font-size:13px}.toc-box ul{margin:8px 0 0;padding-inline-start:18px}.toc-box li{margin:4px 0;font-size:13.5px}.toc-box li.sub{list-style:none;padding-inline-start:12px}.toc-box a{color:#F5F7FA;text-decoration:none;border-bottom:1px dotted #4a5568}.mag-band{display:flex;gap:14px;align-items:center;justify-content:space-between;flex-wrap:wrap;background:#111720;border:1px dashed #F3BD36;border-radius:14px;padding:16px;margin-top:26px}.mag-band b{display:block;color:#FFE08A}.mag-band span{color:#A9B2BF;font-size:13px}</style></head>
 <body data-root="../../">
 <a class="skip" href="#main">تخطَّ إلى المحتوى</a>
 <header class="nav" id="top">
@@ -837,7 +837,7 @@ var FORM_SENDING='جارٍ الإرسال…';
   };
   var RAW = 'https://raw.githubusercontent.com/' + CMS.owner + '/' + CMS.repo + '/' + CMS.branch + '/';
   var root = document.body.getAttribute('data-root') || './';
-  var VER = '20260925b';
+  var VER = '20260925c';
   function vs(p){ return p + (p.indexOf('?') > -1 ? '' : '?v=' + VER); }
 
   function cb() { return '?t=' + Date.now(); }
@@ -993,6 +993,12 @@ var FORM_SENDING='جارٍ الإرسال…';
           '<h1>' + esc(p.title) + '</h1>' +
           (p.cover ? '<img class="article-cover" src="' + root + vs(p.cover) + '" alt="">' : '') +
           md2html(md) + share;
+        var mins = Math.max(1, Math.round(md.split(/\s+/).length / 200));
+        var metaEl = view.querySelector('.post-meta');
+        if (metaEl) metaEl.innerHTML += ' · ' + (p.lang === 'ar' ? mins + ' دقيقة قراءة' : mins + ' min read');
+        var hs = view.querySelectorAll('h2,h3');
+        if (hs.length > 1) { var items = []; for (var hi = 0; hi < hs.length; hi++) { var hid = 'sec-' + (hi + 1); hs[hi].id = hid; items.push('<li class="' + (hs[hi].tagName === 'H3' ? 'sub' : '') + '"><a href="#' + hid + '">' + hs[hi].textContent + '</a></li>'); } var h1 = view.querySelector('h1'); if (h1) h1.insertAdjacentHTML('afterend', '<div class="toc-box"><b>' + (p.lang === 'ar' ? 'محاور المقال' : 'In this article') + '</b><ul>' + items.join('') + '</ul></div>'); }
+        view.insertAdjacentHTML('beforeend', '<div class="mag-band"><div><b>' + (p.lang === 'ar' ? 'ورقة مجانية: أسئلة القرار الخمسة قبل أي إنفاق' : 'Free sheet: the five decision questions before you spend') + '</b><span>' + (p.lang === 'ar' ? 'خمسة أسئلة ورقية تكشف جاهزية فكرتك — حمّلها وابدأ الليلة.' : 'Five paper questions that test whether your idea is ready — download and start tonight.') + '</span></div><a class="btn" href="' + root + 'assets/led/decision-5-questions.pdf" download>' + (p.lang === 'ar' ? 'تحميل الورقة' : 'Download the sheet') + '</a></div>');
       }).catch(function () { view.innerHTML = '<p class="err-note">Could not load the article body.</p>'; });
     }).catch(function () { view.innerHTML = '<p class="err-note">Could not load articles index.</p>'; });
   }
