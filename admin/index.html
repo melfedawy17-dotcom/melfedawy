@@ -378,7 +378,7 @@ textarea{min-height:260px}
 <script>
 (function(){
 'use strict';
-var ADMIN_VER='20260925d';
+var ADMIN_VER='20260925e';
 (function(){try{
   fetch('../assets/data/ver.json?cb='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.json():null;}).then(function(j){
     if(!j||!j.v||j.v===ADMIN_VER){try{sessionStorage.removeItem('mf-stale');}catch(e){}return;}
