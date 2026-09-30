@@ -110,5 +110,14 @@
   "lang": "ar",
   "status": "draft",
   "cover": "assets/img/covers/c09.webp"
+ },
+ {
+  "slug": "ai-2026-09-30-en",
+  "title": "إدارة المخزون في التجارة: تكلفة مخفية تستهلك هامشك",
+  "excerpt": "In commercial operations, inventory is often viewed strictly as an asset. However, poor holding discipline and uncalculated carrying costs quietly erode operating margins and freeze working capital.",
+  "date": "2026-09-30",
+  "lang": "en",
+  "status": "draft",
+  "cover": "assets/img/covers/c11.webp"
  }
 ]
