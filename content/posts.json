@@ -164,5 +164,14 @@
   "lang": "ar",
   "status": "draft",
   "cover": "assets/img/covers/c07.webp"
+ },
+ {
+  "slug": "ai-2026-10-11-en",
+  "title": "من فكرة إلى خطة: خارطة طريق الـ ٩٠ يومًا الأولى",
+  "excerpt": "A structured, executive roadmap designed to transition raw business concepts into validated, executable operating plans across three disciplined thirty-day phases.",
+  "date": "2026-10-11",
+  "lang": "en",
+  "status": "draft",
+  "cover": "assets/img/covers/c08.webp"
  }
 ]
