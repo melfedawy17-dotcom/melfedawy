@@ -182,5 +182,14 @@
   "lang": "ar",
   "status": "draft",
   "cover": "assets/img/covers/c09.webp"
+ },
+ {
+  "slug": "ai-2026-10-12-en",
+  "title": "إدارة التدفق النقدي في المشاريع الناشئة: قواعد البقاء",
+  "excerpt": "A direct executive guide on managing liquidity, controlling burn rate, and establishing structural financial discipline in emerging ventures.",
+  "date": "2026-10-12",
+  "lang": "en",
+  "status": "draft",
+  "cover": "assets/img/covers/c09.webp"
  }
 ]
