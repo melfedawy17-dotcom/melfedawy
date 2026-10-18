@@ -236,5 +236,14 @@
   "lang": "ar",
   "status": "draft",
   "cover": "assets/img/covers/c15.webp"
+ },
+ {
+  "slug": "ai-2026-10-18-en",
+  "title": "قراءة قائمة دخل لمشروع صغير في ١٠ دقائق",
+  "excerpt": "A concise, executive guide for small business owners on how to read, interpret, and extract actionable insights from an income statement in just ten minutes.",
+  "date": "2026-10-18",
+  "lang": "en",
+  "status": "draft",
+  "cover": "assets/img/covers/c15.webp"
  }
 ]
