@@ -272,5 +272,14 @@
   "lang": "en",
   "status": "draft",
   "cover": "assets/img/covers/c02.webp"
+ },
+ {
+  "slug": "ai-2026-10-22-en",
+  "title": "أتمتة العمليات الصغيرة: أين تبدأ بدون ميزانية تقنية؟",
+  "excerpt": "A practical guide for business leaders seeking to eliminate operational drag and automate manual workflows using accessible, zero-cost tools before investing in enterprise software.",
+  "date": "2026-10-22",
+  "lang": "en",
+  "status": "draft",
+  "cover": "assets/img/covers/c03.webp"
  }
 ]
